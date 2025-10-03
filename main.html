@@ -195,10 +195,10 @@
   <!-- ========= BRANDED HEADER ========= -->
   <header class="brand-bar">
     <div class="container">
-      <div class="brand" role="banner" aria-label="The Family Advocates CRM">
-        <img src="\images\brand_image.png" class="logo" alt="The Family Advocates logo">
+      <div class="brand" role="banner" aria-label="The Family Advocates CRM Canada">
+        <img src="\images\TFA_Logo_Asset 14.png" class="logo" alt="The Family Advocates logo">
         <div class="title">
-          <b>The Family Advocates</b>
+          <b>The Family Advocates Canada</b>
           <small>Community CRM</small>
         </div>
       </div>
@@ -327,8 +327,7 @@
 
   <footer>
     <small>
-      Demo only. Replace local auth with a secure backend (hashed passwords, sessions/JWTs, RBAC).
-      Colors & accents reflect TFA branding; adjust tokens in <code>:root</code>.
+      Demo only. 
     </small>
   </footer>
 
@@ -370,7 +369,7 @@
     function clearSession(){ localStorage.removeItem(LS_KEYS.session) }
 
     function hash(str){
-      // lightweight hash for demo only (not secure!)
+      // lightweight hash for demo only (UPDATE ASAP)
       let h = 0; for (let i=0;i<str.length;i++) h = (h<<5) - h + str.charCodeAt(i) | 0;
       return String(h);
     }
@@ -542,7 +541,7 @@
 
     searchBox.addEventListener("input", renderTable);
 
-    // Seed with an example row the first time
+    // Populate with an example row the first time
     if(readContacts().length === 0){
       writeContacts([
         { id: uid(), name:"Alex Rivera", role:"Donor", email:"alex@donors.org", phone:"555-0102", tags:["monthly","newsletter"], notes:"Prefers email updates", updatedAt: Date.now() }

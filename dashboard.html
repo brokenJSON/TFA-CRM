@@ -50,9 +50,8 @@
   <header class="brand-bar">
     <div class="container">
       <div class="brand">
-        <!-- Swap this block for your PNG if you prefer -->
-        <!-- <img src="assets/images/logo.png" class="logo" alt="The Family Advocates logo"> -->
-        <div class="logo">TFA</div>
+        <img src="\images\brand_image.png" class="logo" alt="The Family Advocates logo">
+        <!-- <div class="logo">TFA</div> -->
         <div>
           <div style="font-weight:800">The Family Advocates</div>
           <small>CRM Dashboard</small>
@@ -61,7 +60,7 @@
       <div class="nav">
         <div>
           <a href="dashboard.html">Dashboard</a>
-          <a href="contacts.html">Contacts</a>
+          <a href="contacts_TBD.html">Contacts</a>
           <a href="#" id="aboutLink">About</a>
         </div>
         <div>
@@ -166,7 +165,7 @@
   </main>
 
   <script>
-    // ===== Shared keys with your original page =====
+    // ===== Shared keys with original page =====
     const LS = { session:"tfa_session", contacts:"tfa_contacts_v1", tasks:"tfa_tasks_v1" };
 
     // ===== Guard: require login =====
@@ -252,7 +251,7 @@
       reader.readAsText(file);
     }
 
-    // ===== Log Interaction (simple prompt demo) =====
+    // ===== Log Interaction (demo) =====
     function logInteraction(){
       const name = prompt("Log note for which contact name?");
       if(!name) return;
