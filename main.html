@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TFA CRM – Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    /* ======= TFA BRAND TOKENS ======= */
+    :root{
+      --tfa-green: #063F1E;          /* Primary - Deep Green */
+      --tfa-gold:  #D89F01;          /* Secondary - Heritage Gold */
+      --tfa-white: #FFFFFF;          /* White */
+      --tfa-beige: #F9F8F6;          /* Light Beige */
+      --tfa-light: #E3E3E3;          /* Light Gray */
+      --tfa-mid:   #888888;          /* Medium Gray */
+      --tfa-char:  #222222;          /* Dark Gray / Charcoal */
+
+      --bg: var(--tfa-beige);
+      --text: var(--tfa-char);
+      --muted: var(--tfa-mid);
+      --card: var(--tfa-white);
+      --border: var(--tfa-light);
+      --focus: var(--tfa-gold);
+      --primary: var(--tfa-green);
+      --accent: var(--tfa-gold);
+      --radius: 14px;
+      --shadow: 0 10px 28px rgba(0,0,0,.10);
+    }
+
+    /* ======= Base ======= */
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{
+      margin:0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    a{ color: var(--primary); text-decoration: none }
+    a:hover{ text-decoration: underline }
+    h1,h2,h3{ margin:.25rem 0 .5rem }
+    h1{ font-size:clamp(22px, 2.6vw, 30px); }
+    h2{ font-size:clamp(18px, 2.2vw, 24px); }
+    p{ margin:.25rem 0 .75rem }
+
+    /* ======= Header (Branded) ======= */
+    .brand-bar{
+      background: var(--primary);
+      color: var(--tfa-white);
+      border-bottom: 6px solid var(--accent);
+    }
+    .container{
+      width:min(1100px, 92vw);
+      margin-inline:auto;
+      padding: 18px 0;
+    }
+    .brand{
+      display:flex; align-items:center; gap:14px;
+    }
+    /* Simple local SVG as a stand-in logo (replace with your real logo img if desired) */
+    .logo{
+      width:46px; height:46px; border-radius:12px;
+      background: var(--accent);
+      display:grid; place-items:center;
+      color: var(--primary);
+      font-weight:800;
+      box-shadow: inset 0 0 0 3px rgba(0,0,0,.08);
+    }
+    .brand .title{
+      line-height:1.1;
+    }
+    .brand .title b{ display:block; letter-spacing:.2px }
+    .brand .title small{ opacity:.9; font-weight:500 }
+
+    /* ======= Shell Layout ======= */
+    .shell{
+      display:grid;
+      grid-template-columns: 260px 1fr;
+      gap:18px;
+      width:min(1100px, 92vw);
+      margin:18px auto 40px;
+    }
+    @media (max-width: 900px){
+      .shell{ grid-template-columns: 1fr }
+    }
+
+    /* ======= Card ======= */
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+    .card h2{
+      margin-top:0;
+      border-bottom:1px solid var(--border);
+      padding-bottom:8px;
+    }
+
+    /* ======= Sidebar ======= */
+    .sidebar .section + .section{ margin-top:14px }
+    .callout{
+      background:linear-gradient(0deg, rgba(216,159,1,.08), rgba(216,159,1,.08));
+      border:1px solid var(--accent);
+      color:#5b4500;
+    }
+
+    /* ======= Forms ======= */
+    label{ display:block; font-weight:600; margin:.6rem 0 .25rem }
+    .row{ display:flex; gap:10px; }
+    .row > *{ flex:1 }
+    input, select, textarea{
+      width:100%;
+      appearance:none;
+      border:1px solid var(--border);
+      background:var(--tfa-white);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:10px;
+      outline:none;
+      transition:border-color .15s ease, box-shadow .15s ease;
+    }
+    textarea{ min-height:84px; resize:vertical }
+    input:focus, select:focus, textarea:focus{
+      border-color: var(--focus);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 25%, transparent);
+    }
+    .actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px }
+
+    .btn{
+      border:0; cursor:pointer; font-weight:700;
+      padding:10px 14px; border-radius:12px;
+      transition:transform .04s ease, box-shadow .12s ease, background-color .15s ease;
+      box-shadow: 0 7px 18px rgba(6,63,30,.18);
+    }
+    .btn:active{ transform: translateY(1px) }
+    .btn-primary{ background:var(--primary); color:white }
+    .btn-primary:hover{ background:#05431f }
+    .btn-ghost{ background:transparent; color:var(--primary); border:1px solid var(--primary) }
+    .btn-danger{ background:#8b1a1a; color:#fff }
+    .tag{
+      display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px;
+      background: color-mix(in srgb, var(--accent) 22%, white);
+      border:1px solid var(--accent);
+      color:#5b4500;
+    }
+
+    /* ======= Auth ======= */
+    .auth-wrap{
+      display:flex; gap:14px; flex-wrap:wrap;
+    }
+    .auth-card{ flex:1 1 280px }
+
+    .alert{
+      background:#fff4e5; border:1px solid #ffd699; color:#7a5600;
+      padding:10px 12px; border-radius:10px; margin:.5rem 0 0;
+    }
+
+    /* ======= Contacts ======= */
+    .toolbar{
+      display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px;
+    }
+    .search{ max-width:360px }
+    table{
+      width:100%; border-collapse:separate; border-spacing:0 8px;
+    }
+    th, td{
+      text-align:left; padding:10px 12px;
+      background: var(--card);
+      border-top:1px solid var(--border);
+      border-bottom:1px solid var(--border);
+    }
+    th:first-child, td:first-child{ border-left:1px solid var(--border); border-top-left-radius:10px; border-bottom-left-radius:10px }
+    th:last-child, td:last-child{ border-right:1px solid var(--border); border-top-right-radius:10px; border-bottom-right-radius:10px }
+
+    .empty{
+      text-align:center; color:var(--muted); padding:24px 6px; border:1px dashed var(--border); border-radius:12px; background:#fff
+    }
+
+    /* ======= Footer ======= */
+    footer{
+      width:min(1100px, 92vw); margin: 18px auto 50px;
+      color: var(--muted);
+      font-size:14px;
+    }
+    .accent-underline{
+      text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 3px;
+      text-underline-offset: 4px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ========= BRANDED HEADER ========= -->
+  <header class="brand-bar">
+    <div class="container">
+      <div class="brand" role="banner" aria-label="The Family Advocates CRM">
+        <img src="\images\brand_image.png" class="logo" alt="The Family Advocates logo">
+        <div class="title">
+          <b>The Family Advocates</b>
+          <small>Community CRM</small>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========= MAIN LAYOUT ========= -->
+  <div class="shell" role="main">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="card section callout" aria-live="polite">
+        <h2>Branding</h2>
+        <p>
+          This demo uses <span class="tag">Deep Green #063F1E</span> &
+          <span class="tag">Heritage Gold #D89F01</span> plus neutrals for
+          accessibility and hierarchy.
+        </p>
+      </div>
+
+      <div class="card section">
+        <h2>About</h2>
+        <p>
+          UI demonstrates: <strong>Admin Sign Up / Login</strong> and
+          <strong>Staff Contact Management</strong>. Data is stored locally
+          in your browser for demo purposes only.
+        </p>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <section class="content">
+      <!-- AUTH AREA -->
+      <div class="card">
+        <h2 class="accent-underline">Access (Admin)</h2>
+        <div class="auth-wrap">
+          <!-- SIGN UP -->
+          <form id="signupForm" class="auth-card" autocomplete="off" aria-labelledby="signupTitle">
+            <h3 id="signupTitle">Sign Up</h3>
+            <label for="suEmail">Email</label>
+            <input id="suEmail" name="email" type="email" required placeholder="admin@tfa.local" />
+            <div class="row">
+              <div>
+                <label for="suPass">Password</label>
+                <input id="suPass" name="password" type="password" minlength="6" required placeholder="••••••••" />
+              </div>
+              <div>
+                <label for="suPass2">Confirm</label>
+                <input id="suPass2" type="password" minlength="6" required placeholder="••••••••" />
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">Create Admin</button>
+              <span class="muted" style="color:var(--muted)">Demo only – stored in localStorage</span>
+            </div>
+            <div id="signupMsg" class="alert" style="display:none"></div>
+          </form>
+
+          <!-- LOGIN -->
+          <form id="loginForm" class="auth-card" autocomplete="off" aria-labelledby="loginTitle">
+            <h3 id="loginTitle">Log In</h3>
+            <label for="liEmail">Email</label>
+            <input id="liEmail" name="email" type="email" required placeholder="admin@tfa.local" />
+            <label for="liPass">Password</label>
+            <input id="liPass" name="password" type="password" required placeholder="••••••••" />
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">Enter CRM</button>
+              <button id="logoutBtn" class="btn btn-ghost" type="button" title="Clear current session">Log Out</button>
+            </div>
+            <div id="loginMsg" class="alert" style="display:none"></div>
+          </form>
+        </div>
+      </div>
+
+      <!-- CONTACTS AREA -->
+      <div id="contactsCard" class="card" aria-live="polite" style="margin-top:18px; display:none">
+        <div class="toolbar">
+          <h2 class="accent-underline">Contacts (Staff)</h2>
+          <input id="searchBox" class="search" type="search" placeholder="Search name, email, or tag…" aria-label="Search contacts" />
+        </div>
+
+        <!-- Add/Edit Form -->
+        <form id="contactForm" autocomplete="off" aria-labelledby="contactFormTitle" style="margin-bottom:14px">
+          <h3 id="contactFormTitle" style="margin:.25rem 0 .75rem">Add / Edit Contact</h3>
+          <div class="row">
+            <div>
+              <label for="cName">Full Name</label>
+              <input id="cName" required placeholder="Jane Doe" />
+            </div>
+            <div>
+              <label for="cRole">Type</label>
+              <select id="cRole" required>
+                <option value="Participant">Participant</option>
+                <option value="Donor">Donor</option>
+                <option value="Volunteer">Volunteer</option>
+                <option value="Partner">Partner</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="cEmail">Email</label>
+              <input id="cEmail" type="email" placeholder="jane@example.org" />
+            </div>
+            <div>
+              <label for="cPhone">Phone</label>
+              <input id="cPhone" placeholder="(555) 123-4567" />
+            </div>
+          </div>
+          <label for="cTags">Tags (comma-separated)</label>
+          <input id="cTags" placeholder="donor, monthly, 2025 gala" />
+          <label for="cNotes">Notes</label>
+          <textarea id="cNotes" placeholder="Background, interests, preferences…"></textarea>
+
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Save Contact</button>
+            <button id="resetFormBtn" class="btn btn-ghost" type="button">Reset</button>
+            <span id="editFlag" class="tag" style="display:none">Editing</span>
+          </div>
+        </form>
+
+        <!-- Table -->
+        <div id="tableWrap"></div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <small>
+      Demo only. Replace local auth with a secure backend (hashed passwords, sessions/JWTs, RBAC).
+      Colors & accents reflect TFA branding; adjust tokens in <code>:root</code>.
+    </small>
+  </footer>
+
+  <script>
+    // ============== Simple Local "Auth" (Demo) ==============
+    const LS_KEYS = {
+      admin: "tfa_admin",
+      session: "tfa_session",
+      contacts: "tfa_contacts_v1"
+    };
+
+    const $ = sel => document.querySelector(sel);
+    const signupForm = $("#signupForm");
+    const loginForm = $("#loginForm");
+    const logoutBtn = $("#logoutBtn");
+    const signupMsg = $("#signupMsg");
+    const loginMsg = $("#loginMsg");
+    const contactsCard = $("#contactsCard");
+
+    const contactForm = $("#contactForm");
+    const searchBox = $("#searchBox");
+    const tableWrap = $("#tableWrap");
+    const editFlag = $("#editFlag");
+    const resetFormBtn = $("#resetFormBtn");
+
+    let editingId = null;
+
+    function setMsg(el, text){
+      el.textContent = text;
+      el.style.display = 'block';
+      setTimeout(()=> el.style.display='none', 3000);
+    }
+
+    function getAdmin(){ try{ return JSON.parse(localStorage.getItem(LS_KEYS.admin)) }catch{ return null } }
+    function setAdmin(obj){ localStorage.setItem(LS_KEYS.admin, JSON.stringify(obj)) }
+
+    function getSession(){ return localStorage.getItem(LS_KEYS.session) }
+    function setSession(email){ localStorage.setItem(LS_KEYS.session, email) }
+    function clearSession(){ localStorage.removeItem(LS_KEYS.session) }
+
+    function hash(str){
+      // lightweight hash for demo only (not secure!)
+      let h = 0; for (let i=0;i<str.length;i++) h = (h<<5) - h + str.charCodeAt(i) | 0;
+      return String(h);
+    }
+
+    signupForm.addEventListener("submit", e=>{
+      e.preventDefault();
+      const email = $("#suEmail").value.trim().toLowerCase();
+      const p1 = $("#suPass").value;
+      const p2 = $("#suPass2").value;
+
+      if(p1 !== p2){ setMsg(signupMsg, "Passwords do not match."); return }
+      setAdmin({ email, passHash: hash(p1), createdAt: Date.now() });
+      setMsg(signupMsg, "Admin created. You can now log in.");
+      signupForm.reset();
+    });
+
+    loginForm.addEventListener("submit", e=>{
+      e.preventDefault();
+      const admin = getAdmin();
+      if(!admin){ setMsg(loginMsg, "No admin exists yet. Please sign up first."); return }
+
+      const email = $("#liEmail").value.trim().toLowerCase();
+      const pass = $("#liPass").value;
+      if(email === admin.email && hash(pass) === admin.passHash){
+        setSession(email);
+        setMsg(loginMsg, "Welcome! Access granted.");
+        //revealCRM(true);
+        window.location.href = "dashboard.html";
+      } else {
+        setMsg(loginMsg, "Invalid credentials.");
+      }
+      loginForm.reset();
+    });
+
+    logoutBtn.addEventListener("click", ()=>{
+      clearSession();
+      revealCRM(false);
+      setMsg(loginMsg, "Logged out.");
+    });
+
+    function revealCRM(visible){
+      contactsCard.style.display = visible ? "block" : "none";
+    }
+
+    // On load
+    revealCRM(!!getSession());
+
+    // ============== Contacts (CRUD in localStorage) ==============
+    function readContacts(){
+      try{ return JSON.parse(localStorage.getItem(LS_KEYS.contacts)) ?? [] }
+      catch{ return [] }
+    }
+    function writeContacts(list){
+      localStorage.setItem(LS_KEYS.contacts, JSON.stringify(list));
+      renderTable();
+    }
+    function uid(){ return Math.random().toString(36).slice(2,9) }
+
+    function upsertContact(data){
+      const list = readContacts();
+      if(editingId){
+        const idx = list.findIndex(x=>x.id===editingId);
+        if(idx>-1){ list[idx] = {...list[idx], ...data}; }
+        editingId = null;
+      }else{
+        list.push({ id: uid(), ...data });
+      }
+      writeContacts(list);
+      contactForm.reset();
+      editFlag.style.display = "none";
+      $("#contactFormTitle").textContent = "Add / Edit Contact";
+    }
+
+    function deleteContact(id){
+      const list = readContacts().filter(x=>x.id!==id);
+      writeContacts(list);
+    }
+
+    function startEdit(id){
+      const item = readContacts().find(x=>x.id===id);
+      if(!item) return;
+      $("#cName").value = item.name ?? "";
+      $("#cRole").value = item.role ?? "Participant";
+      $("#cEmail").value = item.email ?? "";
+      $("#cPhone").value = item.phone ?? "";
+      $("#cTags").value = (item.tags ?? []).join(", ");
+      $("#cNotes").value = item.notes ?? "";
+      editingId = id;
+      editFlag.style.display = "inline-block";
+      $("#contactFormTitle").textContent = "Editing Contact";
+      window.scrollTo({top: contactForm.offsetTop - 16, behavior: 'smooth'});
+    }
+
+    contactForm.addEventListener("submit", e=>{
+      e.preventDefault();
+      const data = {
+        name: $("#cName").value.trim(),
+        role: $("#cRole").value,
+        email: $("#cEmail").value.trim(),
+        phone: $("#cPhone").value.trim(),
+        tags: $("#cTags").value.split(",").map(s=>s.trim()).filter(Boolean),
+        notes: $("#cNotes").value.trim(),
+        updatedAt: Date.now()
+      };
+      if(!data.name){ alert("Name is required."); return }
+      upsertContact(data);
+    });
+
+    resetFormBtn.addEventListener("click", ()=>{
+      contactForm.reset(); editingId=null; editFlag.style.display="none";
+      $("#contactFormTitle").textContent = "Add / Edit Contact";
+    });
+
+    function renderTable(){
+      const q = (searchBox.value || "").toLowerCase();
+      const rows = readContacts()
+        .filter(c=>{
+          const blob = `${c.name} ${c.email} ${c.phone} ${c.role} ${(c.tags||[]).join(" ")}`.toLowerCase();
+          return blob.includes(q);
+        })
+        .sort((a,b)=> (a.name||"").localeCompare(b.name||""));
+
+      if(rows.length === 0){
+        tableWrap.innerHTML = `<div class="empty">No contacts yet. Use the form above to add one.</div>`;
+        return;
+      }
+
+      const html = `
+        <table aria-describedby="contact-table-caption">
+          <caption id="contact-table-caption" style="position:absolute; left:-9999px">Contacts table</caption>
+          <thead>
+            <tr>
+              <th style="width:22%">Name</th>
+              <th style="width:12%">Type</th>
+              <th style="width:22%">Email</th>
+              <th style="width:16%">Phone</th>
+              <th>Tags</th>
+              <th style="width:140px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r=>`
+              <tr>
+                <td>${escapeHtml(r.name||"")}</td>
+                <td><span class="tag">${escapeHtml(r.role||"")}</span></td>
+                <td>${escapeHtml(r.email||"")}</td>
+                <td>${escapeHtml(r.phone||"")}</td>
+                <td>${(r.tags||[]).map(t=>`<span class="tag" style="margin-right:6px">${escapeHtml(t)}</span>`).join("")}</td>
+                <td>
+                  <button class="btn btn-ghost" onclick="startEdit('${r.id}')">Edit</button>
+                  <button class="btn btn-danger" onclick="confirmDelete('${r.id}')">Delete</button>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+      tableWrap.innerHTML = html;
+    }
+
+    function escapeHtml(s){
+      return s.replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+    }
+
+    window.startEdit = startEdit;
+    window.confirmDelete = function(id){
+      if(confirm("Delete this contact?")) deleteContact(id);
+    };
+
+    searchBox.addEventListener("input", renderTable);
+
+    // Seed with an example row the first time
+    if(readContacts().length === 0){
+      writeContacts([
+        { id: uid(), name:"Alex Rivera", role:"Donor", email:"alex@donors.org", phone:"555-0102", tags:["monthly","newsletter"], notes:"Prefers email updates", updatedAt: Date.now() }
+      ]);
+    } else {
+      renderTable();
+    }
+  </script>
+</body>
+</html>

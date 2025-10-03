@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TFA CRM – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --tfa-green:#063F1E; --tfa-gold:#D89F01; --tfa-white:#fff;
+      --tfa-beige:#F9F8F6; --tfa-light:#E3E3E3; --tfa-mid:#888; --tfa-char:#222;
+      --bg:var(--tfa-beige); --text:var(--tfa-char); --border:var(--tfa-light);
+      --primary:var(--tfa-green); --accent:var(--tfa-gold);
+      --card:#fff; --radius:14px; --shadow:0 10px 28px rgba(0,0,0,.10);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    a{color:var(--primary);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .brand-bar{background:var(--primary);color:#fff;border-bottom:6px solid var(--accent)}
+    .container{width:min(1100px,92vw);margin:0 auto;padding:18px 0}
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{width:46px;height:46px;border-radius:12px;background:var(--accent);display:grid;place-items:center;color:var(--primary);font-weight:800;box-shadow:inset 0 0 0 3px rgba(0,0,0,.08)}
+    .shell{width:min(1100px,92vw);margin:18px auto 40px;display:grid;gap:18px}
+    .nav{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-top:8px}
+    .nav a,.nav button{padding:8px 12px;border-radius:10px;border:1px solid var(--primary);background:#fff;color:var(--primary);cursor:pointer}
+    .nav .logout{border-color:#8b1a1a;color:#8b1a1a}
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    h2{margin:0 0 10px;border-bottom:1px solid var(--border);padding-bottom:8px}
+    .actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+    .action{border:1px dashed var(--border);border-radius:12px;padding:12px;background:#fff}
+    .btn{display:inline-block;margin-top:6px;padding:8px 12px;border-radius:10px;border:0;background:var(--primary);color:#fff;cursor:pointer;box-shadow:0 7px 18px rgba(6,63,30,.18)}
+    .btn.secondary{background:var(--accent);color:#3f2f00}
+    .btn.danger{background:#8b1a1a}
+    label{display:block;font-weight:600;margin:.6rem 0 .25rem}
+    input,textarea,select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;outline:none;background:#fff}
+    input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%, transparent)}
+    .row{display:flex;gap:10px}.row>*{flex:1}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    th,td{padding:10px 12px;background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    th:first-child,td:first-child{border-left:1px solid var(--border);border-top-left-radius:10px;border-bottom-left-radius:10px}
+    th:last-child,td:last-child{border-right:1px solid var(--border);border-top-right-radius:10px;border-bottom-right-radius:10px}
+    .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:color-mix(in srgb,var(--accent) 22%, white);border:1px solid var(--accent);color:#5b4500}
+    .empty{padding:20px;border:1px dashed var(--border);border-radius:12px;text-align:center;background:#fff;color:#777}
+    .muted{color:#777}
+  </style>
+</head>
+<body>
+  <header class="brand-bar">
+    <div class="container">
+      <div class="brand">
+        <!-- Swap this block for your PNG if you prefer -->
+        <!-- <img src="assets/images/logo.png" class="logo" alt="The Family Advocates logo"> -->
+        <div class="logo">TFA</div>
+        <div>
+          <div style="font-weight:800">The Family Advocates</div>
+          <small>CRM Dashboard</small>
+        </div>
+      </div>
+      <div class="nav">
+        <div>
+          <a href="dashboard.html">Dashboard</a>
+          <a href="contacts.html">Contacts</a>
+          <a href="#" id="aboutLink">About</a>
+        </div>
+        <div>
+          <button class="logout" onclick="logout()">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div class="grid">
+      <!-- LEFT: Quick Actions + Recent Contacts -->
+      <section class="card">
+        <h2>Quick Actions</h2>
+        <div class="actions">
+          <div class="action">
+            <b>Add Contact</b>
+            <p class="muted">Create a new participant, donor, or partner.</p>
+            <button class="btn" onclick="openQuickAdd()">Open Form</button>
+          </div>
+          <div class="action">
+            <b>Import CSV</b>
+            <p class="muted">Name,Email,Phone,Role,Tags</p>
+            <input id="csvInput" type="file" accept=".csv" onchange="importCSV(event)" />
+          </div>
+          <div class="action">
+            <b>Export Contacts</b>
+            <p class="muted">Download JSON of all records.</p>
+            <button class="btn secondary" onclick="exportContacts()">Export</button>
+          </div>
+          <div class="action">
+            <b>Log Interaction</b>
+            <p class="muted">Add a quick note tied to a contact.</p>
+            <button class="btn" onclick="logInteraction()">Add Note</button>
+          </div>
+          <div class="action">
+            <b>Schedule Follow-up</b>
+            <p class="muted">Create a personal task/reminder.</p>
+            <button class="btn" onclick="createTask()">Create Task</button>
+          </div>
+        </div>
+
+        <!-- Quick Add form -->
+        <div id="quickAdd" style="margin-top:14px; display:none">
+          <h3 style="margin:.5rem 0">Quick Add Contact</h3>
+          <div class="row">
+            <div>
+              <label for="qName">Full Name</label>
+              <input id="qName" placeholder="Jane Doe"/>
+            </div>
+            <div>
+              <label for="qRole">Type</label>
+              <select id="qRole">
+                <option>Participant</option>
+                <option>Donor</option>
+                <option>Volunteer</option>
+                <option>Partner</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="qEmail">Email</label>
+              <input id="qEmail" type="email" placeholder="jane@example.org"/>
+            </div>
+            <div>
+              <label for="qPhone">Phone</label>
+              <input id="qPhone" placeholder="(555) 123-4567"/>
+            </div>
+          </div>
+          <label for="qTags">Tags</label>
+          <input id="qTags" placeholder="donor, newsletter"/>
+          <div style="margin-top:8px">
+            <button class="btn" onclick="saveQuickAdd()">Save</button>
+            <button class="btn danger" onclick="closeQuickAdd()">Cancel</button>
+          </div>
+        </div>
+
+        <div style="height:16px"></div>
+        <h2>Recent Contacts</h2>
+        <div class="row" style="margin-bottom:10px">
+          <input id="search" placeholder="Search contacts…" oninput="renderContacts()"/>
+          <select id="roleFilter" onchange="renderContacts()">
+            <option value="">All types</option>
+            <option>Participant</option><option>Donor</option><option>Volunteer</option><option>Partner</option>
+          </select>
+        </div>
+        <div id="tableWrap"></div>
+      </section>
+
+      <!-- RIGHT: Tasks -->
+      <aside class="card">
+        <h2>My Tasks</h2>
+        <div class="row">
+          <input id="taskText" placeholder="Follow up with Alex about monthly gift"/>
+          <button class="btn" onclick="addTask()">Add</button>
+        </div>
+        <ul id="taskList" style="padding-left:20px;margin-top:10px"></ul>
+        <button class="btn danger" onclick="clearTasks()">Clear All</button>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    // ===== Shared keys with your original page =====
+    const LS = { session:"tfa_session", contacts:"tfa_contacts_v1", tasks:"tfa_tasks_v1" };
+
+    // ===== Guard: require login =====
+    if(!localStorage.getItem(LS.session)){
+      alert("Please log in first.");
+      window.location.href = "tfa-crm.html";
+    }
+
+    // ===== Utilities =====
+    const $ = s => document.querySelector(s);
+    const esc = s => String(s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+    const uid = () => Math.random().toString(36).slice(2,9);
+
+    function logout(){
+      localStorage.removeItem(LS.session);
+      window.location.href = "main.html";
+    }
+
+    // ===== Contacts store =====
+    function readContacts(){ try{return JSON.parse(localStorage.getItem(LS.contacts))||[]}catch{return[]} }
+    function writeContacts(a){ localStorage.setItem(LS.contacts, JSON.stringify(a)); renderContacts(); }
+
+    // ===== Tasks store =====
+    function readTasks(){ try{return JSON.parse(localStorage.getItem(LS.tasks))||[]}catch{return[]} }
+    function writeTasks(a){ localStorage.setItem(LS.tasks, JSON.stringify(a)); renderTasks(); }
+
+    // ===== Quick Add =====
+    function openQuickAdd(){ $("#quickAdd").style.display="block"; }
+    function closeQuickAdd(){ $("#quickAdd").style.display="none"; }
+    function saveQuickAdd(){
+      const item = {
+        id: uid(),
+        name: $("#qName").value.trim(),
+        role: $("#qRole").value,
+        email: $("#qEmail").value.trim(),
+        phone: $("#qPhone").value.trim(),
+        tags: $("#qTags").value.split(",").map(s=>s.trim()).filter(Boolean),
+        updatedAt: Date.now()
+      };
+      if(!item.name){ alert("Name is required."); return }
+      const list = readContacts(); list.push(item); writeContacts(list);
+      closeQuickAdd();
+      $("#qName").value = $("#qEmail").value = $("#qPhone").value = $("#qTags").value = "";
+    }
+
+    // ===== Import / Export =====
+    function exportContacts(){
+      const data = JSON.stringify(readContacts(), null, 2);
+      const blob = new Blob([data], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = "tfa-contacts.json"; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importCSV(e){
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const lines = reader.result.split(/\r?\n/).filter(Boolean);
+        const [h, ...rows] = lines;
+        const headers = h.split(",").map(s=>s.trim().toLowerCase());
+        const out = readContacts();
+        rows.forEach(line=>{
+          const cols = line.split(",").map(s=>s.trim());
+          const obj = {};
+          headers.forEach((k,i)=> obj[k] = cols[i] || "");
+          out.push({
+            id: uid(),
+            name: obj.name || "",
+            email: obj.email || "",
+            phone: obj.phone || "",
+            role: obj.role || "Participant",
+            tags: (obj.tags||"").split(";").map(s=>s.trim()).filter(Boolean),
+            updatedAt: Date.now()
+          });
+        });
+        writeContacts(out);
+        alert("Imported " + rows.length + " rows.");
+        e.target.value = "";
+      };
+      reader.readAsText(file);
+    }
+
+    // ===== Log Interaction (simple prompt demo) =====
+    function logInteraction(){
+      const name = prompt("Log note for which contact name?");
+      if(!name) return;
+      const note = prompt("Enter interaction/note:");
+      if(!note) return;
+      const list = readContacts();
+      const c = list.find(x => (x.name||"").toLowerCase() === name.toLowerCase());
+      if(!c){ alert("Contact not found."); return }
+      c.notes = (c.notes ? c.notes + "\n" : "") + new Date().toLocaleString() + ": " + note;
+      c.updatedAt = Date.now();
+      writeContacts(list);
+      alert("Note added.");
+    }
+
+    // ===== Tasks =====
+    function addTask(){
+      const v = $("#taskText").value.trim();
+      if(!v) return;
+      const list = readTasks(); list.push({ id: uid(), text: v, done:false });
+      writeTasks(list); $("#taskText").value="";
+    }
+    function toggleTask(id){
+      const list = readTasks();
+      const t = list.find(x=>x.id===id); if(t){ t.done=!t.done; writeTasks(list); }
+    }
+    function clearTasks(){ if(confirm("Clear all tasks?")) writeTasks([]); }
+
+    function renderTasks(){
+      const list = readTasks();
+      $("#taskList").innerHTML = list.map(t=>`
+        <li>
+          <label>
+            <input type="checkbox" ${t.done?"checked":""} onchange="toggleTask('${t.id}')">
+            ${esc(t.text)}
+          </label>
+        </li>
+      `).join("") || `<p class="empty">No tasks yet.</p>`;
+    }
+
+    // ===== Contacts table =====
+    function renderContacts(){
+      const q = ($("#search").value||"").toLowerCase();
+      const role = $("#roleFilter").value;
+      const data = readContacts()
+        .filter(c=>{
+          const blob = `${c.name} ${c.email} ${c.phone} ${c.role} ${(c.tags||[]).join(" ")}`.toLowerCase();
+          const passQ = blob.includes(q);
+          const passR = !role || (c.role === role);
+          return passQ && passR;
+        })
+        .sort((a,b)=> (b.updatedAt||0) - (a.updatedAt||0))
+        .slice(0,10);
+
+      if(data.length===0){
+        $("#tableWrap").innerHTML = `<div class="empty">No contacts yet. Try “Add Contact”.</div>`;
+        return;
+      }
+
+      $("#tableWrap").innerHTML = `
+        <table>
+          <thead><tr>
+            <th>Name</th><th>Type</th><th>Email</th><th>Phone</th><th>Tags</th>
+          </tr></thead>
+          <tbody>
+            ${data.map(r=>`
+              <tr>
+                <td>${esc(r.name||"")}</td>
+                <td><span class="tag">${esc(r.role||"")}</span></td>
+                <td>${esc(r.email||"")}</td>
+                <td>${esc(r.phone||"")}</td>
+                <td>${(r.tags||[]).map(t=>`<span class="tag" style="margin-right:6px">${esc(t)}</span>`).join("")}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+        <p class="muted" style="margin:.25rem 0 0">Showing latest 10 by recent activity.</p>
+      `;
+    }
+
+    // Seed if empty so the dashboard isn’t blank
+    (function init(){
+      if(readContacts().length===0){
+        writeContacts([{ id: uid(), name:"Alex Rivera", role:"Donor", email:"alex@donors.org", phone:"555-0102", tags:["monthly","newsletter"], updatedAt: Date.now() }]);
+      } else {
+        renderContacts();
+      }
+      renderTasks();
+    })();
+
+    // About link (simple modal/alert for demo)
+    document.getElementById("aboutLink").addEventListener("click", e=>{
+      e.preventDefault();
+      alert("The Family Advocates CRM Demo\nBrand: Deep Green #063F1E, Heritage Gold #D89F01\nThis dashboard is a static mock—wire to your backend for production.");
+    });
+  </script>
+</body>
+</html>
