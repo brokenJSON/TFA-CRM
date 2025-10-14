@@ -60,7 +60,8 @@
       <div class="nav">
         <div>
           <a href="dashboard.html">Dashboard</a>
-          <a href="contacts_TBD.html">Contacts</a>
+          <a href="contacts.html">Contacts</a>
+          <a href="database-schema.html">Database Schema</a>
           <a href="#" id="aboutLink">About</a>
         </div>
         <div>
@@ -171,7 +172,7 @@
     // ===== Guard: require login =====
     if(!localStorage.getItem(LS.session)){
       alert("Please log in first.");
-      window.location.href = "tfa-crm.html";
+      window.location.href = "main.html";
     }
 
     // ===== Utilities =====

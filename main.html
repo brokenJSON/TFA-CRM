@@ -73,6 +73,15 @@
     .brand .title b{ display:block; letter-spacing:.2px }
     .brand .title small{ opacity:.9; font-weight:500 }
 
+    /* ======= Top Nav ======= */
+    .top-nav{ display:flex; gap:10px; margin-top:10px; flex-wrap:wrap }
+    .top-nav a{
+      display:inline-block; padding:8px 12px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.9);
+      color:#fff; text-decoration:none; background:transparent;
+    }
+    .top-nav a:hover{ background:rgba(255,255,255,.12); text-decoration:none }
+
     /* ======= Shell Layout ======= */
     .shell{
       display:grid;
@@ -202,6 +211,11 @@
           <small>Community CRM</small>
         </div>
       </div>
+      <nav id="topNav" class="top-nav" aria-label="Primary" style="display:none">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="contacts.html">Contacts</a>
+        <a href="database-schema.html">Database Schema</a>
+      </nav>
     </div>
   </header>
 
@@ -346,6 +360,7 @@
     const signupMsg = $("#signupMsg");
     const loginMsg = $("#loginMsg");
     const contactsCard = $("#contactsCard");
+    const topNav = document.getElementById("topNav");
 
     const contactForm = $("#contactForm");
     const searchBox = $("#searchBox");
@@ -412,6 +427,7 @@
 
     function revealCRM(visible){
       contactsCard.style.display = visible ? "block" : "none";
+      if(topNav) topNav.style.display = visible ? "flex" : "none";
     }
 
     // On load

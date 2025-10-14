@@ -61,6 +61,8 @@
         <div>
           <a href="dashboard.html">Dashboard</a>
           <a href="contacts.html">Contacts</a>
+          <a href="database-schema.html">Database Schema</a>
+          <a href="#" id="aboutLink">About</a>
         </div>
         <div>
           <button class="logout" onclick="logout()">Log Out</button>
@@ -133,7 +135,7 @@
     const LS = { session:"tfa_session", contacts:"tfa_contacts_v1" };
     if(!localStorage.getItem(LS.session)){
       alert("Please log in first.");
-      window.location.href = "tfa-crm.html";
+      window.location.href = "main.html";
     }
 
     // ==== Helpers ====
@@ -337,6 +339,15 @@
     // expose for buttons
     window.startEdit = startEdit;
     window.remove = remove;
+
+  // About link
+  const aboutLink = document.getElementById("aboutLink");
+  if(aboutLink){
+    aboutLink.addEventListener("click", e=>{
+      e.preventDefault();
+      alert("The Family Advocates CRM Demo\nContacts manager (localStorage)\nFor production, connect to a backend per the Database Schema page.");
+    });
+  }
   </script>
 </body>
 </html>
