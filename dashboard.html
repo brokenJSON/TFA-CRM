@@ -5,52 +5,242 @@
   <title>TFA CRM – Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root{
-      --tfa-green:#063F1E; --tfa-gold:#D89F01; --tfa-white:#fff;
-      --tfa-beige:#F9F8F6; --tfa-light:#E3E3E3; --tfa-mid:#888; --tfa-char:#222;
-      --bg:var(--tfa-beige); --text:var(--tfa-char); --border:var(--tfa-light);
-      --primary:var(--tfa-green); --accent:var(--tfa-gold);
-      --card:#fff; --radius:14px; --shadow:0 10px 28px rgba(0,0,0,.10);
+
+    /* reset so padding/borders behave */
+    * { box-sizing: border-box; }
+
+    /* page basics */
+    body {
+      margin: 0;
+      background: #f5f5f5;   /* light gray page background */
+      color: #222;           /* dark text */
+      font: 16px/1.4 Arial, Helvetica, sans-serif;
     }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-    a{color:var(--primary);text-decoration:none}
-    a:hover{text-decoration:underline}
-    .brand-bar{background:var(--primary);color:#fff;border-bottom:6px solid var(--accent)}
-    .container{width:min(1100px,92vw);margin:0 auto;padding:18px 0}
-    .brand{display:flex;align-items:center;gap:14px}
-    .logo{width:46px;height:46px;border-radius:12px;background:var(--accent);display:grid;place-items:center;color:var(--primary);font-weight:800;box-shadow:inset 0 0 0 3px rgba(0,0,0,.08)}
-    .shell{width:min(1100px,92vw);margin:18px auto 40px;display:grid;gap:18px}
-    .nav{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-top:8px}
-    .nav a,.nav button{padding:8px 12px;border-radius:10px;border:1px solid var(--primary);background:#fff;color:var(--primary);cursor:pointer}
-    .nav .logout{border-color:#8b1a1a;color:#8b1a1a}
-    .grid{display:grid;grid-template-columns:2fr 1fr;gap:18px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-    h2{margin:0 0 10px;border-bottom:1px solid var(--border);padding-bottom:8px}
-    .actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-    .action{border:1px dashed var(--border);border-radius:12px;padding:12px;background:#fff}
-    .btn{display:inline-block;margin-top:6px;padding:8px 12px;border-radius:10px;border:0;background:var(--primary);color:#fff;cursor:pointer;box-shadow:0 7px 18px rgba(6,63,30,.18)}
-    .btn.secondary{background:var(--accent);color:#3f2f00}
-    .btn.danger{background:#8b1a1a}
-    label{display:block;font-weight:600;margin:.6rem 0 .25rem}
-    input,textarea,select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;outline:none;background:#fff}
-    input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%, transparent)}
-    .row{display:flex;gap:10px}.row>*{flex:1}
-    table{width:100%;border-collapse:separate;border-spacing:0 8px}
-    th,td{padding:10px 12px;background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-    th:first-child,td:first-child{border-left:1px solid var(--border);border-top-left-radius:10px;border-bottom-left-radius:10px}
-    th:last-child,td:last-child{border-right:1px solid var(--border);border-top-right-radius:10px;border-bottom-right-radius:10px}
-    .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:color-mix(in srgb,var(--accent) 22%, white);border:1px solid var(--accent);color:#5b4500}
-    .empty{padding:20px;border:1px dashed var(--border);border-radius:12px;text-align:center;background:#fff;color:#777}
-    .muted{color:#777}
+
+    /* links */
+    a {
+      color: #063F1E;        /* deep green (TFA COLOR CODE) */
+      text-decoration: none;
+    }
+    a:hover { text-decoration: underline; }
+
+    /* header / branding */
+    .brand-bar {
+      background: #063F1E;   /* deep green bar (TFA COLOR CODE) */
+      color: #ffffff;
+      border-bottom: 4px solid #D89F01; /* gold accent (TFA COLOR CODE) */
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* build out logos */
+    .logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      background: #D89F01;   /* gold fill behind transparent PNGs looks fine */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #063F1E;        /* green text if you ever show letters */
+      font-weight: bold;
+    }
+
+    /* page shell */
+    .shell {
+      max-width: 1100px;
+      margin: 16px auto 32px;
+      padding: 0 16px;
+    }
+
+    /* top nav */
+    .nav {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    .nav a,
+    .nav button {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #063F1E;
+      background: #ffffff;
+      color: #063F1E;
+      cursor: pointer;
+    }
+    .nav .logout {
+      border-color: #8b1a1a;
+      color: #8b1a1a;
+    }
+
+    /* Two-column area (left content + right tasks) */
+    .grid {
+      display: flex;
+      gap: 16px;
+    }
+    .grid > * {
+      flex: 1;               /* both columns take space */
+    }
+    .grid > :first-child {
+      flex: 2;               /* left side bigger */
+    }
+
+    /* Stack columns on small screens */
+    @media (max-width: 900px) {
+      .grid { flex-direction: column; }
+    }
+
+    /* Card */
+    .card {
+      background: #ffffff;
+      border: 1px solid #e3e3e3;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    }
+    h2 {
+      margin: 0 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #eaeaea;
+    }
+
+    /* Quick actions list */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .action {
+      flex: 1 1 180px;       /* grow/shrink, min width */
+      border: 1px dashed #dcdcdc;
+      border-radius: 10px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 0;
+      background: #063F1E;   /* primary green */
+      color: #fff;
+      cursor: pointer;
+    }
+    .btn:hover { background: #0a4e28; }   /* a bit darker */
+    .btn.secondary {
+      background: #D89F01;   /* gold */
+      color: #3f2f00;
+    }
+    .btn.danger {
+      background: #8b1a1a;   /* red-ish */
+      color: #fff;
+    }
+
+    /* form basics */
+    label {
+      display: block;
+      font-weight: bold;
+      margin: .6rem 0 .25rem;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      background: #fff;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #D89F01;  /* gold focus */
+      box-shadow: 0 0 0 3px rgba(216,159,1,0.25);
+    }
+
+    /* row layout */
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .row > * { flex: 1; }
+
+    /* table for contacts */
+    table {
+      width: 100%;
+      border-collapse: collapse;   /* simple table lines */
+      background: #fff;
+    }
+    th, td {
+      padding: 10px 12px;
+      border: 1px solid #eee;
+      text-align: left;
+    }
+    th { background: #fafafa; }
+
+    /* Small pill/tag */
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: #fff6da;          /* pale gold */
+      border: 1px solid #D89F01;
+      color: #5b4500;
+    }
+
+    /* Empty state + muted text */
+    .empty {
+      padding: 16px;
+      border: 1px dashed #cccccc;
+      border-radius: 10px;
+      text-align: center;
+      background: #fff;
+      color: #777;
+    }
+    .muted { color: #777; }
+
+    /* ============ Email Flow (proposal-only sponosor feedback needed) ============ */
+    .flow-card .meta { display:flex; gap:10px; flex-wrap:wrap; margin:8px 0 14px }
+    .badge {
+      display:inline-block; font-weight:700; font-size:12px;
+      padding:4px 8px; border-radius:999px; border:1px solid #D89F01;
+      background:#fff6da; color:#5b4500;
+    }
+    .flow { display:flex; flex-direction:column; gap:16px }
+    .flow-row { display:flex; flex-wrap:wrap; gap:12px }
+    .node {
+      background:#fff; border:1px solid #e3e3e3; border-radius:12px;
+      padding:12px; box-shadow:0 6px 14px rgba(0,0,0,0.08);
+      min-width: 220px; flex: 1;
+    }
+    .node h4 { margin:0 0 6px; color:#063F1E }
+    .kv { margin:4px 0; font-size:14px }
+    .kv b { color:#444 }
+    .btn-ghost-sm {
+      border:1px solid #063F1E; background:#fff; color:#063F1E;
+      padding:6px 10px; border-radius:10px; font-weight:600; cursor:default;
+    }
+    .flow-arrows { display:flex; justify-content:center; align-items:center }
+    .flow-arrows svg { width:56px; height:30px }
+    .note { color:#777; font-size:13px }
   </style>
 </head>
 <body>
   <header class="brand-bar">
     <div class="container">
       <div class="brand">
-        <img src="\images\brand_image.png" class="logo" alt="The Family Advocates logo">
+        <img src="\images\TFA_Logo_Asset 14.png" class="logo" alt="The Family Advocates logo">
         <!-- <div class="logo">TFA</div> -->
         <div>
           <div style="font-weight:800">The Family Advocates</div>
@@ -60,7 +250,9 @@
       <div class="nav">
         <div>
           <a href="dashboard.html">Dashboard</a>
-          <a href="contacts_TBD.html">Contacts</a>
+          <a href="contacts.html">Contacts</a>
+          <!-- hidden until clicked to show the email-flow-->
+          <a href="#email-flow">Email Mgmt</a>
           <a href="#" id="aboutLink">About</a>
         </div>
         <div>
@@ -162,6 +354,111 @@
         <button class="btn danger" onclick="clearTasks()">Clear All</button>
       </aside>
     </div>
+
+    <!-- ===== Email Management (Flow Design) – NO CURRENT FUNCTIONALITY ===== -->
+    <section id="email-flow" class="card flow-card" style="display:none">
+      <h2>Email Management (Flow Design)</h2>
+
+      <div class="flow">
+        <!-- Row 1: TRIGGER AND AUDIENCE -->
+        <div class="flow-row">
+          <div class="node">
+            <h4>Trigger</h4>
+            <div class="kv"><b>Type:</b> Event or Schedule</div>
+            <div class="kv"><b>Examples:</b> New Donation, Signup, Monthly Newsletter</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Edit</button>
+            </div>
+          </div>
+
+          <div class="flow-arrows" aria-hidden="true">
+            <svg viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- horizontal line -->
+              <path d="M5 15 H85" stroke="#063F1E" stroke-width="3"/>
+              <!-- arrow head -->
+              <path d="M85 7 L95 15 L85 23 Z" fill="#063F1E"/>
+            </svg>
+          </div>
+
+          <div class="node">
+            <h4>Audience</h4>
+            <div class="kv"><b>Segment:</b> Donors, Participants, Volunteers, Partners</div>
+            <div class="kv"><b>Filter:</b> Tags (e.g., <i>monthly</i>, <i>gala 2025</i>)</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Edit</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: TEMPLATE AND PERSONALIZATION -->
+        <div class="flow-row">
+          <div class="node">
+            <h4>Template</h4>
+            <div class="kv"><b>Layout:</b> Announcement, Thank-You, Event Invite</div>
+            <div class="kv"><b>Branding:</b> Colors, Logo, Footer</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Choose</button>
+            </div>
+          </div>
+
+          <div class="flow-arrows" aria-hidden="true">
+            <svg viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 15 H85" stroke="#063F1E" stroke-width="3"/>
+              <path d="M85 7 L95 15 L85 23 Z" fill="#063F1E"/>
+            </svg>
+          </div>
+
+          <div class="node">
+            <h4>Personalization</h4>
+            <div class="kv"><b>Merge Fields:</b> {{FirstName}}, {{LastGift}}, {{EventName}}</div>
+            <div class="kv"><b>Preview:</b> Sample recipient view</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Preview</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: SCHEDULE + COMPLIANCE -->
+        <div class="flow-row">
+          <div class="node">
+            <h4>Schedule</h4>
+            <div class="kv"><b>Send:</b> Now or Later</div>
+            <div class="kv"><b>Windows:</b> Best-time suggestions</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Set Time</button>
+            </div>
+          </div>
+
+          <div class="flow-arrows" aria-hidden="true">
+            <svg viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 15 H85" stroke="#063F1E" stroke-width="3"/>
+              <path d="M85 7 L95 15 L85 23 Z" fill="#063F1E"/>
+            </svg>
+          </div>
+
+          <div class="node">
+            <h4>Compliance</h4>
+            <div class="kv"><b>Preferences:</b> Unsubscribe, Opt-in</div>
+            <div class="kv"><b>Footer:</b> Organization address & contact</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Review</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4: REVIEW AND CONFIRM -->
+        <div class="flow-row">
+          <div class="node" style="flex: 1 1 100%">
+            <h4>Review & Confirm</h4>
+            <div class="kv"><b>Checklist:</b> Trigger ✓ Audience ✓ Template ✓ Personalization ✓ Schedule ✓ Compliance ✓</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Generate Summary</button>
+              <button class="btn-ghost-sm" aria-disabled="true">Save Draft</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -329,6 +626,21 @@
         <p class="muted" style="margin:.25rem 0 0">Showing latest 10 by recent activity.</p>
       `;
     }
+
+    // ===== Simple hash-based toggler to show the Email Flow when link clicked =====
+    function showByHash() {
+      const target = location.hash || "#";
+      const emailCard = document.getElementById("email-flow");
+      if (!emailCard) return;
+      if (target === "#email-flow") {
+        emailCard.style.display = "block";
+        emailCard.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        emailCard.style.display = "none";
+      }
+    }
+    window.addEventListener("hashchange", showByHash);
+    window.addEventListener("DOMContentLoaded", showByHash);
 
     // Seed if empty so the dashboard isn’t blank
     (function init(){
