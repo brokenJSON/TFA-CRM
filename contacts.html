@@ -5,45 +5,167 @@
   <title>TFA CRM – Contacts</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root{
-      --tfa-green:#063F1E; --tfa-gold:#D89F01; --tfa-white:#fff;
-      --tfa-beige:#F9F8F6; --tfa-light:#E3E3E3; --tfa-mid:#777; --tfa-char:#222;
-      --bg:var(--tfa-beige); --text:var(--tfa-char); --border:var(--tfa-light);
-      --primary:var(--tfa-green); --accent:var(--tfa-gold);
-      --card:#fff; --radius:14px; --shadow:0 10px 28px rgba(0,0,0,.10);
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #f5f5f5;  /* light gray */
+      color: #222;
+      font: 16px/1.4 Arial, Helvetica, sans-serif;
     }
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-    a{color:var(--primary);text-decoration:none} a:hover{text-decoration:underline}
-    .brand-bar{background:var(--primary);color:#fff;border-bottom:6px solid var(--accent)}
-    .container{width:min(1100px,92vw);margin:0 auto;padding:18px 0}
-    .brand{display:flex;align-items:center;gap:14px}
-    .logo{width:46px;height:46px;border-radius:12px;background:var(--accent);display:grid;place-items:center;color:var(--primary);font-weight:800;box-shadow:inset 0 0 0 3px rgba(0,0,0,.08)}
-    .nav{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:8px}
-    .nav a,.nav button{padding:8px 12px;border-radius:10px;border:1px solid var(--primary);background:#fff;color:var(--primary);cursor:pointer}
-    .nav .logout{border-color:#8b1a1a;color:#8b1a1a}
 
-    .shell{width:min(1100px,92vw);margin:18px auto 40px;display:grid;gap:18px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-    h2{margin:0 0 10px;border-bottom:1px solid var(--border);padding-bottom:8px}
+    a { color: #063F1E; text-decoration: none; }
+    a:hover { text-decoration: underline; }
 
-    label{display:block;font-weight:600;margin:.6rem 0 .25rem}
-    input,textarea,select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;outline:none}
-    input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%, transparent)}
-    .row{display:flex;gap:10px}.row>*{flex:1}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    .btn{border:0;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 7px 18px rgba(6,63,30,.18)}
-    .btn.primary{background:var(--primary);color:#fff}
-    .btn.ghost{background:#fff;border:1px solid var(--primary);color:var(--primary)}
-    .btn.danger{background:#8b1a1a;color:#fff}
-    .muted{color:var(--tfa-mid)}
+    /* branding */
+    .brand-bar {
+      background: #063F1E;          /* deep green */
+      color: #fff;
+      border-bottom: 4px solid #D89F01; /* gold accent */
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      width: 46px; height: 46px; border-radius: 10px;
+      background: #D89F01;       /* gold behind transparent PNGs */
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #063F1E; font-weight: bold;
+    }
 
-    table{width:100%;border-collapse:separate;border-spacing:0 8px}
-    th,td{padding:10px 12px;background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);vertical-align:top}
-    th:first-child,td:first-child{border-left:1px solid var(--border);border-top-left-radius:10px;border-bottom-left-radius:10px}
-    th:last-child,td:last-child{border-right:1px solid var(--border);border-top-right-radius:10px;border-bottom-right-radius:10px}
-    .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:color-mix(in srgb,var(--accent) 22%, white);border:1px solid var(--accent);color:#5b4500;margin-right:6px}
-    .empty{padding:20px;border:1px dashed var(--border);border-radius:12px;text-align:center;background:#fff;color:#777}
-    #editFlag{display:none}
+    /* top navigation */
+    .nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    .nav a, .nav button {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #063F1E;
+      background: #fff;
+      color: #063F1E;
+      cursor: pointer;
+    }
+    .nav .logout {
+      border-color: #8b1a1a;
+      color: #8b1a1a;
+    }
+
+    /* page shell */
+    .shell {
+      max-width: 1100px;
+      margin: 18px auto 40px;
+      padding: 0 16px;
+      display: block;
+    }
+
+    /* card */
+    .card {
+      background: #fff;
+      border: 1px solid #e3e3e3;
+      border-radius: 10px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+    h2 {
+      margin: 0 0 10px;
+      border-bottom: 1px solid #eaeaea;
+      padding-bottom: 8px;
+    }
+
+    /* form */
+    label {
+      display: block;
+      font-weight: bold;
+      margin: .6rem 0 .25rem;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      background: #fff;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #D89F01;                  /* gold focus */
+      box-shadow: 0 0 0 3px rgba(216,159,1,0.25);
+    }
+
+    .row { display: flex; gap: 10px; }
+    .row > * { flex: 1; }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .btn {
+      border: 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 7px 18px rgba(6,63,30,0.18);
+      background: #063F1E; color: #fff;
+    }
+    .btn.primary { background: #063F1E; color: #fff; }
+    .btn.ghost { background: #fff; color: #063F1E; border: 1px solid #063F1E; box-shadow: none; }
+    .btn.danger { background: #8b1a1a; color: #fff; }
+
+    .muted { color: #777; }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;  /* simpler */
+      background: #fff;
+    }
+    th, td {
+      padding: 10px 12px;
+      border: 1px solid #eee;
+      vertical-align: top;
+      text-align: left;
+    }
+    th { background: #fafafa; }
+
+    /* tag / pill */
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: #fff6da;        /* pale gold */
+      border: 1px solid #D89F01;
+      color: #5b4500;
+      margin-right: 6px;
+    }
+
+    /* empty state */
+    .empty {
+      padding: 16px;
+      border: 1px dashed #cccccc;
+      border-radius: 10px;
+      text-align: center;
+      background: #fff;
+      color: #777;
+    }
+
+    #editFlag { display: none; }
   </style>
 </head>
 <body>
@@ -128,7 +250,7 @@
   </main>
 
   <script>
-    // ==== Session guard (same key as your other pages) ====
+    // ==== Session guard (same key as other pages) ====
     const LS = { session:"tfa_session", contacts:"tfa_contacts_v1" };
     if(!localStorage.getItem(LS.session)){
       alert("Please log in first.");
@@ -308,7 +430,7 @@
       reader.readAsText(file);
     }
 
-    // Simple CSV parser for a single line (handles quoted fields with commas)
+    // simple CSV parser for a single line (handles quoted fields with commas)
     function parseCSVLine(line){
       const out=[]; let cur=""; let inQ=false;
       for(let i=0;i<line.length;i++){
@@ -326,7 +448,7 @@
       return out;
     }
 
-    // ==== Seed & initial render ====
+    // ==== seed & initial render ====
     (function init(){
       if(readContacts().length===0){
         writeContacts([{ id: uid(), name:"Alex Rivera", role:"Donor", email:"alex@donors.org", phone:"555-0102", tags:["monthly","newsletter"], notes:"Prefers email updates", updatedAt: Date.now() }]);
