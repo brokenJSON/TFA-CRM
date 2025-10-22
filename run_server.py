@@ -126,7 +126,7 @@ def check_files():
         "main.html",
         "dashboard.html", 
         "contacts.html",
-        "database-schema.html"
+        "volunteer-hours.html"
     ]
     
     missing_files = []
@@ -155,7 +155,7 @@ def print_server_info(port):
         ("main.html", "Home/Login Page"),
         ("dashboard.html", "Dashboard"),
         ("contacts.html", "Contacts Management"),
-        ("database-schema.html", "Database Schema")
+        ("volunteer-hours.html", "Volunteer Hours Management")
     ]
     
     for filename, description in pages:
