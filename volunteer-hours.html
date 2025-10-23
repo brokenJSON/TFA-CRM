@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Volunteer Hours - TFA CRM</title>
+    <link rel="stylesheet" href="volunteer-hours.css" />
+</head>
+<body>
+  <header class="brand-bar">
+    <div class="container">
+      <div class="brand">
+        <img src="\images\brand_image.png" class="logo" alt="The Family Advocates logo">
+        <div>
+          <div style="font-weight:800">The Family Advocates</div>
+          <small>Volunteer Hours</small>
+        </div>
+      </div>
+      <div id="topNav" class="nav">
+        <div>
+          <a href="dashboard.html">Dashboard</a>
+          <a href="contacts.html">Contacts</a>
+          <a href="volunteer-hours.html">Volunteer Hours</a>
+          <a href="#" id="aboutLink">About</a>
+        </div>
+        <div>
+          <button class="logout" onclick="logout()">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+    <div class="shell">
+        <div class="page-header">
+            <h1>📊 Volunteer Hours Management</h1>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalHours">0</div>
+                <div class="stat-label">Total Hours Logged</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalVolunteers">0</div>
+                <div class="stat-label">Active Volunteers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="thisMonthHours">0</div>
+                <div class="stat-label">This Month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avgHoursPerVolunteer">0</div>
+                <div class="stat-label">Avg Hours/Volunteer</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Log Hours Form -->
+            <div class="card">
+                <h2>📝 Log Volunteer Hours</h2>
+                <form id="hoursForm">
+                    <div class="form-group">
+                        <label for="volunteerSelect">Volunteer *</label>
+                        <select id="volunteerSelect" required>
+                            <option value="">Select a volunteer...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="entryDate">Date *</label>
+                            <input type="date" id="entryDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hours">Hours *</label>
+                            <input type="number" id="hours" step="0.25" min="0.25" max="24" required placeholder="e.g., 2.5">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">Notes (Optional)</label>
+                        <textarea id="notes" rows="3" placeholder="What did the volunteer do? Any special notes..."></textarea>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">Log Hours</button>
+                        <button type="button" class="btn btn-ghost" onclick="resetForm()">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Recent Hours -->
+            <div class="card">
+                <h2>📋 Recent Hours</h2>
+                <div class="search-bar">
+                    <input type="text" id="searchHours" placeholder="Search by volunteer name or notes...">
+                </div>
+                <div class="hours-list" id="hoursList">
+                    <!-- Hours will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Volunteer Form -->
+        <div class="card">
+            <h2>👥 Add New Volunteer</h2>
+            <form id="volunteerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="volFirstName">First Name *</label>
+                        <input type="text" id="volFirstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="volLastName">Last Name *</label>
+                        <input type="text" id="volLastName" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="volEmail">Email *</label>
+                        <input type="email" id="volEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="volPhone">Phone</label>
+                        <input type="tel" id="volPhone">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="volSkills">Skills</label>
+                        <input type="text" id="volSkills" placeholder="e.g., Event Planning, Fundraising, Marketing">
+                    </div>
+                    <div class="form-group">
+                        <label for="volAvailability">Availability</label>
+                        <input type="text" id="volAvailability" placeholder="e.g., Weekends, Evenings">
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-secondary">Add Volunteer</button>
+                    <button type="button" class="btn btn-ghost" onclick="resetVolunteerForm()">Clear Form</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ===== Session Management =====
+        const LS = { 
+            session: "tfa_session", 
+            volunteers: "tfa_volunteers_v1", 
+            volunteerHours: "tfa_volunteer_hours_v1" 
+        };
+
+        // ===== Guard: require login =====
+        if(!localStorage.getItem(LS.session)){
+            alert("Please log in first.");
+            window.location.href = "main.html";
+        }
+
+        // ===== Utilities =====
+        const $ = s => document.querySelector(s);
+        const $$ = s => document.querySelectorAll(s);
+        const uid = () => Math.random().toString(36).slice(2,9);
+        const esc = s => String(s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+
+        // ===== Data Management =====
+        function readVolunteers(){
+            try{ return JSON.parse(localStorage.getItem(LS.volunteers)) ?? [] }
+            catch{ return [] }
+        }
+
+        function writeVolunteers(list){
+            localStorage.setItem(LS.volunteers, JSON.stringify(list));
+        }
+
+        function readVolunteerHours(){
+            try{ return JSON.parse(localStorage.getItem(LS.volunteerHours)) ?? [] }
+            catch{ return [] }
+        }
+
+        function writeVolunteerHours(list){
+            localStorage.setItem(LS.volunteerHours, JSON.stringify(list));
+        }
+
+        // ===== UI Functions =====
+        function updateStats(){
+            const volunteers = readVolunteers();
+            const hours = readVolunteerHours();
+            
+            const totalHours = hours.reduce((sum, h) => sum + parseFloat(h.hours), 0);
+            const thisMonth = new Date().getMonth();
+            const thisYear = new Date().getFullYear();
+            const thisMonthHours = hours.filter(h => {
+                const date = new Date(h.entry_date);
+                return date.getMonth() === thisMonth && date.getFullYear() === thisYear;
+            }).reduce((sum, h) => sum + parseFloat(h.hours), 0);
+            
+            const avgHours = volunteers.length > 0 ? (totalHours / volunteers.length).toFixed(1) : 0;
+            
+            $("#totalHours").textContent = totalHours.toFixed(1);
+            $("#totalVolunteers").textContent = volunteers.length;
+            $("#thisMonthHours").textContent = thisMonthHours.toFixed(1);
+            $("#avgHoursPerVolunteer").textContent = avgHours;
+        }
+
+        function populateVolunteerSelect(){
+            const volunteers = readVolunteers();
+            const select = $("#volunteerSelect");
+            select.innerHTML = '<option value="">Select a volunteer...</option>';
+            
+            volunteers.forEach(vol => {
+                const option = document.createElement('option');
+                option.value = vol.id;
+                option.textContent = `${vol.first_name} ${vol.last_name}`;
+                select.appendChild(option);
+            });
+        }
+
+        function renderHoursList(searchTerm = ""){
+            const hours = readVolunteerHours();
+            const volunteers = readVolunteers();
+            const hoursList = $("#hoursList");
+            
+            let filteredHours = hours;
+            if(searchTerm){
+                filteredHours = hours.filter(h => {
+                    const volunteer = volunteers.find(v => v.id === h.volunteer_id);
+                    const volunteerName = volunteer ? `${volunteer.first_name} ${volunteer.last_name}` : '';
+                    return volunteerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (h.notes && h.notes.toLowerCase().includes(searchTerm.toLowerCase()));
+                });
+            }
+            
+            // Sort by date (newest first)
+            filteredHours.sort((a, b) => new Date(b.entry_date) - new Date(a.entry_date));
+            
+            if(filteredHours.length === 0){
+                hoursList.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">No hours logged yet.</p>';
+                return;
+            }
+            
+            hoursList.innerHTML = filteredHours.map(h => {
+                const volunteer = volunteers.find(v => v.id === h.volunteer_id);
+                const volunteerName = volunteer ? `${volunteer.first_name} ${volunteer.last_name}` : 'Unknown Volunteer';
+                const date = new Date(h.entry_date).toLocaleDateString();
+                
+                return `
+                    <div class="hours-item">
+                        <h4>${esc(volunteerName)}</h4>
+                        <div class="hours-meta">
+                            <span>📅 ${date} • ⏱️ ${h.hours} hours</span>
+                            <div class="hours-actions">
+                                <button class="btn btn-ghost btn-small" onclick="editHours('${h.id}')">Edit</button>
+                                <button class="btn btn-ghost btn-small" onclick="deleteHours('${h.id}')" style="color: #dc3545;">Delete</button>
+                            </div>
+                        </div>
+                        ${h.notes ? `<p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">${esc(h.notes)}</p>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== Form Handlers =====
+        $("#hoursForm").addEventListener('submit', function(e){
+            e.preventDefault();
+            
+            const volunteerId = $("#volunteerSelect").value;
+            const entryDate = $("#entryDate").value;
+            const hoursValue = parseFloat($("#hours").value);
+            const notes = $("#notes").value.trim();
+            
+            if(!volunteerId || !entryDate || !hoursValue){
+                alert("Please fill in all required fields.");
+                return;
+            }
+            
+            const hoursData = {
+                id: uid(),
+                volunteer_id: volunteerId,
+                entry_date: entryDate,
+                hours: hoursValue,
+                notes: notes,
+                created_at: new Date().toISOString()
+            };
+            
+            const hoursList = readVolunteerHours();
+            hoursList.push(hoursData);
+            writeVolunteerHours(hoursList);
+            
+            // Update volunteer's total hours
+            const volunteers = readVolunteers();
+            const volunteer = volunteers.find(v => v.id === volunteerId);
+            if(volunteer){
+                volunteer.total_hours = (parseFloat(volunteer.total_hours) || 0) + hoursValue;
+                writeVolunteers(volunteers);
+            }
+            
+            resetForm();
+            updateStats();
+            renderHoursList();
+            
+            // Show success message
+            const alertEl = document.createElement('div');
+            alertEl.className = 'alert alert-success';
+            alertEl.textContent = 'Hours logged successfully!';
+            document.querySelector('.main-content').insertBefore(alertEl, document.querySelector('.main-content').firstChild);
+            setTimeout(() => alertEl.remove(), 3000);
+        });
+
+        $("#volunteerForm").addEventListener('submit', function(e){
+            e.preventDefault();
+            
+            const volunteerData = {
+                id: uid(),
+                first_name: $("#volFirstName").value.trim(),
+                last_name: $("#volLastName").value.trim(),
+                email: $("#volEmail").value.trim(),
+                phone: $("#volPhone").value.trim(),
+                skills: $("#volSkills").value.trim(),
+                availability: $("#volAvailability").value.trim(),
+                total_hours: 0,
+                created_at: new Date().toISOString()
+            };
+            
+            const volunteers = readVolunteers();
+            
+            // Check for duplicate email
+            if(volunteers.some(v => v.email === volunteerData.email)){
+                alert("A volunteer with this email already exists.");
+                return;
+            }
+            
+            volunteers.push(volunteerData);
+            writeVolunteers(volunteers);
+            
+            resetVolunteerForm();
+            populateVolunteerSelect();
+            updateStats();
+            
+            // Show success message
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.textContent = 'Volunteer added successfully!';
+            document.querySelector('.main-content').insertBefore(alert, document.querySelector('.main-content').firstChild);
+            setTimeout(() => alert.remove(), 3000);
+        });
+
+        // ===== Utility Functions =====
+        function resetForm(){
+            $("#hoursForm").reset();
+            $("#entryDate").value = new Date().toISOString().split('T')[0]; // Today's date
+        }
+
+        function resetVolunteerForm(){
+            $("#volunteerForm").reset();
+        }
+
+        function deleteHours(hoursId){
+            if(!confirm("Are you sure you want to delete these hours?")) return;
+            
+            const hours = readVolunteerHours();
+            const hoursToDelete = hours.find(h => h.id === hoursId);
+            
+            if(hoursToDelete){
+                // Update volunteer's total hours
+                const volunteers = readVolunteers();
+                const volunteer = volunteers.find(v => v.id === hoursToDelete.volunteer_id);
+                if(volunteer){
+                    volunteer.total_hours = Math.max(0, (parseFloat(volunteer.total_hours) || 0) - parseFloat(hoursToDelete.hours));
+                    writeVolunteers(volunteers);
+                }
+                
+                // Remove the hours entry
+                const updatedHours = hours.filter(h => h.id !== hoursId);
+                writeVolunteerHours(updatedHours);
+                
+                updateStats();
+                renderHoursList();
+            }
+        }
+
+        function editHours(hoursId){
+            // For now, just delete and let user re-enter
+            // In a full implementation, you'd show an edit form
+            alert("Edit functionality coming soon! For now, you can delete and re-enter the hours.");
+        }
+
+        // ===== Global Functions =====
+        function logout(){
+            localStorage.removeItem(LS.session);
+            window.location.href = "main.html";
+        }
+        
+        // Make logout function global
+        window.logout = logout;
+
+        // ===== Search Functionality =====
+        $("#searchHours").addEventListener('input', function(){
+            renderHoursList(this.value);
+        });
+
+        // ===== Initialize =====
+        document.addEventListener('DOMContentLoaded', function(){
+            // Set today's date as default
+            $("#entryDate").value = new Date().toISOString().split('T')[0];
+            
+            
+            // About link (simple modal/alert for demo)
+            document.getElementById("aboutLink").addEventListener("click", e=>{
+                e.preventDefault();
+                alert("The Family Advocates CRM Demo\nBrand: Deep Green #063F1E, Heritage Gold #D89F01\nThis dashboard is a static mock—wire to your backend for production.");
+            });
+            
+            populateVolunteerSelect();
+            updateStats();
+            renderHoursList();
+            
+        });
+    </script>
+</body>
+</html>
