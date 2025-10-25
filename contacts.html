@@ -10,8 +10,7 @@
   <header class="brand-bar">
     <div class="container">
       <div class="brand">
-        <!-- swap for PNG if you want: <img src="assets/images/logo.png" class="logo" alt="The Family Advocates logo"> -->
-        <div class="logo">TFA</div>
+        <img src="\images\TFA_Logo_Asset 14.png" class="logo" alt="The Family Advocates logo">
         <div>
           <div style="font-weight:800">The Family Advocates</div>
           <small>Contacts</small>
@@ -91,7 +90,7 @@
   </main>
 
   <script>
-    // ==== Session guard (same key as your other pages) ====
+    // ==== Session guard (same key as other pages) ====
     const LS = { session:"tfa_session", contacts:"tfa_contacts_v1" };
     if(!localStorage.getItem(LS.session)){
       alert("Please log in first.");
@@ -278,7 +277,7 @@
       reader.readAsText(file);
     }
 
-    // Simple CSV parser for a single line (handles quoted fields with commas)
+    // simple CSV parser for a single line (handles quoted fields with commas)
     function parseCSVLine(line){
       const out=[]; let cur=""; let inQ=false;
       for(let i=0;i<line.length;i++){
@@ -296,7 +295,7 @@
       return out;
     }
 
-    // ==== Seed & initial render ====
+    // ==== seed & initial render ====
     (function init(){
       if(readContacts().length===0){
         writeContacts([{ id: uid(), name:"Alex Rivera", role:"Donor", email:"alex@donors.org", phone:"555-0102", tags:["monthly","newsletter"], notes:"Prefers email updates", updatedAt: Date.now() }]);

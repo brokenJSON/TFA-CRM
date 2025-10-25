@@ -10,7 +10,7 @@
   <header class="brand-bar">
     <div class="container">
       <div class="brand">
-        <img src="\images\brand_image.png" class="logo" alt="The Family Advocates logo">
+        <img src="\images\TFA_Logo_Asset 14.png" class="logo" alt="The Family Advocates logo">
         <!-- <div class="logo">TFA</div> -->
         <div>
           <div style="font-weight:800">The Family Advocates</div>
@@ -123,6 +123,111 @@
         <button class="btn danger" onclick="clearTasks()">Clear All</button>
       </aside>
     </div>
+
+    <!-- ===== Email Management (Flow Design) – NO CURRENT FUNCTIONALITY ===== -->
+    <section id="email-flow" class="card flow-card" style="display:none">
+      <h2>Email Management (Flow Design)</h2>
+
+      <div class="flow">
+        <!-- Row 1: TRIGGER AND AUDIENCE -->
+        <div class="flow-row">
+          <div class="node">
+            <h4>Trigger</h4>
+            <div class="kv"><b>Type:</b> Event or Schedule</div>
+            <div class="kv"><b>Examples:</b> New Donation, Signup, Monthly Newsletter</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Edit</button>
+            </div>
+          </div>
+
+          <div class="flow-arrows" aria-hidden="true">
+            <svg viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- horizontal line -->
+              <path d="M5 15 H85" stroke="#063F1E" stroke-width="3"/>
+              <!-- arrow head -->
+              <path d="M85 7 L95 15 L85 23 Z" fill="#063F1E"/>
+            </svg>
+          </div>
+
+          <div class="node">
+            <h4>Audience</h4>
+            <div class="kv"><b>Segment:</b> Donors, Participants, Volunteers, Partners</div>
+            <div class="kv"><b>Filter:</b> Tags (e.g., <i>monthly</i>, <i>gala 2025</i>)</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Edit</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: TEMPLATE AND PERSONALIZATION -->
+        <div class="flow-row">
+          <div class="node">
+            <h4>Template</h4>
+            <div class="kv"><b>Layout:</b> Announcement, Thank-You, Event Invite</div>
+            <div class="kv"><b>Branding:</b> Colors, Logo, Footer</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Choose</button>
+            </div>
+          </div>
+
+          <div class="flow-arrows" aria-hidden="true">
+            <svg viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 15 H85" stroke="#063F1E" stroke-width="3"/>
+              <path d="M85 7 L95 15 L85 23 Z" fill="#063F1E"/>
+            </svg>
+          </div>
+
+          <div class="node">
+            <h4>Personalization</h4>
+            <div class="kv"><b>Merge Fields:</b> {{FirstName}}, {{LastGift}}, {{EventName}}</div>
+            <div class="kv"><b>Preview:</b> Sample recipient view</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Preview</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: SCHEDULE + COMPLIANCE -->
+        <div class="flow-row">
+          <div class="node">
+            <h4>Schedule</h4>
+            <div class="kv"><b>Send:</b> Now or Later</div>
+            <div class="kv"><b>Windows:</b> Best-time suggestions</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Set Time</button>
+            </div>
+          </div>
+
+          <div class="flow-arrows" aria-hidden="true">
+            <svg viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 15 H85" stroke="#063F1E" stroke-width="3"/>
+              <path d="M85 7 L95 15 L85 23 Z" fill="#063F1E"/>
+            </svg>
+          </div>
+
+          <div class="node">
+            <h4>Compliance</h4>
+            <div class="kv"><b>Preferences:</b> Unsubscribe, Opt-in</div>
+            <div class="kv"><b>Footer:</b> Organization address & contact</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Review</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4: REVIEW AND CONFIRM -->
+        <div class="flow-row">
+          <div class="node" style="flex: 1 1 100%">
+            <h4>Review & Confirm</h4>
+            <div class="kv"><b>Checklist:</b> Trigger ✓ Audience ✓ Template ✓ Personalization ✓ Schedule ✓ Compliance ✓</div>
+            <div class="actions" style="margin-top:8px">
+              <button class="btn-ghost-sm" aria-disabled="true">Generate Summary</button>
+              <button class="btn-ghost-sm" aria-disabled="true">Save Draft</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -296,6 +401,21 @@
         <p class="muted" style="margin:.25rem 0 0">Showing latest 10 by recent activity.</p>
       `;
     }
+
+    // ===== Simple hash-based toggler to show the Email Flow when link clicked =====
+    function showByHash() {
+      const target = location.hash || "#";
+      const emailCard = document.getElementById("email-flow");
+      if (!emailCard) return;
+      if (target === "#email-flow") {
+        emailCard.style.display = "block";
+        emailCard.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        emailCard.style.display = "none";
+      }
+    }
+    window.addEventListener("hashchange", showByHash);
+    window.addEventListener("DOMContentLoaded", showByHash);
 
     // Seed if empty so the dashboard isn’t blank
     (function init(){
