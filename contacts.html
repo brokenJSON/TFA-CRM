@@ -182,6 +182,9 @@
         <div>
           <a href="dashboard.html">Dashboard</a>
           <a href="contacts.html">Contacts</a>
+          <a href="volunteer-hours.html">Volunteer Hours</a>
+          <a href="dashboard.html#email-flow">Email Mgmt</a>
+          <a href="#" id="aboutLink">About</a>
         </div>
         <div>
           <button class="logout" onclick="logout()">Log Out</button>
@@ -454,6 +457,12 @@
         writeContacts([{ id: uid(), name:"Alex Rivera", role:"Donor", email:"alex@donors.org", phone:"555-0102", tags:["monthly","newsletter"], notes:"Prefers email updates", updatedAt: Date.now() }]);
       } else { render(); }
     })();
+
+    // About link (simple modal/alert for demo)
+    document.getElementById("aboutLink").addEventListener("click", e=>{
+      e.preventDefault();
+      alert("The Family Advocates CRM Demo\nBrand: Deep Green #063F1E, Heritage Gold #D89F01\nThis dashboard is a static mock—wire to your backend for production.");
+    });
 
     // expose for buttons
     window.startEdit = startEdit;

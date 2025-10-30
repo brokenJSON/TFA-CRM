@@ -24,6 +24,7 @@
           <a href="dashboard.html">Dashboard</a>
           <a href="contacts.html">Contacts</a>
           <a href="volunteer-hours.html">Volunteer Hours</a>
+          <a href="dashboard.html#email-flow">Email Mgmt</a>
           <a href="#" id="aboutLink">About</a>
         </div>
         <div>
@@ -70,6 +71,30 @@
                         </select>
                     </div>
                     
+                <div class="form-group">
+                    <label for="activityType">Activity/Program Type *</label>
+                    <select id="activityType" required>
+                        <option value="">Select activity type...</option>
+                        <option value="Event Planning">Event Planning</option>
+                        <option value="Fundraising">Fundraising</option>
+                        <option value="Community Outreach">Community Outreach</option>
+                        <option value="Administrative Support">Administrative Support</option>
+                        <option value="Education & Training">Education & Training</option>
+                        <option value="Marketing & Social Media">Marketing & Social Media</option>
+                        <option value="Program Coordination">Program Coordination</option>
+                        <option value="Family Support Services">Family Support Services</option>
+                        <option value="Workshop Facilitation">Workshop Facilitation</option>
+                        <option value="Data Entry">Data Entry</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Custom Activity Input (shown when "Other" is selected) -->
+                <div class="form-group" id="customActivityGroup" style="display: none;">
+                    <label for="customActivity">Specify Activity *</label>
+                    <input type="text" id="customActivity" placeholder="Enter the specific activity...">
+                </div>
+                    
                     <div class="form-row">
                         <div class="form-group">
                             <label for="entryDate">Date *</label>
@@ -97,11 +122,22 @@
             <div class="card">
                 <h2>📋 Recent Hours</h2>
                 <div class="search-bar">
-                    <input type="text" id="searchHours" placeholder="Search by volunteer name or notes...">
+                    <input type="text" id="searchHours" placeholder="Search by volunteer name, activity, or notes...">
                 </div>
                 <div class="hours-list" id="hoursList">
                     <!-- Hours will be populated here -->
                 </div>
+            </div>
+        </div>
+
+        <!-- Registered Volunteers Section -->
+        <div class="card">
+            <h2>👥 Registered Volunteers</h2>
+            <div class="search-bar">
+                <input type="text" id="searchVolunteers" placeholder="Search volunteers by name, email, or skills...">
+            </div>
+            <div id="volunteersList">
+                <!-- Volunteers will be populated here -->
             </div>
         </div>
 
@@ -131,14 +167,69 @@
                     </div>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="volSkills">Skills</label>
-                        <input type="text" id="volSkills" placeholder="e.g., Event Planning, Fundraising, Marketing">
-                    </div>
-                    <div class="form-group">
-                        <label for="volAvailability">Availability</label>
-                        <input type="text" id="volAvailability" placeholder="e.g., Weekends, Evenings">
+                <div class="form-group">
+                    <label for="volSkills">Skills</label>
+                    <input type="text" id="volSkills" placeholder="e.g., Event Planning, Fundraising, Marketing">
+                </div>
+                
+                <!-- Availability Schedule Builder -->
+                <div class="form-group">
+                    <label>Availability Schedule *</label>
+                    <p style="font-size: 0.9rem; color: #666; margin-top: -0.5rem; margin-bottom: 1rem;">
+                        Create availability periods by selecting days of the week, date range, and time
+                    </p>
+                    <div class="availability-builder">
+                        <!-- Step 1: Select Days -->
+                        <div class="builder-section">
+                            <label class="builder-label">📅 Days of the Week</label>
+                            <div class="day-selector">
+                                <label><input type="checkbox" value="Monday" class="day-check-builder"> Mon</label>
+                                <label><input type="checkbox" value="Tuesday" class="day-check-builder"> Tue</label>
+                                <label><input type="checkbox" value="Wednesday" class="day-check-builder"> Wed</label>
+                                <label><input type="checkbox" value="Thursday" class="day-check-builder"> Thu</label>
+                                <label><input type="checkbox" value="Friday" class="day-check-builder"> Fri</label>
+                                <label><input type="checkbox" value="Saturday" class="day-check-builder"> Sat</label>
+                                <label><input type="checkbox" value="Sunday" class="day-check-builder"> Sun</label>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Select Date Range -->
+                        <div class="builder-section">
+                            <label class="builder-label">📆 Date Range</label>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="rangeStartDate">From Date</label>
+                                    <input type="date" id="rangeStartDate" min="" max="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="rangeEndDate">To Date</label>
+                                    <input type="date" id="rangeEndDate" min="" max="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Select Time Range -->
+                        <div class="builder-section">
+                            <label class="builder-label">⏰ Time Range</label>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="rangeStartTime">From Time</label>
+                                    <input type="time" id="rangeStartTime" value="09:00">
+                                </div>
+                                <div class="form-group">
+                                    <label for="rangeEndTime">To Time</label>
+                                    <input type="time" id="rangeEndTime" value="17:00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-ghost" onclick="addAvailabilityPeriod()">
+                            ➕ Add Availability Period
+                        </button>
+                        
+                        <div id="availabilityPeriodsList" class="availability-periods-list">
+                            <p class="empty-state">No availability periods added yet. Add at least one period.</p>
+                        </div>
                     </div>
                 </div>
                 
@@ -169,6 +260,107 @@
         const $$ = s => document.querySelectorAll(s);
         const uid = () => Math.random().toString(36).slice(2,9);
         const esc = s => String(s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+
+        // ===== Availability Periods Management =====
+        let availabilityPeriods = [];
+
+        function addAvailabilityPeriod(){
+            // Get selected days
+            const selectedDays = Array.from(document.querySelectorAll('.day-check-builder:checked')).map(cb => cb.value);
+            
+            // Get date range
+            const startDate = $("#rangeStartDate").value;
+            const endDate = $("#rangeEndDate").value;
+            
+            // Get time range
+            const startTime = $("#rangeStartTime").value;
+            const endTime = $("#rangeEndTime").value;
+
+            // Validation
+            if(selectedDays.length === 0){
+                alert("Please select at least one day of the week.");
+                return;
+            }
+
+            if(!startDate || !endDate){
+                alert("Please select both start and end dates.");
+                return;
+            }
+
+            if(new Date(endDate) < new Date(startDate)){
+                alert("End date must be after or equal to start date.");
+                return;
+            }
+
+            if(endTime <= startTime){
+                alert("End time must be after start time.");
+                return;
+            }
+
+            // Create period
+            const period = {
+                id: uid(),
+                days: selectedDays,
+                start_date: startDate,
+                end_date: endDate,
+                start_time: startTime,
+                end_time: endTime,
+                display: formatAvailabilityPeriod(selectedDays, startDate, endDate, startTime, endTime)
+            };
+
+            availabilityPeriods.push(period);
+            renderAvailabilityPeriodsList();
+
+            // Clear the inputs
+            document.querySelectorAll('.day-check-builder').forEach(cb => cb.checked = false);
+            $("#rangeStartDate").value = "";
+            $("#rangeEndDate").value = "";
+            $("#rangeStartTime").value = "09:00";
+            $("#rangeEndTime").value = "17:00";
+        }
+
+        function removeAvailabilityPeriod(periodId){
+            availabilityPeriods = availabilityPeriods.filter(p => p.id !== periodId);
+            renderAvailabilityPeriodsList();
+        }
+
+        function formatAvailabilityPeriod(days, startDate, endDate, startTime, endTime){
+            const startDateFormatted = new Date(startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const endDateFormatted = new Date(endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const daysShort = days.map(d => d.substring(0, 3)).join(', ');
+            
+            return `${daysShort} | ${startDateFormatted} - ${endDateFormatted} | ${startTime}-${endTime}`;
+        }
+
+        function renderAvailabilityPeriodsList(){
+            const listContainer = document.getElementById("availabilityPeriodsList");
+
+            if(availabilityPeriods.length === 0){
+                listContainer.innerHTML = '<p class="empty-state">No availability periods added yet. Add at least one period.</p>';
+                return;
+            }
+
+            // Sort periods by start date
+            const sortedPeriods = [...availabilityPeriods].sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+
+            listContainer.innerHTML = sortedPeriods.map(period => `
+                <div class="period-item">
+                    <div class="period-info">
+                        <div class="period-badge">📅 ${period.display}</div>
+                        <div class="period-details">
+                            <span class="period-days">${period.days.join(', ')}</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-remove" onclick="removeAvailabilityPeriod('${period.id}')" title="Remove this period">
+                        ✕
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Make function global
+        window.addAvailabilityPeriod = addAvailabilityPeriod;
+        window.removeAvailabilityPeriod = removeAvailabilityPeriod;
 
         // ===== Data Management =====
         function readVolunteers(){
@@ -234,6 +426,7 @@
                     const volunteer = volunteers.find(v => v.id === h.volunteer_id);
                     const volunteerName = volunteer ? `${volunteer.first_name} ${volunteer.last_name}` : '';
                     return volunteerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (h.activity_type && h.activity_type.toLowerCase().includes(searchTerm.toLowerCase())) ||
                            (h.notes && h.notes.toLowerCase().includes(searchTerm.toLowerCase()));
                 });
             }
@@ -250,10 +443,11 @@
                 const volunteer = volunteers.find(v => v.id === h.volunteer_id);
                 const volunteerName = volunteer ? `${volunteer.first_name} ${volunteer.last_name}` : 'Unknown Volunteer';
                 const date = new Date(h.entry_date).toLocaleDateString();
+                const activityBadge = h.activity_type ? `<span class="activity-badge">${esc(h.activity_type)}</span>` : '';
                 
                 return `
                     <div class="hours-item">
-                        <h4>${esc(volunteerName)}</h4>
+                        <h4>${esc(volunteerName)} ${activityBadge}</h4>
                         <div class="hours-meta">
                             <span>📅 ${date} • ⏱️ ${h.hours} hours</span>
                             <div class="hours-actions">
@@ -268,22 +462,45 @@
         }
 
         // ===== Form Handlers =====
+        // Show/hide custom activity input when "Other" is selected
+        $("#activityType").addEventListener('change', function(){
+            const customActivityGroup = document.getElementById("customActivityGroup");
+            const customActivityInput = document.getElementById("customActivity");
+            
+            if(this.value === "Other"){
+                customActivityGroup.style.display = "block";
+                customActivityInput.required = true;
+            } else {
+                customActivityGroup.style.display = "none";
+                customActivityInput.required = false;
+                customActivityInput.value = "";
+            }
+        });
+
         $("#hoursForm").addEventListener('submit', function(e){
             e.preventDefault();
             
             const volunteerId = $("#volunteerSelect").value;
+            let activityType = $("#activityType").value;
+            const customActivity = $("#customActivity").value.trim();
             const entryDate = $("#entryDate").value;
             const hoursValue = parseFloat($("#hours").value);
             const notes = $("#notes").value.trim();
             
-            if(!volunteerId || !entryDate || !hoursValue){
+            if(!volunteerId || !activityType || !entryDate || !hoursValue){
                 alert("Please fill in all required fields.");
                 return;
+            }
+            
+            // If "Other" is selected, use the custom activity text
+            if(activityType === "Other" && customActivity){
+                activityType = customActivity;
             }
             
             const hoursData = {
                 id: uid(),
                 volunteer_id: volunteerId,
+                activity_type: activityType,
                 entry_date: entryDate,
                 hours: hoursValue,
                 notes: notes,
@@ -305,61 +522,223 @@
             resetForm();
             updateStats();
             renderHoursList();
+            renderVolunteersList();
             
-            // Show success message
+            // Show success message - positioned above the cards container
             const alertEl = document.createElement('div');
             alertEl.className = 'alert alert-success';
-            alertEl.textContent = 'Hours logged successfully!';
-            document.querySelector('.main-content').insertBefore(alertEl, document.querySelector('.main-content').firstChild);
+            alertEl.textContent = '✅ Hours logged successfully!';
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent && mainContent.parentElement) {
+                mainContent.parentElement.insertBefore(alertEl, mainContent);
+            }
             setTimeout(() => alertEl.remove(), 3000);
         });
 
         $("#volunteerForm").addEventListener('submit', function(e){
             e.preventDefault();
             
-            const volunteerData = {
-                id: uid(),
-                first_name: $("#volFirstName").value.trim(),
-                last_name: $("#volLastName").value.trim(),
-                email: $("#volEmail").value.trim(),
-                phone: $("#volPhone").value.trim(),
-                skills: $("#volSkills").value.trim(),
-                availability: $("#volAvailability").value.trim(),
-                total_hours: 0,
-                created_at: new Date().toISOString()
+            // Check if at least one availability period is provided
+            if(availabilityPeriods.length === 0){
+                alert("Please add at least one availability period.");
+                return;
+            }
+            
+            // Build availability schedule
+            const availabilitySchedule = {
+                periods: [...availabilityPeriods],
+                summary: getAvailabilitySummary(availabilityPeriods)
             };
             
             const volunteers = readVolunteers();
             
-            // Check for duplicate email
-            if(volunteers.some(v => v.email === volunteerData.email)){
-                alert("A volunteer with this email already exists.");
-                return;
+            // Check if editing or adding new
+            if(window.editingVolunteerId){
+                // Update existing volunteer
+                const index = volunteers.findIndex(v => v.id === window.editingVolunteerId);
+                if(index !== -1){
+                    volunteers[index] = {
+                        ...volunteers[index],
+                        first_name: $("#volFirstName").value.trim(),
+                        last_name: $("#volLastName").value.trim(),
+                        email: $("#volEmail").value.trim(),
+                        phone: $("#volPhone").value.trim(),
+                        skills: $("#volSkills").value.trim(),
+                        availability: availabilitySchedule
+                    };
+                    writeVolunteers(volunteers);
+                    
+                    // Reset edit mode
+                    window.editingVolunteerId = null;
+                    const submitBtn = $("#volunteerForm button[type='submit']");
+                    submitBtn.textContent = 'Add Volunteer';
+                    submitBtn.classList.remove('btn-primary');
+                    submitBtn.classList.add('btn-secondary');
+                    
+                    alert("Volunteer updated successfully!");
+                }
+            } else {
+                // Add new volunteer
+                const email = $("#volEmail").value.trim();
+                
+                // Check for duplicate email
+                if(volunteers.some(v => v.email === email)){
+                    alert("A volunteer with this email already exists.");
+                    return;
+                }
+                
+                const volunteerData = {
+                    id: uid(),
+                    first_name: $("#volFirstName").value.trim(),
+                    last_name: $("#volLastName").value.trim(),
+                    email: email,
+                    phone: $("#volPhone").value.trim(),
+                    skills: $("#volSkills").value.trim(),
+                    availability: availabilitySchedule,
+                    total_hours: 0,
+                    created_at: new Date().toISOString()
+                };
+                
+                volunteers.push(volunteerData);
+                writeVolunteers(volunteers);
+                
+                // Show success message
+                const alertEl = document.createElement('div');
+                alertEl.className = 'alert alert-success';
+                alertEl.textContent = 'Volunteer added successfully!';
+                document.querySelector('.shell').insertBefore(alertEl, document.querySelector('.shell').firstChild);
+                setTimeout(() => alertEl.remove(), 3000);
             }
-            
-            volunteers.push(volunteerData);
-            writeVolunteers(volunteers);
             
             resetVolunteerForm();
             populateVolunteerSelect();
             updateStats();
-            
-            // Show success message
-            const alert = document.createElement('div');
-            alert.className = 'alert alert-success';
-            alert.textContent = 'Volunteer added successfully!';
-            document.querySelector('.main-content').insertBefore(alert, document.querySelector('.main-content').firstChild);
-            setTimeout(() => alert.remove(), 3000);
+            renderVolunteersList();
         });
+
+        // ===== Render Volunteers List =====
+        function renderVolunteersList(searchTerm = ""){
+            const volunteers = readVolunteers();
+            const volunteersList = document.getElementById("volunteersList");
+            
+            let filteredVolunteers = volunteers;
+            if(searchTerm){
+                filteredVolunteers = volunteers.filter(v => {
+                    const searchStr = `${v.first_name} ${v.last_name} ${v.email} ${v.phone} ${v.skills}`.toLowerCase();
+                    return searchStr.includes(searchTerm.toLowerCase());
+                });
+            }
+            
+            if(filteredVolunteers.length === 0){
+                volunteersList.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">No volunteers registered yet.</p>';
+                return;
+            }
+            
+            volunteersList.innerHTML = filteredVolunteers.map(v => {
+                // Handle different availability formats
+                let availDisplay = 'Not specified';
+                let periodsHtml = '';
+                
+                if(typeof v.availability === 'object'){
+                    if(v.availability.periods && v.availability.periods.length > 0){
+                        // New periods format
+                        availDisplay = v.availability.summary;
+                        
+                        // Show upcoming periods
+                        const now = new Date();
+                        const upcomingPeriods = v.availability.periods
+                            .filter(p => new Date(p.end_date) >= now)
+                            .sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
+                            .slice(0, 7);
+                        
+                        if(upcomingPeriods.length > 0){
+                            periodsHtml = `
+                                <div style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                                    <strong style="font-size: 0.9rem;">Upcoming periods:</strong>
+                                    <ul style="margin: 0.25rem 0 0 0; padding-left: 1.5rem; font-size: 0.85rem; color: #555;">
+                                        ${upcomingPeriods.map(p => `<li>${p.display}</li>`).join('')}
+                                        ${v.availability.periods.length > 7 ? `<li><em>...and ${v.availability.periods.length - 7} more</em></li>` : ''}
+                                    </ul>
+                                </div>
+                            `;
+                        }
+                    } else if(v.availability.summary){
+                        availDisplay = v.availability.summary;
+                    } else if(v.availability.display){
+                        availDisplay = v.availability.display;
+                    }
+                } else if(v.availability){
+                    availDisplay = v.availability;
+                }
+                    
+                return `
+                    <div class="volunteer-card">
+                        <div class="volunteer-header">
+                            <h3>${esc(v.first_name)} ${esc(v.last_name)}</h3>
+                            <span class="hours-badge">${(v.total_hours || 0).toFixed(1)} hrs</span>
+                        </div>
+                        <div class="volunteer-details">
+                            <p><strong>📧 Email:</strong> ${esc(v.email)}</p>
+                            <p><strong>📞 Phone:</strong> ${esc(v.phone || 'Not provided')}</p>
+                            <p><strong>💼 Skills:</strong> ${esc(v.skills || 'Not specified')}</p>
+                            <p><strong>📅 Availability:</strong> ${esc(availDisplay)}</p>
+                            ${periodsHtml}
+                            <p><strong>📊 Total Hours:</strong> ${(v.total_hours || 0).toFixed(1)} hours</p>
+                        </div>
+                        <div class="volunteer-actions">
+                            <button class="btn btn-ghost btn-small" onclick="editVolunteer('${v.id}')">✏️ Edit</button>
+                            <button class="btn btn-ghost btn-small" onclick="viewVolunteerPeriods('${v.id}')">📅 View Schedule</button>
+                            <button class="btn btn-ghost btn-small" onclick="deleteVolunteer('${v.id}')" style="color: #dc3545;">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
         // ===== Utility Functions =====
         function resetForm(){
             $("#hoursForm").reset();
             $("#entryDate").value = new Date().toISOString().split('T')[0]; // Today's date
+            
+            // Hide custom activity field
+            document.getElementById("customActivityGroup").style.display = "none";
+            $("#customActivity").required = false;
+            $("#customActivity").value = "";
         }
 
         function resetVolunteerForm(){
             $("#volunteerForm").reset();
+            document.querySelectorAll('.day-check-builder').forEach(cb => cb.checked = false);
+            $("#rangeStartDate").value = "";
+            $("#rangeEndDate").value = "";
+            $("#rangeStartTime").value = "09:00";
+            $("#rangeEndTime").value = "17:00";
+            availabilityPeriods = [];
+            renderAvailabilityPeriodsList();
+            
+            // Reset edit mode
+            window.editingVolunteerId = null;
+            const submitBtn = $("#volunteerForm button[type='submit']");
+            submitBtn.textContent = 'Add Volunteer';
+            submitBtn.classList.remove('btn-primary');
+            submitBtn.classList.add('btn-secondary');
+        }
+
+        // Get a readable summary of all availability periods
+        function getAvailabilitySummary(periods){
+            if(!periods || periods.length === 0){
+                return 'Not specified';
+            }
+            
+            const totalPeriods = periods.length;
+            const now = new Date();
+            const upcomingPeriods = periods.filter(p => new Date(p.end_date) >= now);
+            
+            if(upcomingPeriods.length === 0){
+                return `${totalPeriods} period${totalPeriods > 1 ? 's' : ''} (all past)`;
+            }
+            
+            return `${upcomingPeriods.length} active period${upcomingPeriods.length > 1 ? 's' : ''}`;
         }
 
         function deleteHours(hoursId){
@@ -392,18 +771,109 @@
             alert("Edit functionality coming soon! For now, you can delete and re-enter the hours.");
         }
 
+        function editVolunteer(volunteerId){
+            const volunteer = readVolunteers().find(v => v.id === volunteerId);
+            if(!volunteer){
+                alert("Volunteer not found.");
+                return;
+            }
+            
+            // Scroll to form
+            document.getElementById("volunteerForm").scrollIntoView({ behavior: 'smooth' });
+            
+            // Pre-fill form
+            $("#volFirstName").value = volunteer.first_name;
+            $("#volLastName").value = volunteer.last_name;
+            $("#volEmail").value = volunteer.email;
+            $("#volPhone").value = volunteer.phone || '';
+            $("#volSkills").value = volunteer.skills || '';
+            
+            // Clear previous selections
+            document.querySelectorAll('.day-check-builder').forEach(cb => cb.checked = false);
+            availabilityPeriods = [];
+            
+            // Load availability periods if available
+            if(typeof volunteer.availability === 'object' && volunteer.availability.periods){
+                availabilityPeriods = [...volunteer.availability.periods];
+                renderAvailabilityPeriodsList();
+            }
+            
+            // Store edit mode
+            window.editingVolunteerId = volunteerId;
+            
+            // Change button text
+            const submitBtn = $("#volunteerForm button[type='submit']");
+            submitBtn.textContent = 'Update Volunteer';
+            submitBtn.classList.remove('btn-secondary');
+            submitBtn.classList.add('btn-primary');
+        }
+
+        function viewVolunteerPeriods(volunteerId){
+            const volunteer = readVolunteers().find(v => v.id === volunteerId);
+            if(!volunteer || !volunteer.availability || !volunteer.availability.periods){
+                alert("No availability schedule for this volunteer.");
+                return;
+            }
+            
+            const periods = volunteer.availability.periods
+                .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+            
+            if(periods.length === 0){
+                alert("No availability periods found.");
+                return;
+            }
+            
+            const now = new Date();
+            const periodsList = periods.map(period => {
+                const isPast = new Date(period.end_date) < now;
+                const status = isPast ? ' [PAST]' : '';
+                return `• ${period.display}${status}`;
+            }).join('\n');
+            
+            alert(`${volunteer.first_name} ${volunteer.last_name}'s Schedule:\n\n${periodsList}`);
+        }
+
+        function deleteVolunteer(volunteerId){
+            if(!confirm("Are you sure you want to delete this volunteer? This will also delete all their logged hours.")){
+                return;
+            }
+            
+            // Delete volunteer
+            let volunteers = readVolunteers().filter(v => v.id !== volunteerId);
+            writeVolunteers(volunteers);
+            
+            // Delete all hours for this volunteer
+            let hours = readVolunteerHours().filter(h => h.volunteer_id !== volunteerId);
+            writeVolunteerHours(hours);
+            
+            // Refresh displays
+            populateVolunteerSelect();
+            updateStats();
+            renderHoursList();
+            renderVolunteersList();
+            
+            alert("Volunteer deleted successfully.");
+        }
+
         // ===== Global Functions =====
         function logout(){
             localStorage.removeItem(LS.session);
             window.location.href = "main.html";
         }
         
-        // Make logout function global
+        // Make functions global
         window.logout = logout;
+        window.editVolunteer = editVolunteer;
+        window.viewVolunteerPeriods = viewVolunteerPeriods;
+        window.deleteVolunteer = deleteVolunteer;
 
         // ===== Search Functionality =====
         $("#searchHours").addEventListener('input', function(){
             renderHoursList(this.value);
+        });
+
+        document.getElementById("searchVolunteers").addEventListener('input', function(){
+            renderVolunteersList(this.value);
         });
 
         // ===== Initialize =====
@@ -411,6 +881,18 @@
             // Set today's date as default
             $("#entryDate").value = new Date().toISOString().split('T')[0];
             
+            // Set date range for availability period date pickers (today to 365 days from now)
+            const today = new Date();
+            const maxDate = new Date();
+            maxDate.setDate(today.getDate() + 365);
+            
+            const todayStr = today.toISOString().split('T')[0];
+            const maxDateStr = maxDate.toISOString().split('T')[0];
+            
+            $("#rangeStartDate").min = todayStr;
+            $("#rangeStartDate").max = maxDateStr;
+            $("#rangeEndDate").min = todayStr;
+            $("#rangeEndDate").max = maxDateStr;
             
             // About link (simple modal/alert for demo)
             document.getElementById("aboutLink").addEventListener("click", e=>{
@@ -418,10 +900,11 @@
                 alert("The Family Advocates CRM Demo\nBrand: Deep Green #063F1E, Heritage Gold #D89F01\nThis dashboard is a static mock—wire to your backend for production.");
             });
             
+            // Initialize all displays
             populateVolunteerSelect();
             updateStats();
             renderHoursList();
-            
+            renderVolunteersList();
         });
     </script>
 </body>
