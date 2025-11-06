@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>TFA – Campaign Scheduler</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/theme-tfa.css" />
+  </head>
+  <body class="is-preload">
+    <div id="wrapper">
+      <div id="main">
+        <div class="inner">
+          <header id="header">
+            <a href="index.html" class="logo"><strong>Campaign Scheduler</strong></a>
+          </header>
+
+          <section>
+            <header class="main"><h1>Email / Outreach Campaigns</h1></header>
+
+            <div class="box">
+              <form id="campForm">
+                <input type="hidden" id="campId" />
+                <div class="row gtr-uniform">
+                  <div class="col-6 col-12-small">
+                    <label for="campName">Campaign name</label>
+                    <input type="text" id="campName" placeholder="e.g., Winter Coat Drive Outreach" required />
+                  </div>
+                  <div class="col-3 col-12-small">
+                    <label for="campStart">Start</label>
+                    <input type="date" id="campStart" required />
+                  </div>
+                  <div class="col-3 col-12-small">
+                    <label for="campEnd">End</label>
+                    <input type="date" id="campEnd" required />
+                  </div>
+                  <div class="col-6 col-12-small">
+                    <label for="campAudience">Audience</label>
+                    <select id="campAudience">
+                      <option value="all">All Volunteers</option>
+                      <option value="active">Active Only</option>
+                      <option value="admins">Admins Only</option>
+                    </select>
+                  </div>
+                  <div class="col-6 col-12-small">
+                    <label for="campChannel">Channel</label>
+                    <select id="campChannel">
+                      <option>Email</option>
+                      <option>SMS</option>
+                      <option>Phone Bank</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label for="campNotes">Notes / Draft Message</label>
+                    <textarea id="campNotes" rows="4" placeholder="Draft your outreach copy or planning notes here…"></textarea>
+                  </div>
+                  <div class="col-12">
+                    <ul class="actions">
+                      <li><button type="submit" class="button primary">Save Campaign</button></li>
+                      <li><button type="button" class="button" id="campReset">Reset</button></li>
+                    </ul>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="table-wrapper">
+              <table id="campTable" class="alt">
+                <thead>
+                  <tr>
+                    <th>Name</th><th>Start</th><th>End</th><th>Audience</th><th>Channel</th><th></th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div id="sidebar">
+        <div class="inner">
+          <nav id="menu">
+            <header class="major"><h2>Admin Menu</h2></header>
+            <ul>
+              <li><a href="dashboard_admin.html">Volunteer Directory</a></li>
+              <li><a href="reports.html">Reports</a></li>
+              <li><a href="campaigns.html" class="tfa-current">Campaign Scheduler</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <script>
+      (function(){
+        const STORAGE_CAMPAIGNS = 'tfa_campaigns';
+        let campaigns = load(STORAGE_CAMPAIGNS) || [];
+
+        const tbody = document.querySelector('#campTable tbody');
+        const form = document.getElementById('campForm');
+        const campId = document.getElementById('campId');
+        const campName = document.getElementById('campName');
+        const campStart = document.getElementById('campStart');
+        const campEnd = document.getElementById('campEnd');
+        const campAudience = document.getElementById('campAudience');
+        const campChannel = document.getElementById('campChannel');
+        const campNotes = document.getElementById('campNotes');
+        const campReset = document.getElementById('campReset');
+
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+          const id = campId.value || cryptoId();
+          const c = {
+            id,
+            name: campName.value.trim(),
+            start: campStart.value,
+            end: campEnd.value,
+            audience: campAudience.value,
+            channel: campChannel.value,
+            notes: campNotes.value.trim()
+          };
+          if(!c.name || !c.start || !c.end){ alert('Please complete required fields.'); return; }
+          const idx = campaigns.findIndex(x => x.id===id);
+          if(idx>=0) campaigns[idx]=c; else campaigns.unshift(c);
+          save(STORAGE_CAMPAIGNS, campaigns);
+          reset();
+          render();
+        });
+
+        campReset.addEventListener('click', reset);
+
+        function render(){
+          tbody.innerHTML = campaigns.map(c => `
+            <tr>
+              <td>${escapeHtml(c.name)}</td>
+              <td>${escapeHtml(c.start)}</td>
+              <td>${escapeHtml(c.end)}</td>
+              <td>${escapeHtml(labelAudience(c.audience))}</td>
+              <td>${escapeHtml(c.channel)}</td>
+              <td class="align-right">
+                <a href="#" class="button small" onclick="return _cedit('${c.id}');">Edit</a>
+                <a href="#" class="button small" onclick="return _cdel('${c.id}');">Delete</a>
+              </td>
+            </tr>
+          `).join('') || '<tr><td colspan="6">No campaigns yet.</td></tr>';
+        }
+
+        function labelAudience(v){
+          if(v==='all') return 'All Volunteers';
+          if(v==='active') return 'Active Only';
+          if(v==='admins') return 'Admins Only';
+          return v;
+        }
+
+        function _cedit(id){
+          const c = campaigns.find(x=>x.id===id);
+          if(!c) return false;
+          campId.value = c.id;
+          campName.value = c.name || '';
+          campStart.value = c.start || '';
+          campEnd.value = c.end || '';
+          campAudience.value = c.audience || 'all';
+          campChannel.value = c.channel || 'Email';
+          campNotes.value = c.notes || '';
+          window.scrollTo({top: form.offsetTop - 80, behavior:'smooth'});
+          return false;
+        }
+
+        function _cdel(id){
+          if(!confirm('Delete this campaign?')) return false;
+          campaigns = campaigns.filter(c=>c.id!==id);
+          save(STORAGE_CAMPAIGNS, campaigns);
+          render();
+          return false;
+        }
+
+        function reset(){
+          campId.value = '';
+          form.reset();
+          campAudience.value = 'all';
+          campChannel.value = 'Email';
+        }
+
+        function load(k){ try{return JSON.parse(localStorage.getItem(k));}catch(_){return null;} }
+        function save(k,v){ try{localStorage.setItem(k, JSON.stringify(v));}catch(_){/*noop*/} }
+        function cryptoId(){ try{ return crypto.getRandomValues(new Uint32Array(2)).join('')+Date.now().toString(36);}catch(_){ return Math.random().toString(16).slice(2)+Date.now().toString(36);} }
+        function escapeHtml(s){ return String(s).replace(/[&<>"]+/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+        render();
+        window._cedit = _cedit;
+        window._cdel = _cdel;
+      })();
+    </script>
+  </body>
+</html>

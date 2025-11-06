@@ -1,0 +1,148 @@
+/* === TFA Theme Overrides =============================== */
+/* Brand tokens */
+:root{
+  --tfa-primary: #063F1E;   /* Deep Green */
+  --tfa-secondary: #D89F01; /* Heritage Gold */
+}
+
+/* Links */
+a{
+  border-bottom-color: var(--tfa-primary);
+  color: var(--tfa-primary);
+}
+a:hover{
+  border-bottom-color: var(--tfa-primary);
+  color: var(--tfa-primary) !important;
+}
+
+/* Section headers underline */
+header.major > :last-child{
+  border-bottom-color: var(--tfa-secondary);
+}
+
+/* Top header divider */
+#header{
+  border-bottom-color: var(--tfa-primary);
+}
+
+/* Buttons */
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"]{
+  box-shadow: inset 0 0 0 2px var(--tfa-primary);
+  color: var(--tfa-primary) !important;
+}
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover{
+  background-color: rgba(6, 63, 30, 0.06); /* subtle green wash */
+}
+.button:active,
+button:active,
+input[type="submit"]:active,
+input[type="reset"]:active,
+input[type="button"]:active{
+  background-color: rgba(6, 63, 30, 0.16);
+}
+
+/* Primary (filled) buttons */
+.button.primary,
+button.primary,
+input[type="submit"].primary,
+input[type="reset"].primary,
+input[type="button"].primary{
+  background-color: var(--tfa-primary);
+  color: #fff !important;
+  box-shadow: none;
+}
+.button.primary:hover,
+button.primary:hover,
+input[type="submit"].primary:hover,
+input[type="reset"].primary:hover,
+input[type="button"].primary:hover{
+  filter: brightness(1.08);
+}
+.button.primary:active,
+button.primary:active,
+input[type="submit"].primary:active,
+input[type="reset"].primary:active,
+input[type="button"].primary:active{
+  filter: brightness(0.95);
+}
+
+/* Optional: a gold callout button */
+.button.secondary{
+  box-shadow: inset 0 0 0 2px var(--tfa-secondary);
+  color: var(--tfa-secondary) !important;
+}
+.button.secondary:hover{ background-color: rgba(216,159,1,0.08); }
+.button.secondary:active{ background-color: rgba(216,159,1,0.18); }
+
+/* Form focus + check/radio states */
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="search"]:focus,
+input[type="url"]:focus,
+select:focus,
+textarea:focus{
+  border-color: var(--tfa-primary);
+  box-shadow: 0 0 0 1px var(--tfa-primary);
+}
+input[type="checkbox"]:focus + label:before,
+input[type="radio"]:focus + label:before{
+  border-color: var(--tfa-primary);
+  box-shadow: 0 0 0 1px var(--tfa-primary);
+}
+input[type="checkbox"]:checked + label:before,
+input[type="radio"]:checked + label:before{
+  background: var(--tfa-primary);
+  border-color: var(--tfa-primary);
+}
+
+/* Feature icons (diamond + icon color) */
+.features article .icon:before{
+  color: var(--tfa-secondary);
+}
+.features article .icon:after{
+  border-color: rgba(210,215,217,0.75); /* keep the subtle grey frame */
+}
+
+/* Contact icon bullets */
+ul.contact li:before{
+  color: var(--tfa-secondary);
+}
+
+/* Menu hover/chevron */
+#menu ul a:hover, #menu ul span:hover{
+  color: var(--tfa-primary);
+}
+#menu ul a.opener:hover:before, #menu ul span.opener:hover:before{
+  color: var(--tfa-primary);
+}
+
+/* Pagination active chip */
+ul.pagination li > .page.active{
+  background-color: var(--tfa-primary);
+  color: #fff !important;
+}
+
+/* Header logo link (brand emphasis) */
+#header .logo{
+  color: var(--tfa-primary);
+}
+
+/* Optional: accent bars/underlines that were pink */
+header p{
+  /* keep typography, no color change here by default */
+}
+
+.chart-box canvas {
+  width: 100% !important;
+  max-height: 350px;   /* keeps charts from ballooning */
+}

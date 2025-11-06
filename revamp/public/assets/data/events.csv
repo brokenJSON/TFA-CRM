@@ -1,0 +1,11 @@
+id,name,date,start,end,location,capacity,tags,status,signup,notes
+e1,Food Pantry Sorting,2025-11-12,09:00,12:00,Central Warehouse,20,pantry,scheduled,https://example.org/signup/pantry,"Gloves provided"
+e2,Community Clothing Drive,2025-11-16,10:00,14:00,Midtown Center,30,clothing,scheduled,https://example.org/signup/clothes,"Bring tape & markers"
+e3,Thanksgiving Meal Prep,2025-11-23,08:00,13:00,Kitchen HQ,25,kitchen,scheduled,https://example.org/signup/meal,"Hairnets on site"
+e4,Fundraiser Phone Bank,2025-11-19,17:30,20:00,Office Room B,12,phone,scheduled,https://example.org/signup/phone,"Snacks available"
+e5,Toy Drive Sorting,2025-12-05,09:00,12:00,Warehouse East,18,toys,scheduled,https://example.org/signup/toys,""
+e6,Holiday Gift Wrap,2025-12-10,11:00,15:00,Community Hall,22,holidays,scheduled,https://example.org/signup/wrap,""
+e7,Delivery Run – West Side,2025-11-20,13:00,16:00,Dispatch Bay,8,delivery,scheduled,https://example.org/signup/deliver,"Bring DL & insurance"
+e8,Family Resource Night,2025-11-29,16:00,19:00,South Center,16,outreach,scheduled,https://example.org/signup/resource,""
+e9,Backpack Stuffing,2025-11-26,10:00,12:00,Office A,15,school,scheduled,https://example.org/signup/backpacks,""
+e10,Food Pantry Sorting,2025-12-15,09:00,12:00,Central Warehouse,20,pantry,scheduled,https://example.org/signup/pantry2,"Repeat session"
