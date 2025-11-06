@@ -2,201 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>TFA CRM – Demo</title>
+  <title>TFA CRM – Landing</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <style>
-    /* ======= TFA BRAND TOKENS ======= */
-    :root{
-      --tfa-green: #063F1E;          /* Primary - Deep Green */
-      --tfa-gold:  #D89F01;          /* Secondary - Heritage Gold */
-      --tfa-white: #FFFFFF;          /* White */
-      --tfa-beige: #F9F8F6;          /* Light Beige */
-      --tfa-light: #E3E3E3;          /* Light Gray */
-      --tfa-mid:   #888888;          /* Medium Gray */
-      --tfa-char:  #222222;          /* Dark Gray / Charcoal */
-
-      --bg: var(--tfa-beige);
-      --text: var(--tfa-char);
-      --muted: var(--tfa-mid);
-      --card: var(--tfa-white);
-      --border: var(--tfa-light);
-      --focus: var(--tfa-gold);
-      --primary: var(--tfa-green);
-      --accent: var(--tfa-gold);
-      --radius: 14px;
-      --shadow: 0 10px 28px rgba(0,0,0,.10);
-    }
-
-    /* ======= Base ======= */
-    *{ box-sizing:border-box }
-    html,body{ height:100% }
-    body{
-      margin:0;
-      background: var(--bg);
-      color: var(--text);
-      font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-    }
-    a{ color: var(--primary); text-decoration: none }
-    a:hover{ text-decoration: underline }
-    h1,h2,h3{ margin:.25rem 0 .5rem }
-    h1{ font-size:clamp(22px, 2.6vw, 30px); }
-    h2{ font-size:clamp(18px, 2.2vw, 24px); }
-    p{ margin:.25rem 0 .75rem }
-
-    /* ======= Header (Branded) ======= */
-    .brand-bar{
-      background: var(--primary);
-      color: var(--tfa-white);
-      border-bottom: 6px solid var(--accent);
-    }
-    .container{
-      width:min(1100px, 92vw);
-      margin-inline:auto;
-      padding: 18px 0;
-    }
-    .brand{
-      display:flex; align-items:center; gap:14px;
-    }
-    /* Simple local SVG as a stand-in logo */
-    .logo{
-      width:46px; height:46px; border-radius:12px;
-      background: var(--accent);
-      display:grid; place-items:center;
-      color: var(--primary);
-      font-weight:800;
-      box-shadow: inset 0 0 0 3px rgba(0,0,0,.08);
-    }
-    .brand .title{
-      line-height:1.1;
-    }
-    .brand .title b{ display:block; letter-spacing:.2px }
-    .brand .title small{ opacity:.9; font-weight:500 }
-
-    /* ======= Shell Layout ======= */
-    .shell{
-      display:grid;
-      grid-template-columns: 260px 1fr;
-      gap:18px;
-      width:min(1100px, 92vw);
-      margin:18px auto 40px;
-    }
-    @media (max-width: 900px){
-      .shell{ grid-template-columns: 1fr }
-    }
-
-    /* ======= Card ======= */
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding:18px;
-    }
-    .card h2{
-      margin-top:0;
-      border-bottom:1px solid var(--border);
-      padding-bottom:8px;
-    }
-
-    /* ======= Sidebar ======= */
-    .sidebar .section + .section{ margin-top:14px }
-    .callout{
-      background:linear-gradient(0deg, rgba(216,159,1,.08), rgba(216,159,1,.08));
-      border:1px solid var(--accent);
-      color:#5b4500;
-    }
-
-    /* ======= Forms ======= */
-    label{ display:block; font-weight:600; margin:.6rem 0 .25rem }
-    .row{ display:flex; gap:10px; }
-    .row > *{ flex:1 }
-    input, select, textarea{
-      width:100%;
-      appearance:none;
-      border:1px solid var(--border);
-      background:var(--tfa-white);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:10px;
-      outline:none;
-      transition:border-color .15s ease, box-shadow .15s ease;
-    }
-    textarea{ min-height:84px; resize:vertical }
-    input:focus, select:focus, textarea:focus{
-      border-color: var(--focus);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 25%, transparent);
-    }
-    .actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px }
-
-    .btn{
-      border:0; cursor:pointer; font-weight:700;
-      padding:10px 14px; border-radius:12px;
-      transition:transform .04s ease, box-shadow .12s ease, background-color .15s ease;
-      box-shadow: 0 7px 18px rgba(6,63,30,.18);
-    }
-    .btn:active{ transform: translateY(1px) }
-    .btn-primary{ background:var(--primary); color:white }
-    .btn-primary:hover{ background:#05431f }
-    .btn-ghost{ background:transparent; color:var(--primary); border:1px solid var(--primary) }
-    .btn-danger{ background:#8b1a1a; color:#fff }
-    .tag{
-      display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px;
-      background: color-mix(in srgb, var(--accent) 22%, white);
-      border:1px solid var(--accent);
-      color:#5b4500;
-    }
-
-    /* ======= Auth ======= */
-    .auth-wrap{
-      display:flex; gap:14px; flex-wrap:wrap;
-    }
-    .auth-card{ flex:1 1 280px }
-
-    .alert{
-      background:#fff4e5; border:1px solid #ffd699; color:#7a5600;
-      padding:10px 12px; border-radius:10px; margin:.5rem 0 0;
-    }
-
-    /* ======= Contacts ======= */
-    .toolbar{
-      display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px;
-    }
-    .search{ max-width:360px }
-    table{
-      width:100%; border-collapse:separate; border-spacing:0 8px;
-    }
-    th, td{
-      text-align:left; padding:10px 12px;
-      background: var(--card);
-      border-top:1px solid var(--border);
-      border-bottom:1px solid var(--border);
-    }
-    th:first-child, td:first-child{ border-left:1px solid var(--border); border-top-left-radius:10px; border-bottom-left-radius:10px }
-    th:last-child, td:last-child{ border-right:1px solid var(--border); border-top-right-radius:10px; border-bottom-right-radius:10px }
-
-    .empty{
-      text-align:center; color:var(--muted); padding:24px 6px; border:1px dashed var(--border); border-radius:12px; background:#fff
-    }
-
-    /* ======= Footer ======= */
-    footer{
-      width:min(1100px, 92vw); margin: 18px auto 50px;
-      color: var(--muted);
-      font-size:14px;
-    }
-    .accent-underline{
-      text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 3px;
-      text-underline-offset: 4px;
-    }
-  </style>
+  <link rel="stylesheet" href="main.css">
 </head>
 <body>
-  <!-- ========= BRANDED HEADER ========= -->
+  <!-- HEADER -->
   <header class="brand-bar">
     <div class="container">
       <div class="brand" role="banner" aria-label="The Family Advocates CRM Canada">
-        <img src="\images\TFA_Logo_Asset 14.png" class="logo" alt="The Family Advocates logo">
+        <img src="/images/TFA_Logo_Asset 14.png" class="logo" alt="The Family Advocates logo">
         <div class="title">
           <b>The Family Advocates Canada</b>
           <small>Community CRM</small>
@@ -205,350 +20,475 @@
     </div>
   </header>
 
-  <!-- ========= MAIN LAYOUT ========= -->
+  <!-- LAYOUT -->
   <div class="shell" role="main">
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="card section callout" aria-live="polite">
-        <h2>Branding</h2>
-        <p>
-          This demo uses <span class="tag">Deep Green #063F1E</span> &
-          <span class="tag">Heritage Gold #D89F01</span> plus neutrals for
-          accessibility and hierarchy.
-        </p>
+        <h2>Welcome</h2>
+        <p>This is the public landing page. Volunteers can register or log in to record hours.</p>
+        <div class="cta-row">
+          <button id="openAdminBtn" class="btn btn-ghost" type="button">Admin Login</button>
+        </div>
       </div>
 
       <div class="card section">
         <h2>About</h2>
-        <p>
-          UI demonstrates: <strong>Admin Sign Up / Login</strong> and
-          <strong>Staff Contact Management</strong>. Data is stored locally
-          in your browser for demo purposes only.
-        </p>
+        <p>Demo only (no server). Data is stored locally in your browser.</p>
       </div>
     </aside>
 
     <!-- MAIN CONTENT -->
     <section class="content">
-      <!-- AUTH AREA -->
-      <div class="card">
-        <h2 class="accent-underline">Access (Admin)</h2>
-        <div class="auth-wrap">
-          <!-- SIGN UP -->
-          <form id="signupForm" class="auth-card" autocomplete="off" aria-labelledby="signupTitle">
-            <h3 id="signupTitle">Sign Up</h3>
-            <label for="suEmail">Email</label>
-            <input id="suEmail" name="email" type="email" required placeholder="admin@tfa.local" />
-            <div class="row">
-              <div>
-                <label for="suPass">Password</label>
-                <input id="suPass" name="password" type="password" minlength="6" required placeholder="••••••••" />
-              </div>
-              <div>
-                <label for="suPass2">Confirm</label>
-                <input id="suPass2" type="password" minlength="6" required placeholder="••••••••" />
-              </div>
-            </div>
-            <div class="actions">
-              <button class="btn btn-primary" type="submit">Create Admin</button>
-              <span class="muted" style="color:var(--muted)">Demo only – stored in localStorage</span>
-            </div>
-            <div id="signupMsg" class="alert" style="display:none"></div>
-          </form>
+      <!-- VOLUNTEER REGISTER -->
+      <div class="card" id="volunteerRegisterCard">
+        <h2 class="accent-underline">Volunteer Registration</h2>
+        <p class="muted" style="margin-top:-6px">New here? Create your volunteer account.</p>
 
-          <!-- LOGIN -->
-          <form id="loginForm" class="auth-card" autocomplete="off" aria-labelledby="loginTitle">
-            <h3 id="loginTitle">Log In</h3>
-            <label for="liEmail">Email</label>
-            <input id="liEmail" name="email" type="email" required placeholder="admin@tfa.local" />
-            <label for="liPass">Password</label>
-            <input id="liPass" name="password" type="password" required placeholder="••••••••" />
-            <div class="actions">
-              <button class="btn btn-primary" type="submit">Enter CRM</button>
-              <button id="logoutBtn" class="btn btn-ghost" type="button" title="Clear current session">Log Out</button>
-            </div>
-            <div id="loginMsg" class="alert" style="display:none"></div>
-          </form>
-        </div>
-      </div>
+        <form id="volForm" autocomplete="off" aria-labelledby="volTitle">
+          <h3 id="volTitle" style="margin:.25rem 0 .75rem">Tell us about you</h3>
 
-      <!-- CONTACTS AREA -->
-      <div id="contactsCard" class="card" aria-live="polite" style="margin-top:18px; display:none">
-        <div class="toolbar">
-          <h2 class="accent-underline">Contacts (Staff)</h2>
-          <input id="searchBox" class="search" type="search" placeholder="Search name, email, or tag…" aria-label="Search contacts" />
-        </div>
-
-        <!-- Add/Edit Form -->
-        <form id="contactForm" autocomplete="off" aria-labelledby="contactFormTitle" style="margin-bottom:14px">
-          <h3 id="contactFormTitle" style="margin:.25rem 0 .75rem">Add / Edit Contact</h3>
           <div class="row">
             <div>
-              <label for="cName">Full Name</label>
-              <input id="cName" required placeholder="Jane Doe" />
+              <label for="vName">Full Name</label>
+              <input id="vName" required placeholder="Jane Doe" />
             </div>
             <div>
-              <label for="cRole">Type</label>
-              <select id="cRole" required>
-                <option value="Participant">Participant</option>
-                <option value="Donor">Donor</option>
-                <option value="Volunteer">Volunteer</option>
-                <option value="Partner">Partner</option>
+              <label for="vEmail">Email</label>
+              <input id="vEmail" type="email" required placeholder="jane@example.org" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="vPhone">Phone</label>
+              <input id="vPhone" placeholder="(555) 123-4567" />
+            </div>
+            <div>
+              <label for="vAvailability">Availability</label>
+              <select id="vAvailability">
+                <option value="">Choose…</option>
+                <option>Weekdays</option>
+                <option>Weeknights</option>
+                <option>Weekends</option>
+                <option>Flexible</option>
               </select>
             </div>
           </div>
+
+          <label for="vInterests">Interests (comma-separated)</label>
+          <input id="vInterests" placeholder="events, outreach, admin" />
+
+          <label for="vNotes">Notes</label>
+          <textarea id="vNotes" placeholder="Anything we should know?"></textarea>
+
           <div class="row">
             <div>
-              <label for="cEmail">Email</label>
-              <input id="cEmail" type="email" placeholder="jane@example.org" />
+              <label for="vPass">Create Password</label>
+              <input id="vPass" type="password" minlength="4" required placeholder="••••" />
             </div>
             <div>
-              <label for="cPhone">Phone</label>
-              <input id="cPhone" placeholder="(555) 123-4567" />
+              <label for="vPass2">Confirm Password</label>
+              <input id="vPass2" type="password" minlength="4" required placeholder="••••" />
             </div>
           </div>
-          <label for="cTags">Tags (comma-separated)</label>
-          <input id="cTags" placeholder="donor, monthly, 2025 gala" />
-          <label for="cNotes">Notes</label>
-          <textarea id="cNotes" placeholder="Background, interests, preferences…"></textarea>
 
           <div class="actions">
-            <button class="btn btn-primary" type="submit">Save Contact</button>
-            <button id="resetFormBtn" class="btn btn-ghost" type="button">Reset</button>
-            <span id="editFlag" class="tag" style="display:none">Editing</span>
+            <label for="vConsent" style="font-weight:normal">
+              <input type="checkbox" id="vConsent" required>
+              I consent to be contacted about volunteer opportunities.
+            </label>
           </div>
-        </form>
 
-        <!-- Table -->
-        <div id="tableWrap"></div>
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Register as Volunteer</button>
+            <button class="btn btn-ghost" type="reset">Reset</button>
+          </div>
+
+          <div id="volMsg" class="alert"></div>
+        </form>
+      </div>
+
+      <!-- VOLUNTEER LOGIN -->
+      <div class="card" id="volunteerLoginCard" style="margin-top:18px">
+        <h2 class="accent-underline">Volunteer Login</h2>
+        <p class="muted" style="margin-top:-6px">Already registered? Log in to record your hours.</p>
+
+        <form id="volLoginForm" autocomplete="off">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" required placeholder="jane@example.org" />
+
+          <label for="loginPass">Password</label>
+          <input id="loginPass" type="password" required placeholder="••••" />
+
+          <div class="actions" style="margin-top:10px">
+            <button class="btn btn-primary" type="submit">Log In</button>
+          </div>
+
+          <div id="loginMsg" class="alert"></div>
+        </form>
+      </div>
+
+      <!-- HOURS CALENDAR (hidden until volunteer logs in) -->
+      <div class="card" id="hoursCard" style="margin-top:18px; display:none">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px">
+          <div>
+            <h2 class="accent-underline" style="margin:0">My Volunteer Hours</h2>
+            <small class="muted" id="whoAmI"></small>
+          </div>
+          <div>
+            <button id="logoutVolunteerBtn" class="btn btn-ghost" type="button">Log Out</button>
+          </div>
+        </div>
+
+        <div class="calendar">
+          <div class="cal-head">
+            <button id="prevMonth" class="btn btn-ghost" type="button">◀ Prev</button>
+            <div id="monthLabel" style="font-weight:800"></div>
+            <button id="nextMonth" class="btn btn-ghost" type="button">Next ▶</button>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>
+                <th>Thu</th><th>Fri</th><th>Sat</th>
+              </tr>
+            </thead>
+            <tbody id="calBody"></tbody>
+          </table>
+
+          <div class="note">
+            Click a date to add/update hours. Numbers only (e.g., 2 or 3.5).  
+            <div id="monthTotal" style="margin-top:6px; font-weight:700"></div>
+          </div>
+        </div>
       </div>
     </section>
   </div>
 
-  <footer>
-    <small>
-      Demo only. 
-    </small>
-  </footer>
+  <footer><small>Demo only.</small></footer>
+
+  <!-- Admin Login Modal -->
+  <dialog id="adminDialog" aria-labelledby="adminDialogTitle">
+    <div class="modal-card">
+      <h3 id="adminDialogTitle">Admin Login</h3>
+      <p class="muted" style="margin-top:-4px">Enter your admin credentials to access the dashboard.</p>
+
+      <form id="adminLoginForm" method="dialog" autocomplete="off" style="margin-top:8px">
+        <label for="adUser">Username</label>
+        <input id="adUser" required placeholder="admin" />
+
+        <label for="adPass">Password</label>
+        <input id="adPass" type="password" required placeholder="••••••••" />
+
+        <div id="adminMsg" class="alert"></div>
+
+        <div class="modal-actions">
+          <button type="button" id="closeAdminBtn" class="btn btn-ghost">Cancel</button>
+          <button type="submit" class="btn btn-primary">Log In</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
 
   <script>
-    // ============== Simple Local "Auth" (Demo) ==============
-    const LS_KEYS = {
-      admin: "tfa_admin",
-      session: "tfa_session",
-      contacts: "tfa_contacts_v1"
+    // ========== Storage keys ==========
+    const LS = {
+      adminSession: "tfa_session",
+      volunteers: "tfa_volunteer_submissions",
+      contacts: "tfa_contacts_v1",
+      volSession: "tfa_volunteer_session",   // stores logged-in volunteer email
+      volHours: "tfa_volunteer_hours"        // map: { [email]: { "YYYY-MM-DD": number } }
     };
 
-    const $ = sel => document.querySelector(sel);
-    const signupForm = $("#signupForm");
-    const loginForm = $("#loginForm");
-    const logoutBtn = $("#logoutBtn");
-    const signupMsg = $("#signupMsg");
-    const loginMsg = $("#loginMsg");
-    const contactsCard = $("#contactsCard");
+    // ========== Helpers ==========
+    const $ = s => document.querySelector(s);
+    function show(el){ el.style.display = "block"; }
+    function hide(el){ el.style.display = "none"; }
 
-    const contactForm = $("#contactForm");
-    const searchBox = $("#searchBox");
-    const tableWrap = $("#tableWrap");
-    const editFlag = $("#editFlag");
-    const resetFormBtn = $("#resetFormBtn");
-
-    let editingId = null;
-
-    function setMsg(el, text){
-      el.textContent = text;
-      el.style.display = 'block';
-      setTimeout(()=> el.style.display='none', 3000);
+    function setAlert(el, text){
+      text = (text || "").trim();
+      if (text) { el.textContent = text; el.style.display = "block"; }
+      else { el.textContent = ""; el.style.display = "none"; }
     }
 
-    function getAdmin(){ try{ return JSON.parse(localStorage.getItem(LS_KEYS.admin)) }catch{ return null } }
-    function setAdmin(obj){ localStorage.setItem(LS_KEYS.admin, JSON.stringify(obj)) }
+    function readVolunteers(){ try{ return JSON.parse(localStorage.getItem(LS.volunteers)) || []; }catch{ return []; } }
+    function writeVolunteers(list){ localStorage.setItem(LS.volunteers, JSON.stringify(list)); }
+    function readContacts(){ try{ return JSON.parse(localStorage.getItem(LS.contacts)) || []; }catch{ return []; } }
+    function writeContacts(list){ localStorage.setItem(LS.contacts, JSON.stringify(list)); }
+    
 
-    function getSession(){ return localStorage.getItem(LS_KEYS.session) }
-    function setSession(email){ localStorage.setItem(LS_KEYS.session, email) }
-    function clearSession(){ localStorage.removeItem(LS_KEYS.session) }
+    function readHoursMap(){ try{ return JSON.parse(localStorage.getItem(LS.volHours)) || {}; }catch{ return {}; } }
+    function writeHoursMap(map){ localStorage.setItem(LS.volHours, JSON.stringify(map)); }
 
-    function hash(str){
-      // lightweight hash for demo only (UPDATE ASAP)
+    function hash(str){ // simple demo hash
       let h = 0; for (let i=0;i<str.length;i++) h = (h<<5) - h + str.charCodeAt(i) | 0;
       return String(h);
     }
 
-    signupForm.addEventListener("submit", e=>{
-      e.preventDefault();
-      const email = $("#suEmail").value.trim().toLowerCase();
-      const p1 = $("#suPass").value;
-      const p2 = $("#suPass2").value;
+    // ========== Admin Modal ==========
+    const ADMIN_USER = "admin";
+    const ADMIN_PASS = "admin";
 
-      if(p1 !== p2){ setMsg(signupMsg, "Passwords do not match."); return }
-      setAdmin({ email, passHash: hash(p1), createdAt: Date.now() });
-      setMsg(signupMsg, "Admin created. You can now log in.");
-      signupForm.reset();
+    const adminDialog   = $("#adminDialog");
+    const openAdminBtn  = $("#openAdminBtn");
+    const closeAdminBtn = $("#closeAdminBtn");
+    const adminForm     = $("#adminLoginForm");
+    const adminMsg      = $("#adminMsg");
+
+    openAdminBtn.addEventListener("click", () => {
+      setAlert(adminMsg, "");
+      $("#adUser").value = "";
+      $("#adPass").value = "";
+      adminDialog.showModal();
+      setTimeout(() => $("#adUser").focus(), 50);
     });
+    closeAdminBtn.addEventListener("click", () => adminDialog.close());
 
-    loginForm.addEventListener("submit", e=>{
+    adminForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const admin = getAdmin();
-      if(!admin){ setMsg(loginMsg, "No admin exists yet. Please sign up first."); return }
-
-      const email = $("#liEmail").value.trim().toLowerCase();
-      const pass = $("#liPass").value;
-      if(email === admin.email && hash(pass) === admin.passHash){
-        setSession(email);
-        setMsg(loginMsg, "Welcome! Access granted.");
-        //revealCRM(true);
+      const u = ($("#adUser").value || "").trim();
+      const p = $("#adPass").value || "";
+      if (u === ADMIN_USER && p === ADMIN_PASS) {
+        localStorage.setItem(LS.adminSession, u);
+        setAlert(adminMsg, "Access granted. Redirecting…");
+        adminDialog.close();
         window.location.href = "dashboard.html";
       } else {
-        setMsg(loginMsg, "Invalid credentials.");
+        setAlert(adminMsg, "Invalid credentials.");
       }
-      loginForm.reset();
     });
 
-    logoutBtn.addEventListener("click", ()=>{
-      clearSession();
-      revealCRM(false);
-      setMsg(loginMsg, "Logged out.");
-    });
+    // ========== Volunteer Register ==========
+    const volForm = $("#volForm");
+    const volMsg  = $("#volMsg");
 
-    function revealCRM(visible){
-      contactsCard.style.display = visible ? "block" : "none";
-    }
-
-    // On load
-    revealCRM(!!getSession());
-
-    // ============== Contacts (CRUD in localStorage) ==============
-    function readContacts(){
-      try{ return JSON.parse(localStorage.getItem(LS_KEYS.contacts)) ?? [] }
-      catch{ return [] }
-    }
-    function writeContacts(list){
-      localStorage.setItem(LS_KEYS.contacts, JSON.stringify(list));
-      renderTable();
-    }
-    function uid(){ return Math.random().toString(36).slice(2,9) }
-
-    function upsertContact(data){
-      const list = readContacts();
-      if(editingId){
-        const idx = list.findIndex(x=>x.id===editingId);
-        if(idx>-1){ list[idx] = {...list[idx], ...data}; }
-        editingId = null;
-      }else{
-        list.push({ id: uid(), ...data });
-      }
-      writeContacts(list);
-      contactForm.reset();
-      editFlag.style.display = "none";
-      $("#contactFormTitle").textContent = "Add / Edit Contact";
-    }
-
-    function deleteContact(id){
-      const list = readContacts().filter(x=>x.id!==id);
-      writeContacts(list);
-    }
-
-    function startEdit(id){
-      const item = readContacts().find(x=>x.id===id);
-      if(!item) return;
-      $("#cName").value = item.name ?? "";
-      $("#cRole").value = item.role ?? "Participant";
-      $("#cEmail").value = item.email ?? "";
-      $("#cPhone").value = item.phone ?? "";
-      $("#cTags").value = (item.tags ?? []).join(", ");
-      $("#cNotes").value = item.notes ?? "";
-      editingId = id;
-      editFlag.style.display = "inline-block";
-      $("#contactFormTitle").textContent = "Editing Contact";
-      window.scrollTo({top: contactForm.offsetTop - 16, behavior: 'smooth'});
-    }
-
-    contactForm.addEventListener("submit", e=>{
+    volForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const data = {
-        name: $("#cName").value.trim(),
-        role: $("#cRole").value,
-        email: $("#cEmail").value.trim(),
-        phone: $("#cPhone").value.trim(),
-        tags: $("#cTags").value.split(",").map(s=>s.trim()).filter(Boolean),
-        notes: $("#cNotes").value.trim(),
-        updatedAt: Date.now()
-      };
-      if(!data.name){ alert("Name is required."); return }
-      upsertContact(data);
-    });
+      const name = $("#vName").value.trim();
+      const email = $("#vEmail").value.trim().toLowerCase();
+      const phone = $("#vPhone").value.trim();
+      const availability = $("#vAvailability").value.trim();
+      const interests = String($("#vInterests").value || "").split(",").map(s=>s.trim()).filter(Boolean);
+      const notes = $("#vNotes").value.trim();
+      const pass = $("#vPass").value;
+      const pass2 = $("#vPass2").value;
+      const consent = $("#vConsent").checked;
 
-    resetFormBtn.addEventListener("click", ()=>{
-      contactForm.reset(); editingId=null; editFlag.style.display="none";
-      $("#contactFormTitle").textContent = "Add / Edit Contact";
-    });
+      if (!name || !email){ setAlert(volMsg, "Please enter your name and a valid email."); return; }
+      if (!consent){ setAlert(volMsg, "Please consent to be contacted so we can follow up."); return; }
+      if (pass.length < 4){ setAlert(volMsg, "Password must be at least 4 characters."); return; }
+      if (pass !== pass2){ setAlert(volMsg, "Passwords do not match."); return; }
 
-    function renderTable(){
-      const q = (searchBox.value || "").toLowerCase();
-      const rows = readContacts()
-        .filter(c=>{
-          const blob = `${c.name} ${c.email} ${c.phone} ${c.role} ${(c.tags||[]).join(" ")}`.toLowerCase();
-          return blob.includes(q);
-        })
-        .sort((a,b)=> (a.name||"").localeCompare(b.name||""));
-
-      if(rows.length === 0){
-        tableWrap.innerHTML = `<div class="empty">No contacts yet. Use the form above to add one.</div>`;
+      const list = readVolunteers();
+      if (list.some(v => (v.email||"").toLowerCase() === email)){
+        setAlert(volMsg, "That email is already registered. Please log in below.");
         return;
       }
 
-      const html = `
-        <table aria-describedby="contact-table-caption">
-          <caption id="contact-table-caption" style="position:absolute; left:-9999px">Contacts table</caption>
-          <thead>
-            <tr>
-              <th style="width:22%">Name</th>
-              <th style="width:12%">Type</th>
-              <th style="width:22%">Email</th>
-              <th style="width:16%">Phone</th>
-              <th>Tags</th>
-              <th style="width:140px">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows.map(r=>`
-              <tr>
-                <td>${escapeHtml(r.name||"")}</td>
-                <td><span class="tag">${escapeHtml(r.role||"")}</span></td>
-                <td>${escapeHtml(r.email||"")}</td>
-                <td>${escapeHtml(r.phone||"")}</td>
-                <td>${(r.tags||[]).map(t=>`<span class="tag" style="margin-right:6px">${escapeHtml(t)}</span>`).join("")}</td>
-                <td>
-                  <button class="btn btn-ghost" onclick="startEdit('${r.id}')">Edit</button>
-                  <button class="btn btn-danger" onclick="confirmDelete('${r.id}')">Delete</button>
-                </td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      `;
-      tableWrap.innerHTML = html;
+      list.push({
+        name, email, phone, availability, interests, notes,
+        consent: true, submittedAt: Date.now(), passHash: hash(pass)
+      });
+      writeVolunteers(list);
+// --- sync to Contacts (CRM) so admins can see this volunteer ---
+(function syncVolunteerToContacts(){
+  const contacts = readContacts();
+  const ix = contacts.findIndex(c => (c.email||"").toLowerCase() === email);
+  const contact = {
+    id: Math.random().toString(36).slice(2,9),
+    name, email, phone,
+    role: "Volunteer",
+    tags: Array.from(new Set([...(interests||[]), "volunteer"])),
+    notes,
+    updatedAt: Date.now()
+  };
+  if (ix >= 0) {
+    // update existing contact minimally
+    contacts[ix] = { ...contacts[ix], ...contact, id: contacts[ix].id || contact.id };
+  } else {
+    contacts.push(contact);
+  }
+  writeContacts(contacts);
+})();
+
+setAlert(volMsg, "Thanks for registering! You can now log in below.");
+volForm.reset();
+});
+
+    // ========== Volunteer Login + Session ==========
+    const volLoginForm = $("#volLoginForm");
+    const loginMsg = $("#loginMsg");
+
+    function setVolunteerSession(email){
+      localStorage.setItem(LS.volSession, email);
+    }
+    function getVolunteerSession(){
+      return localStorage.getItem(LS.volSession);
+    }
+    function clearVolunteerSession(){
+      localStorage.removeItem(LS.volSession);
     }
 
-    function escapeHtml(s){
-      return s.replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+    volLoginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = $("#loginEmail").value.trim().toLowerCase();
+      const pass  = $("#loginPass").value;
+
+      const vol = readVolunteers().find(v => (v.email||"").toLowerCase() === email);
+      if (!vol){ setAlert(loginMsg, "No account found for that email. Please register above."); return; }
+      if (vol.passHash !== hash(pass)){ setAlert(loginMsg, "Incorrect password."); return; }
+
+      setVolunteerSession(email);
+      setAlert(loginMsg, "Welcome! Loading your calendar…");
+      renderAppState();
+    });
+
+    $("#logoutVolunteerBtn").addEventListener("click", () => {
+      clearVolunteerSession();
+      renderAppState();
+    });
+
+    // ========== Calendar + Hours ==========
+    const calBody = $("#calBody");
+    const monthLabel = $("#monthLabel");
+    const monthTotal = $("#monthTotal");
+    const whoAmI = $("#whoAmI");
+    let viewYear, viewMonth; // month is 0..11
+
+    $("#prevMonth").addEventListener("click", () => {
+      viewMonth--; if (viewMonth < 0){ viewMonth = 11; viewYear--; }
+      drawCalendar();
+    });
+    $("#nextMonth").addEventListener("click", () => {
+      viewMonth++; if (viewMonth > 11){ viewMonth = 0; viewYear++; }
+      drawCalendar();
+    });
+
+    function pad(n){ return String(n).padStart(2, "0"); }
+    function dateKey(y, m, d){ return `${y}-${pad(m+1)}-${pad(d)}`; }
+
+    function getUserHoursMap(email){
+      const map = readHoursMap();
+      return map[email] || {};
+    }
+    function setUserHours(email, key, hours){
+      const map = readHoursMap();
+      if (!map[email]) map[email] = {};
+      if (hours === null){ delete map[email][key]; }
+      else { map[email][key] = hours; }
+      writeHoursMap(map);
     }
 
-    window.startEdit = startEdit;
-    window.confirmDelete = function(id){
-      if(confirm("Delete this contact?")) deleteContact(id);
-    };
+    function drawCalendar(){
+      const sessionEmail = getVolunteerSession();
+      const hoursMap = getUserHoursMap(sessionEmail);
 
-    searchBox.addEventListener("input", renderTable);
+      const first = new Date(viewYear, viewMonth, 1);
+      const last  = new Date(viewYear, viewMonth + 1, 0);
+      const today = new Date();
+      const isThisMonth = (viewYear === today.getFullYear() && viewMonth === today.getMonth());
+      monthLabel.textContent = first.toLocaleString(undefined, { month: "long", year: "numeric" });
 
-    // Populate with an example row the first time
-    if(readContacts().length === 0){
-      writeContacts([
-        { id: uid(), name:"Alex Rivera", role:"Donor", email:"alex@donors.org", phone:"555-0102", tags:["monthly","newsletter"], notes:"Prefers email updates", updatedAt: Date.now() }
-      ]);
-    } else {
-      renderTable();
+      // Build rows
+      let html = "";
+      let dow = first.getDay(); // 0..6 starting Sun
+      let cells = [];
+
+      // leading blanks
+      for (let i=0;i<dow;i++) cells.push({ empty:true });
+
+      // month days
+      for (let d=1; d<=last.getDate(); d++){
+        const key = dateKey(viewYear, viewMonth, d);
+        cells.push({ day:d, key, hours: hoursMap[key] });
+      }
+
+      // trailing blanks to complete last row
+      while (cells.length % 7 !== 0) cells.push({ empty:true });
+
+      // render 7 per row
+      let monthlyTotal = 0;
+      for (let i=0;i<cells.length;i++){
+        if (i % 7 === 0) html += "<tr>";
+        const c = cells[i];
+        if (c.empty){
+          html += "<td></td>";
+        } else {
+          const isToday = isThisMonth && (c.day === today.getDate());
+          const hoursBadge = (c.hours != null)
+            ? `<div class="hours">${c.hours} hr${Number(c.hours)===1?"":"s"}</div>`
+            : "";
+          if (c.hours) monthlyTotal += Number(c.hours) || 0;
+          html += `
+            <td class="${isToday ? "is-today" : ""}" data-key="${c.key}">
+              <div class="day-num">${c.day}</div>
+              ${hoursBadge}
+            </td>
+          `;
+        }
+        if (i % 7 === 6) html += "</tr>";
+      }
+
+      calBody.innerHTML = html;
+      monthTotal.textContent = `Total this month: ${monthlyTotal} hour${monthlyTotal===1?"":"s"}`;
+
+      // click handler for day cells
+      Array.from(calBody.querySelectorAll("td[data-key]")).forEach(td=>{
+        td.addEventListener("click", () => {
+          const key = td.getAttribute("data-key");
+          const current = hoursMap[key];
+          const input = prompt(`Enter hours for ${key} (blank to clear)`, current != null ? String(current) : "");
+          if (input === null) return; // user cancelled
+          const val = input.trim();
+          if (val === ""){
+            setUserHours(sessionEmail, key, null);
+          } else {
+            const num = Number(val);
+            if (Number.isNaN(num) || num < 0){ alert("Please enter a positive number (e.g., 2 or 3.5)."); return; }
+            setUserHours(sessionEmail, key, num);
+          }
+          drawCalendar();
+        });
+      });
     }
+
+    // ========== UI State ==========
+    function renderAppState(){
+      const email = getVolunteerSession();
+      const regCard = $("#volunteerRegisterCard");
+      const loginCard = $("#volunteerLoginCard");
+      const hoursCard = $("#hoursCard");
+
+      if (email){
+        // show calendar
+        const vol = readVolunteers().find(v => (v.email||"").toLowerCase() === email);
+        whoAmI.textContent = vol ? `${vol.name} • ${email}` : email;
+        hide(regCard);
+        hide(loginCard);
+        show(hoursCard);
+
+        // set current month if first load
+        const now = new Date();
+        if (viewYear == null){ viewYear = now.getFullYear(); viewMonth = now.getMonth(); }
+        drawCalendar();
+      } else {
+        // show register and login, hide calendar
+        show(regCard);
+        show(loginCard);
+        hide(hoursCard);
+      }
+    }
+
+    // ========== Init ==========
+    (function init(){
+      // Hide empty alerts by default
+      setAlert($("#volMsg"), "");
+      setAlert($("#loginMsg"), "");
+
+      renderAppState();
+    })();
   </script>
 </body>
 </html>
