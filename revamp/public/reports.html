@@ -13,6 +13,10 @@
         <div class="inner">
           <header id="header">
             <a href="index.html" class="logo"><strong>Reports</strong></a>
+            <ul class="icons">
+              <li><span id="userEmail" style="margin-right:1em;color:#7f888f;"></span></li>
+              <li><a href="#" id="signOutBtn" class="button small" style="margin:0;">Sign Out</a></li>
+            </ul>
           </header>
 
           <section>
@@ -106,11 +110,9 @@
       <div id="sidebar">
         <div class="inner">
           <nav id="menu">
-            <header class="major"><h2>Admin Menu</h2></header>
-            <ul>
-              <li><a href="dashboard_admin.html">Volunteer Directory</a></li>
-              <li><a href="reports.html" class="tfa-current">Reports</a></li>
-              <li><a href="campaigns.html">Campaign Scheduler</a></li>
+            <header class="major"><h2>Navigation</h2></header>
+            <ul id="reportsMenu">
+              <!-- Menu items will be populated based on user role -->
             </ul>
           </nav>
         </div>
@@ -122,8 +124,53 @@
     <script src="assets/js/breakpoints.min.js"></script>
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/auth.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- Dynamic menu based on user role -->
+    <script>
+      (function(){
+        const user = TFA_AUTH.getCurrentUser();
+        const menu = document.getElementById('reportsMenu');
+        
+        if (!user) {
+          menu.innerHTML = '<li><a href="index.html">Homepage</a></li><li><a href="log_in.html">Log In</a></li>';
+          return;
+        }
+        
+        let menuItems = [];
+        
+        if (user.role === 'admin') {
+          menuItems = [
+            '<li><a href="index.html">Homepage</a></li>',
+            '<li><a href="dashboard_admin.html">Admin Dashboard</a></li>',
+            '<li><a href="events.html">Events</a></li>',
+            '<li><a href="reports.html" class="tfa-current">Reports</a></li>',
+            '<li><a href="campaigns.html">Campaigns</a></li>'
+          ];
+        } else if (user.role === 'staff') {
+          menuItems = [
+            '<li><a href="index.html">Homepage</a></li>',
+            '<li><a href="dashboard_staff.html">Staff Dashboard</a></li>',
+            '<li><a href="events.html">Events</a></li>',
+            '<li><a href="reports.html" class="tfa-current">Reports</a></li>',
+            '<li><a href="campaigns.html">Campaigns</a></li>'
+          ];
+        } else {
+          menuItems = [
+            '<li><a href="index.html">Homepage</a></li>',
+            '<li><a href="dashboard_volunteer.html">My Dashboard</a></li>'
+          ];
+        }
+        
+        menu.innerHTML = menuItems.join('');
+      })();
+    </script>
 
+<script>
+  // Require admin authentication
+  TFA_AUTH.requireAdmin();
+</script>
 
 <script>
   (function(){

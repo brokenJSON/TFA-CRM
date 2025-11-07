@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>TFA – Admin Dashboard</title>
+    <title>TFA – Staff Dashboard</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
@@ -15,7 +15,7 @@
         <div class="inner">
           <!-- Header -->
           <header id="header">
-            <a href="index.html" class="logo"><strong>Admin Dashboard</strong></a>
+            <a href="index.html" class="logo"><strong>Staff Dashboard</strong></a>
             <ul class="icons">
               <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
               <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
@@ -28,15 +28,15 @@
           <!-- Content -->
           <section>
             <header class="main">
-              <h1>Staff & Volunteers</h1>
-              <p>Manage staff and volunteer directory, track totals, and export data.</p>
+              <h1>Volunteers</h1>
+              <p>Manage the volunteer directory, track totals, and export data.</p>
             </header>
 
             <!-- KPI Cards -->
             <div class="row gtr-50 gtr-uniform">
               <div class="col-4 col-12-small">
                 <div class="box" style="border-left:6px solid var(--tfa-primary);">
-                  <h3 style="margin-bottom:.25em;">Active (Staff + Volunteers)</h3>
+                  <h3 style="margin-bottom:.25em;">Active volunteers</h3>
                   <div id="kpi-active" style="font-size:2rem;font-weight:700;color:var(--tfa-primary);">0</div>
                 </div>
               </div>
@@ -62,21 +62,14 @@
                 <div class="col-3 col-12-small">
                   <input type="text" id="searchBox" placeholder="Search name/email/phone…" />
                 </div>
-                <div class="col-3 col-12-small">
+                <div class="col-4 col-12-small">
                   <select id="filterStatus">
                     <option value="">All statuses</option>
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
                   </select>
                 </div>
-                <div class="col-3 col-12-small">
-                  <select id="filterRole">
-                    <option value="">All (Staff + Volunteers)</option>
-                    <option value="staff">Staff</option>
-                    <option value="volunteer">Volunteer</option>
-                  </select>
-                </div>
-                <div class="col-3 col-12-small align-right">
+                <div class="col-5 col-12-small align-right">
                   <ul class="actions">
                     <li><a href="#" class="button" id="btnExport">Export CSV</a></li>
                     <li>
@@ -88,9 +81,9 @@
               </div>
             </div>
 
-            <!-- Add Staff or Volunteer -->
+            <!-- Add Volunteer -->
             <div class="box">
-              <h3 class="tfa-accent-underline" style="margin-top:0;">Add / Edit Staff or Volunteer</h3>
+              <h3 class="tfa-accent-underline" style="margin-top:0;">Add / Edit Volunteer</h3>
               <form id="volForm">
                 <input type="hidden" id="volId" />
                 <div class="row gtr-uniform">
@@ -105,13 +98,6 @@
                   <div class="col-4 col-12-xsmall">
                     <label for="volPhone">Phone</label>
                     <input type="tel" id="volPhone" placeholder="(555) 123-4567" />
-                  </div>
-                  <div class="col-4 col-12-xsmall">
-                    <label for="volRole">Role</label>
-                    <select id="volRole">
-                      <option value="volunteer">Volunteer</option>
-                      <option value="staff">Staff</option>
-                    </select>
                   </div>
                   <div class="col-4 col-12-xsmall">
                     <label for="volStatus">Status</label>
@@ -146,7 +132,6 @@
                     <th data-sort="name" class="sortable">Name</th>
                     <th data-sort="email" class="sortable">Email</th>
                     <th>Phone</th>
-                    <th data-sort="role" class="sortable">Role</th>
                     <th data-sort="status" class="sortable">Status</th>
                     <th data-sort="joinDate" class="sortable">Joined</th>
                     <th data-sort="hours" class="sortable">Hours (matched)</th>
@@ -179,7 +164,7 @@
             </header>
             <ul>
               <li><a href="index.html">Homepage</a></li>
-              <li><a href="dashboard_admin.html" class="tfa-current">Admin Dashboard</a></li>
+              <li><a href="dashboard_staff.html" class="tfa-current">Staff Dashboard</a></li>
               <li><a href="events.html">Events</a></li>
               <li><a href="reports.html">Reports</a></li>
               <li><a href="campaigns.html">Campaigns</a></li>
@@ -210,18 +195,20 @@
     <script src="assets/js/main.js"></script>
     <script src="assets/js/auth.js"></script>
 
-    <!-- Admin Logic -->
+    <!-- Staff Logic -->
     <script>
-      // Require admin-only authentication (staff cannot access)
-      TFA_AUTH.requireAdminOnly();
+      // Require admin or staff authentication (both can access this page)
+      TFA_AUTH.requireAdmin();
     </script>
     <script>
       (function(){
+        const STORAGE_VOLUNTEERS = 'tfa_volunteers';
+        const STORAGE_LOGS = 'tfa_hours';
         const PAGE_SIZE = 10;
 
         // State
-        let volunteers = [];
-        let logs = [];
+        let volunteers = load(STORAGE_VOLUNTEERS) || seed();
+        let logs = load(STORAGE_LOGS) || [];
         let sortKey = 'name', sortDir = 'asc', page = 1;
 
         // Elements
@@ -229,7 +216,6 @@
         const pager = document.getElementById('pager');
         const searchBox = document.getElementById('searchBox');
         const filterStatus = document.getElementById('filterStatus');
-        const filterRole = document.getElementById('filterRole');
         const kpiActive = document.getElementById('kpi-active');
         const kpiNew = document.getElementById('kpi-new');
         const kpiHours = document.getElementById('kpi-hours');
@@ -240,7 +226,6 @@
         const volName = document.getElementById('volName');
         const volEmail = document.getElementById('volEmail');
         const volPhone = document.getElementById('volPhone');
-        const volRole = document.getElementById('volRole');
         const volStatus = document.getElementById('volStatus');
         const volJoin = document.getElementById('volJoin');
         const volNotes = document.getElementById('volNotes');
@@ -250,35 +235,9 @@
         const btnExport = document.getElementById('btnExport');
         const csvFile = document.getElementById('csvFile');
 
-        // Init - Load data from API
-        (async function init(){
-          try {
-            // Load volunteers from API (includes user_role for linked accounts)
-            const volunteersData = await TFA_AUTH.apiCall('/volunteers');
-            
-            // Map volunteers to include role from user_role field
-            volunteers = volunteersData.map(v => ({
-              ...v,
-              role: v.user_role || 'volunteer', // Use user_role from API if available
-              joinDate: v.joined_at || v.created_at || ''
-            }));
-            
-            // Load hours logs from API
-            logs = await TFA_AUTH.apiCall('/logs');
-            
-            // Map logs to have volunteerEmail for compatibility
-            logs = logs.map(log => ({
-              ...log,
-              volunteerEmail: log.volunteer_email || ''
-            }));
-            
-            attachSortHandlers();
-            refresh();
-          } catch(err) {
-            console.error('Failed to load data:', err);
-            alert('Error loading data. Please refresh the page.');
-          }
-        })();
+        // Init
+        attachSortHandlers();
+        refresh();
 
         // Expose refresh for sidebar quick search
         window._refresh = refresh;
@@ -286,55 +245,29 @@
         // Handlers
         searchBox.addEventListener('input', ()=>{ page = 1; refresh(); });
         filterStatus.addEventListener('change', ()=>{ page = 1; refresh(); });
-        filterRole.addEventListener('change', ()=>{ page = 1; refresh(); });
 
-        volForm.addEventListener('submit', async function(e){
+        volForm.addEventListener('submit', function(e){
           e.preventDefault();
-          
-          const name = volName.value.trim();
-          const email = volEmail.value.trim().toLowerCase();
-          const phone = volPhone.value.trim();
-          const role = volRole.value;
-          // Capitalize first letter of status to match database ('Active', 'Inactive', etc.)
-          const statusValue = volStatus.value || 'Active';
-          const status = statusValue.charAt(0).toUpperCase() + statusValue.slice(1).toLowerCase();
-          const notes = volNotes.value.trim();
-          
-          if(!name || !email){ alert('Name and email are required.'); return; }
+          const id = volId.value || cryptoId();
+          const v = {
+            id,
+            name: volName.value.trim(),
+            email: volEmail.value.trim().toLowerCase(),
+            phone: volPhone.value.trim(),
+            role: 'Volunteer', // Staff can only create volunteers
+            // Capitalize first letter of status to match database ('Active', 'Inactive', etc.)
+            status: (volStatus.value || 'Active').charAt(0).toUpperCase() + (volStatus.value || 'Active').slice(1).toLowerCase(),
+            joinDate: volJoin.value || todayISO(),
+            notes: volNotes.value.trim()
+          };
+          if(!v.name || !v.email){ alert('Name and email are required.'); return; }
 
-          try {
-            const volunteerId = volId.value;
-            
-            if (volunteerId) {
-              // Update existing volunteer
-              await TFA_AUTH.apiCall(`/volunteers/${volunteerId}`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                  name, email, phone, status, notes
-                })
-              });
-            } else {
-              // Create new volunteer/staff
-              await TFA_AUTH.apiCall('/volunteers', {
-                method: 'POST',
-                body: JSON.stringify({
-                  name, email, phone, status, notes
-                })
-              });
-              
-              // If creating staff, we'd need to also create a user account
-              // For now, just create the volunteer profile
-              // TODO: Add user account creation for staff role
-            }
-            
-            // Reload data from API
-            volunteers = await TFA_AUTH.apiCall('/volunteers');
-            resetForm();
-            refresh();
-            alert('✓ Saved successfully!');
-          } catch(err) {
-            alert('Error saving: ' + err.message);
-          }
+          const existingIdx = volunteers.findIndex(x => x.id === id);
+          if(existingIdx >= 0) volunteers[existingIdx] = v;
+          else volunteers.unshift(v);
+          save(STORAGE_VOLUNTEERS, volunteers);
+          resetForm();
+          refresh();
         });
 
         btnReset.addEventListener('click', function(){
@@ -359,15 +292,20 @@
                 name: r.name || '',
                 email: (r.email || '').toLowerCase(),
                 phone: r.phone || '',
-                role: r.role || 'Volunteer',
+                role: 'Volunteer', // Staff can only import volunteers
                 status: r.status || 'Active',
                 joinDate: r.joinDate || todayISO(),
                 notes: r.notes || ''
               })).filter(v => v.name && v.email);
-              // TODO: Import via API instead of localStorage
-              // For now, just show a message
-              alert('CSV import functionality needs to be updated to use the API. Please use the form to add volunteers/staff.');
+              mapped.forEach(m => {
+                const i = volunteers.findIndex(v => v.email === m.email);
+                if(i>=0) volunteers[i] = {...volunteers[i], ...m};
+                else volunteers.push(m);
+              });
+              save(STORAGE_VOLUNTEERS, volunteers);
               this.value = '';
+              refresh();
+              alert('Import complete.');
             }catch(err){
               alert('CSV import failed: ' + err.message);
             }
@@ -377,7 +315,6 @@
 
         // Functions
         function refresh(){
-          // derive matched hours by email if present in logs
           const hoursByEmail = {};
           try {
             logs.forEach(l => {
@@ -387,21 +324,21 @@
             });
           } catch(_){}
 
-          // KPIs - Only count Staff + Volunteers (exclude Admin accounts)
-          const staffAndVolunteers = volunteers.filter(v => {
+          // Staff dashboard: Only show Volunteers (exclude Staff and Admin accounts)
+          const volunteersOnly = volunteers.filter(v => {
             const role = (v.role || '').toLowerCase();
-            return role === 'staff' || role === 'volunteer';
+            return role === 'volunteer';
           });
-          
+
           // Status is capitalized in database ('Active', 'Inactive', etc.)
-          const activeCount = staffAndVolunteers.filter(v => {
+          const activeCount = volunteersOnly.filter(v => {
             const status = v.status || 'Active';
             return status === 'Active';
           }).length;
           kpiActive.textContent = activeCount;
           
           const now = new Date(), y = now.getFullYear(), m = now.getMonth();
-          const newThisMonth = staffAndVolunteers.filter(v => {
+          const newThisMonth = volunteersOnly.filter(v => {
             if (!v.joinDate) return false;
             const d = new Date(v.joinDate);
             return d.getFullYear() === y && d.getMonth() === m;
@@ -409,7 +346,7 @@
           kpiNew.textContent = newThisMonth;
           
           // Use total_hours from API if available, otherwise fall back to hoursByEmail
-          const totalHours = staffAndVolunteers.reduce((s, v) => {
+          const totalHours = volunteersOnly.reduce((s, v) => {
             // API returns total_hours field
             if (v.total_hours !== undefined && v.total_hours !== null) {
               return s + Number(v.total_hours);
@@ -419,21 +356,13 @@
           }, 0);
           kpiHours.textContent = totalHours.toFixed(2);
 
-          // filter + search
-          // Admin dashboard: Show only Staff + Volunteers (exclude Admin accounts)
-          let list = volunteers
-            .filter(v => {
-              // Exclude admin accounts - only show staff and volunteers
-              const role = (v.role || '').toLowerCase();
-              return role === 'staff' || role === 'volunteer';
-            })
-            .map(v => ({
-              ...v,
-              // Use total_hours from API if available, otherwise fall back to hoursByEmail
-              hours: (v.total_hours !== undefined && v.total_hours !== null) 
-                ? Number(v.total_hours) 
-                : (hoursByEmail[(v.email || '').toLowerCase()] || 0)
-            }));
+          let list = volunteersOnly.map(v => ({
+            ...v,
+            // Use total_hours from API if available, otherwise fall back to hoursByEmail
+            hours: (v.total_hours !== undefined && v.total_hours !== null) 
+              ? Number(v.total_hours) 
+              : (hoursByEmail[(v.email || '').toLowerCase()] || 0)
+          }));
 
           const q = searchBox.value.trim().toLowerCase();
           if(q){
@@ -447,13 +376,7 @@
             // Status comparison (both are capitalized)
             list = list.filter(v => (v.status || 'Active') === filterStatus.value);
           }
-          if(filterRole.value) {
-            // Filter by role (case-insensitive)
-            const filterRoleLower = filterRole.value.toLowerCase();
-            list = list.filter(v => (v.role || '').toLowerCase() === filterRoleLower);
-          }
 
-          // sort
           list.sort((a,b)=> {
             const A = (a[sortKey]||''); const B = (b[sortKey]||'');
             if(sortKey==='joinDate'){ return (new Date(A)-new Date(B))*(sortDir==='asc'?1:-1); }
@@ -461,23 +384,17 @@
             return String(A).localeCompare(String(B))*(sortDir==='asc'?1:-1);
           });
 
-          // paginate
           const total = list.length;
           const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
           if(page > pages) page = pages;
           const start = (page-1)*PAGE_SIZE;
           const view = list.slice(start, start + PAGE_SIZE);
 
-          // render table
-          tbody.innerHTML = view.map(v => {
-            // Format role display (capitalize first letter)
-            const roleDisplay = (v.role || 'volunteer').charAt(0).toUpperCase() + (v.role || 'volunteer').slice(1).toLowerCase();
-            return `
+          tbody.innerHTML = view.map(v => `
             <tr>
               <td>${escapeHtml(v.name)}</td>
               <td>${escapeHtml(v.email)}</td>
               <td>${escapeHtml(v.phone||'')}</td>
-              <td>${escapeHtml(roleDisplay)}</td>
               <td>${escapeHtml(v.status)}</td>
               <td>${v.joinDate ? escapeHtml(fmtDate(v.joinDate)) : ''}</td>
               <td>${(v.hours||0).toFixed(2)}</td>
@@ -486,12 +403,9 @@
                 <a href="#" class="button small" onclick="return _del('${v.id}');">Delete</a>
               </td>
             </tr>
-          `;
-          }).join('');
+          `).join('');
 
-          // render pager
           pager.innerHTML = renderPager(page, pages);
-          // activate pager clicks
           pager.querySelectorAll('a.page').forEach(a=>{
             a.addEventListener('click', (e)=>{ e.preventDefault(); page = Number(a.dataset.p); refresh(); });
           });
@@ -538,9 +452,6 @@
           volName.value = v.name || '';
           volEmail.value = v.email || '';
           volPhone.value = v.phone || '';
-          // Handle role (case-insensitive, default to volunteer)
-          const role = (v.role || 'volunteer').toLowerCase();
-          volRole.value = (role === 'staff' || role === 'volunteer') ? role : 'volunteer';
           // Status is already capitalized in database
           volStatus.value = v.status || 'Active';
           volJoin.value = v.joinDate ? iso(v.joinDate) : '';
@@ -549,30 +460,17 @@
           return false;
         }
 
-        async function _del(id){
-          if(!confirm('Delete this volunteer/staff member?')) return false;
-          
-          try {
-            await TFA_AUTH.apiCall(`/volunteers/${id}`, { method: 'DELETE' });
-            // Reload data from API
-            const volunteersData = await TFA_AUTH.apiCall('/volunteers');
-            volunteers = volunteersData.map(v => ({
-              ...v,
-              role: v.user_role || 'volunteer',
-              joinDate: v.joined_at || v.created_at || ''
-            }));
-            refresh();
-            alert('✓ Deleted successfully!');
-          } catch(err) {
-            alert('Error deleting: ' + err.message);
-          }
+        function _del(id){
+          if(!confirm('Delete this volunteer?')) return false;
+          volunteers = volunteers.filter(v=>v.id!==id);
+          save(STORAGE_VOLUNTEERS, volunteers);
+          refresh();
           return false;
         }
 
         function resetForm(){
           volId.value = '';
           volForm.reset();
-          volRole.value = 'volunteer';
           volStatus.value = 'Active';
           volJoin.value = '';
         }
@@ -582,12 +480,12 @@
         function save(k,v){ try{localStorage.setItem(k, JSON.stringify(v));}catch(_){/*noop*/} }
         function cryptoId(){ try{ return crypto.getRandomValues(new Uint32Array(2)).join('')+Date.now().toString(36);}catch(_){ return Math.random().toString(16).slice(2)+Date.now().toString(36);} }
         function todayISO(){ const d=new Date(); d.setHours(0,0,0,0); return d.toISOString().slice(0,10); }
-        function iso(d){ const dt=new Date(d); dt.setHours(0,0,0,0); return dt.toISOString().slice(0,10); }
+        function iso(d){ const dt=new Date(d); dt.setHours(0,0,0,0); return d.toISOString().slice(0,10); }
         function fmtDate(d){ return new Date(d).toLocaleDateString(); }
         function escapeHtml(s){ return String(s).replace(/[&<>"]+/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
         function toCSV(arr){
-          const cols = ['id','name','email','phone','role','status','joinDate','notes'];
+          const cols = ['id','name','email','phone','status','joinDate','notes'];
           const header = cols.join(',');
           const lines = arr.map(o => cols.map(k => csvCell(o[k])).join(','));
           return [header].concat(lines).join('\\n');
@@ -599,7 +497,6 @@
           return s;
         }
         function parseCSV(text){
-          // simple CSV parser for admin data
           const lines = text.split(/\\r?\\n/).filter(Boolean);
           if(!lines.length) return [];
           const headers = splitCSVLine(lines[0]).map(h=>h.trim());
@@ -629,19 +526,16 @@
         }
 
         function seed(){
-          // only on first run
           return [
             { id: cryptoId(), name:'Jordan Smith', email:'jordan@example.org', phone:'555-201-1000', role:'Volunteer', status:'Active', joinDate: iso(new Date()), notes:'' },
-            { id: cryptoId(), name:'Priya Patel', email:'priya@example.org', phone:'555-201-1100', role:'Volunteer', status:'Active', joinDate: iso(new Date()), notes:'Food pantry shift lead' },
-            { id: cryptoId(), name:'Morgan Lee', email:'morgan@example.org', phone:'555-201-1200', role:'Admin', status:'Active', joinDate: iso(new Date()), notes:'Campaign coordinator' },
-            { id: cryptoId(), name:'Sam Rivera', email:'sam@example.org', phone:'555-201-1300', role:'Volunteer', status:'Inactive', joinDate: iso(new Date()), notes:'' }
+            { id: cryptoId(), name:'Priya Patel', email:'priya@example.org', phone:'555-201-1100', role:'Volunteer', status:'Active', joinDate: iso(new Date()), notes:'Food pantry shift lead' }
           ];
         }
 
-        // expose for table action links
         window._edit = _edit;
         window._del = _del;
       })();
     </script>
   </body>
 </html>
+

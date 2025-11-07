@@ -136,7 +136,7 @@
             <!-- What happens next -->
             <hr class="major" />
             <h3>What happens next?</h3>
-            <p>After registration, you can log in to your <a href="volunteer_dashboard.html">Volunteer Dashboard</a> to see events and log hours. If you need help, email <a href="#">support@thefamilyadvocates.org</a>.</p>
+            <p>After registration, you can log in to your <a href="dashboard_volunteer.html">Volunteer Dashboard</a> to see events and log hours. If you need help, email <a href="#">support@thefamilyadvocates.org</a>.</p>
           </section>
 
         </div>
@@ -162,8 +162,6 @@
               <li><a href="index.html">Homepage</a></li>
               <li><a href="log_in.html">Log In</a></li>
               <li><a href="register.html" class="tfa-current">Volunteer Registration</a></li>
-              <li><a href="volunteer_dashboard.html">Volunteer Dashboard</a></li>
-              <li><a href="elements.html">Style Guide</a></li>
             </ul>
           </nav>
 
@@ -243,52 +241,54 @@
           banner.style.display = 'none';
           if(!validate()) return;
 
+          const API_KEY = 'dev-key';
+          const submitBtn = form.querySelector('button[type="submit"]');
+          const originalText = submitBtn.textContent;
+          
+          // Disable button during submission
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Creating account...';
+
           const payload = {
-            id: cryptoId(),
             name: $('name').value.trim(),
             email: $('email').value.trim().toLowerCase(),
             phone: $('phone').value.trim(),
-            password: $('password').value,          // NOTE: in real apps, never store raw pw client-side
-            skills: $('skills').value.trim(),
-            availability: $('availability').value,
-            interests: Array.from($('interests').selectedOptions).map(o => o.value),
-            optin: $('optin').checked,
-            created_at: new Date().toISOString()
+            password: $('password').value,
           };
 
-          // Try to include avatar as base64 (optional)
-          const file = $('avatar').files[0];
-          try { payload.avatar_b64 = await fileToBase64(file); } catch(_) {}
-
-          // 1) Try API first
-          let usedApi = false;
           try {
-            const res = await fetch('/api/volunteers', {
+            // Call the registration API endpoint
+            const res = await fetch('/api/auth/register', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY
+              },
               body: JSON.stringify(payload)
             });
-            if(res.ok){
-              usedApi = true;
+
+            const data = await res.json();
+
+            if(!res.ok){
+              throw new Error(data.error || 'Registration failed');
             }
-          } catch(_){ /* offline or API not present */ }
 
-          // 2) Fallback to localStorage
-          if(!usedApi){
-            const list = load(STORAGE_VOLUNTEERS) || [];
-            // upsert by email
-            const idx = list.findIndex(v => (v.email||'').toLowerCase() === payload.email);
-            if(idx >= 0) list[idx] = { ...list[idx], ...payload };
-            else list.push(payload);
-            save(STORAGE_VOLUNTEERS, list);
+            // Success!
+            $('password').value = '';
+            $('password2').value = '';
+            banner.innerHTML = '✅ Account created successfully! Redirecting to login...';
+            banner.style.display = 'block';
+
+            // Redirect to login page after success
+            setTimeout(() => {
+              window.location.href = 'log_in.html';
+            }, 2000);
+
+          } catch(err) {
+            alert('Registration error: ' + err.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
           }
-
-          // UX: success + clear sensitive field
-          $('password').value = '';
-          banner.style.display = 'block';
-
-          // Optionally redirect after a short delay:
-          // setTimeout(() => location.href = 'log_in.html', 1200);
         });
       })();
     </script>

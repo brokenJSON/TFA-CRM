@@ -23,6 +23,8 @@
               <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
               <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
               <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+              <li><span id="userEmail" style="margin-right:1em;color:#7f888f;"></span></li>
+              <li><a href="#" id="signOutBtn" class="button small" style="margin:0;">Sign Out</a></li>
             </ul>
           </header>
 
@@ -147,13 +149,11 @@
           <!-- Menu -->
           <nav id="menu">
             <header class="major">
-              <h2>Menu</h2>
+              <h2>Navigation</h2>
             </header>
             <ul>
               <li><a href="index.html">Homepage</a></li>
-              <li><a href="volunteer_dashboard.html" class="tfa-current">Volunteer Dashboard</a></li>
-              <li><a href="contacts.html">Contacts (Admin)</a></li>
-              <li><a href="elements.html">Style Guide</a></li>
+              <li><a href="dashboard_volunteer.html" class="tfa-current">My Dashboard</a></li>
             </ul>
           </nav>
 
@@ -181,23 +181,25 @@
     <script src="assets/js/breakpoints.min.js"></script>
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/auth.js"></script>
 
     <!-- Dashboard Logic -->
     <script>
+      // Require authentication
+      TFA_AUTH.requireAuth();
+    </script>
+    <script>
       (function(){
-        const STORAGE_LOGS   = 'tfa_hours';
-        const EVENTS_CSV_URL = 'assets/data/events.csv';
-
         // Utilities
         function addDays(d, n){ const dd = new Date(d); dd.setDate(dd.getDate()+n); return dd; }
         function fmtDate(d){ const dt = new Date(d); return isNaN(dt) ? '' : dt.toLocaleDateString(); }
         function iso(d){ const dt = new Date(d); dt.setHours(0,0,0,0); return dt.toISOString().slice(0,10); }
-        function cryptoRandom(){ try { return crypto.getRandomValues(new Uint32Array(1))[0].toString(16)+Date.now().toString(16); } catch(e){ return Math.random().toString(16).slice(2)+Date.now().toString(16); } }
         function escapeHtml(s){ return String(s).replace(/[&<>"]+/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
         // State
-        let events = []; // from CSV
-        let logs = load(STORAGE_LOGS) || [];
+        let events = [];
+        let logs = [];
+        let currentVolunteer = null;
 
         // Elements
         const eventsList     = document.getElementById('eventsList');
@@ -233,21 +235,33 @@
         // Boot
         (async function init(){
           try{
-            const rows = await fetchCSV(EVENTS_CSV_URL);
-            events = rows.map(r => ({
-              id: r.id || cryptoRandom(),
-              name: r.name || 'Untitled Event',
-              date: r.date ? new Date(r.date) : null,
-              location: r.location || '',
-              details: r.details || ''
+            // Get current user
+            const user = TFA_AUTH.getCurrentUser();
+            
+            // Fetch volunteer profile
+            const volunteers = await TFA_AUTH.apiCall(`/volunteers?q=${encodeURIComponent(user.email)}`);
+            if (volunteers && volunteers.length > 0) {
+              currentVolunteer = volunteers[0];
+            }
+
+            // Fetch upcoming events
+            const eventsData = await TFA_AUTH.apiCall('/events?upcoming=true&status=scheduled');
+            events = eventsData.map(e => ({
+              id: e.id,
+              name: e.name,
+              date: e.start_date ? new Date(e.start_date) : null,
+              location: e.location || '',
+              details: e.description || ''
             }));
+
+            // Fetch volunteer's hour logs
+            if (currentVolunteer) {
+              logs = await TFA_AUTH.apiCall(`/logs?volunteer_id=${currentVolunteer.id}`);
+            }
+
           } catch(e){
-            console.warn('Failed to load events.csv, falling back to sample events.', e);
-            events = [
-              { id: cryptoRandom(), name: 'Food Pantry Sorting',       date: addDays(new Date(), 3),  location:'Main Warehouse', details:'' },
-              { id: cryptoRandom(), name: 'Community Clothing Drive',  date: addDays(new Date(), 10), location:'Downtown Center', details:'' },
-              { id: cryptoRandom(), name: 'Fundraiser Phone Bank',     date: addDays(new Date(), 14), location:'Call Center', details:'' },
-            ];
+            console.error('Failed to load data from API:', e);
+            alert('Error loading data. Please refresh the page.');
           }
 
           renderEvents();
@@ -279,8 +293,14 @@
           if(!other) customEventName.value = '';
         });
 
-        hoursForm.addEventListener('submit', function(e){
+        hoursForm.addEventListener('submit', async function(e){
           e.preventDefault();
+          
+          if (!currentVolunteer) {
+            alert('Volunteer profile not found. Please log out and log in again.');
+            return;
+          }
+
           const date = logDate.value;
           const eventId = logEvent.value;
           const hours = parseFloat(logHours.value || '0');
@@ -290,40 +310,66 @@
           if(!date || total <= 0){ alert('Please select a date and enter hours.'); return; }
 
           let evName = '(Unknown)';
+          let apiEventId = null;
+          
           if(eventId === 'custom'){
             evName = (customEventName.value || '').trim();
             if(!evName){ alert('Please enter a custom event name.'); return; }
           } else {
-            const ev = events.find(e => e.id === eventId);
+            apiEventId = parseInt(eventId);
+            const ev = events.find(e => e.id == eventId);
             evName = ev ? ev.name : '(Unknown)';
           }
 
-          logs.unshift({
-            id: cryptoRandom(),
-            date,
-            eventId,
-            eventName: evName,
-            hours: +total.toFixed(2),
-            notes: (logNotes.value||'').trim()
-          });
-          persist(STORAGE_LOGS, logs);
+          try {
+            // Submit to API
+            const newLog = await TFA_AUTH.apiCall('/logs', {
+              method: 'POST',
+              body: JSON.stringify({
+                volunteer_id: currentVolunteer.id,
+                event_id: apiEventId,
+                date: date,
+                hours: +total.toFixed(2),
+                notes: (logNotes.value||'').trim(),
+                status: 'pending'
+              })
+            });
 
-          logHours.value = '';
-          logMinutes.value = '';
-          logNotes.value = '';
-          customEventName.value = '';
-          customEventWrap.style.display = 'none';
-          logEvent.value = events[0] ? events[0].id : 'custom';
+            // Add to local logs array for immediate display
+            logs.unshift({
+              ...newLog,
+              eventName: evName,
+              event_name: evName
+            });
 
-          renderLogs();
-          updateKpis();
+            // Clear form
+            logHours.value = '';
+            logMinutes.value = '';
+            logNotes.value = '';
+            customEventName.value = '';
+            customEventWrap.style.display = 'none';
+            logEvent.value = events[0] ? events[0].id : 'custom';
+
+            renderLogs();
+            updateKpis();
+            
+            alert('✓ Hours logged successfully! Status: Pending approval');
+          } catch(err) {
+            alert('Error logging hours: ' + err.message);
+          }
         });
 
-        window._tfaDel = function(id){
-          logs = logs.filter(l => l.id !== id);
-          persist(STORAGE_LOGS, logs);
-          renderLogs();
-          updateKpis();
+        window._tfaDel = async function(id){
+          if (!confirm('Delete this hours log entry?')) return false;
+          
+          try {
+            await TFA_AUTH.apiCall(`/logs/${id}`, { method: 'DELETE' });
+            logs = logs.filter(l => l.id != id);
+            renderLogs();
+            updateKpis();
+          } catch(err) {
+            alert('Error deleting log: ' + err.message);
+          }
           return false;
         };
 
@@ -362,26 +408,55 @@
             logsTableBody.innerHTML = `<tr><td colspan="5">No hours logged yet. Use the form above to add your first entry.</td></tr>`;
             return;
           }
-          logsTableBody.innerHTML = logs.map(l => `
-            <tr>
-              <td>${fmtDate(l.date)}</td>
-              <td>${escapeHtml(l.eventName)}</td>
-              <td>${Number(l.hours||0).toFixed(2)}</td>
-              <td>${escapeHtml(l.notes||'')}</td>
-              <td><a href="#" onclick="return window._tfaDel('${l.id}');" class="button small">Delete</a></td>
-            </tr>
-          `).join('');
+          logsTableBody.innerHTML = logs.map(l => {
+            const eventName = l.event_name || l.eventName || '(No event)';
+            const status = l.status || 'pending';
+            const statusBadge = status === 'approved' ? 
+              '<span style="color:green;">✓ Approved</span>' : 
+              status === 'rejected' ?
+              '<span style="color:red;">✗ Rejected</span>' :
+              '<span style="color:orange;">⏳ Pending</span>';
+            
+            return `
+              <tr>
+                <td>${fmtDate(l.date)}</td>
+                <td>${escapeHtml(eventName)}<br><small>${statusBadge}</small></td>
+                <td>${Number(l.hours||0).toFixed(2)}</td>
+                <td>${escapeHtml(l.notes||'')}</td>
+                <td><a href="#" onclick="return window._tfaDel('${l.id}');" class="button small">Delete</a></td>
+              </tr>
+            `;
+          }).join('');
         }
 
         function updateKpis(){
-          const total = logs.reduce((s,l)=> s + (Number(l.hours)||0), 0);
+          // Only count approved hours
+          const approvedLogs = logs.filter(l => {
+            const status = (l.status || '').toLowerCase();
+            return status === 'approved';
+          });
+          const total = approvedLogs.reduce((s,l)=> s + (Number(l.hours)||0), 0);
           kpiTotal.textContent = total.toFixed(2);
+          
           const now = new Date();
           const y = now.getFullYear(), m = now.getMonth();
-          const monthTotal = logs
-            .filter(l => { const d=new Date(l.date); return d.getFullYear()===y && d.getMonth()===m; })
+          const monthTotal = approvedLogs
+            .filter(l => { 
+              if (!l.date) return false;
+              const d = new Date(l.date);
+              return d.getFullYear() === y && d.getMonth() === m;
+            })
             .reduce((s,l)=> s + (Number(l.hours)||0), 0);
           kpiMonth.textContent = monthTotal.toFixed(2);
+          
+          // Count upcoming events (events with date in the future)
+          const nowTime = now.getTime();
+          const upcomingCount = events.filter(e => {
+            if (!e.date) return false;
+            const eventTime = new Date(e.date).getTime();
+            return eventTime >= nowTime;
+          }).length;
+          kpiEvents.textContent = upcomingCount;
         }
 
         // CSV loader (quoted-field safe)

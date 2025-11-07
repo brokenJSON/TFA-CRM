@@ -144,12 +144,14 @@
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <!-- Simple front-end login handler (replace with real auth later) -->
+    <!-- Real authentication with backend API -->
     <script>
       (function(){
         const form = document.getElementById('loginForm');
         const message = document.getElementById('loginMessage');
         const forgot = document.getElementById('forgotLink');
+        const API_KEY = 'dev-key'; // Should match your server's API key
+        const API_BASE = '/api';
 
         function showMessage(text, ok){
           message.textContent = text;
@@ -165,7 +167,7 @@
         }
 
         if(form){
-          form.addEventListener('submit', function(e){
+          form.addEventListener('submit', async function(e){
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
@@ -176,22 +178,64 @@
               return;
             }
 
-            // demo auth: accept any non-empty credentials
-            try{
-              const user = { email, ts: new Date().toISOString() };
-              localStorage.setItem('tfa_current_user', JSON.stringify(user));
-              if(remember){ localStorage.setItem('tfa_remember_me', '1'); }
-              else { localStorage.removeItem('tfa_remember_me'); }
+            // Disable submit button during login
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
 
-              showMessage('Signed in. Redirecting…', true);
-              // redirect to dashboard based on RBAC
-              if (email.toLowerCase().endsWith('@tfaadmin.org')) {
-				window.location.href = 'dashboard_admin.html';
-				} else {
-				window.location.href = 'dashboard_volunteer.html';
-				}
+            try {
+              // Call the real authentication API
+              const response = await fetch(`${API_BASE}/auth/login`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-api-key': API_KEY
+                },
+                body: JSON.stringify({ email, password })
+              });
+
+              const data = await response.json();
+
+              if (!response.ok) {
+                throw new Error(data.error || 'Login failed');
+              }
+
+              // Store user info in localStorage
+              const user = {
+                id: data.user.id,
+                email: data.user.email,
+                role: data.user.role,
+                is_active: data.user.is_active,
+                loginTime: new Date().toISOString()
+              };
+
+              localStorage.setItem('tfa_current_user', JSON.stringify(user));
+              localStorage.setItem('tfa_api_key', API_KEY);
+              
+              if(remember){ 
+                localStorage.setItem('tfa_remember_me', '1'); 
+              } else { 
+                localStorage.removeItem('tfa_remember_me'); 
+              }
+
+              showMessage('✓ Signed in successfully! Redirecting...', true);
+
+              // Redirect based on user role
+              setTimeout(() => {
+                if (data.user.role === 'admin') {
+                  window.location.href = 'dashboard_admin.html';
+                } else if (data.user.role === 'staff') {
+                  window.location.href = 'dashboard_staff.html';
+                } else {
+                  window.location.href = 'dashboard_volunteer.html';
+                }
+              }, 1000);
+
             } catch(err){
-              showMessage('Sign-in failed in this browser. Please try again.', false);
+              showMessage('✗ ' + err.message, false);
+              submitBtn.disabled = false;
+              submitBtn.textContent = originalText;
             }
           });
         }

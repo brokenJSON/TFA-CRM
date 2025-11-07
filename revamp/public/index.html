@@ -25,6 +25,13 @@
 										<li><a href="#" class="icon brands fa-snapchat-ghost"><span class="label">Snapchat</span></a></li>
 										<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
 										<li><a href="#" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
+										<!-- Auth section (dynamically shown) -->
+										<li id="headerAuthSection" style="display:none;">
+											<span id="userEmail" style="margin-right:1em;color:#7f888f;"></span>
+										</li>
+										<li id="headerSignOutBtn" style="display:none;">
+											<a href="#" id="signOutBtn" class="button small" style="margin:0;">Sign Out</a>
+										</li>
 									</ul>
 								</header>
 
@@ -159,34 +166,26 @@
 									<header class="major">
 										<h2>Menu</h2>
 									</header>
-									<ul>
+									<ul id="mainMenu">
 										<li><a href="index.html">Homepage</a></li>
-										<li><a href="log_in.html">Log In</a></li>
-										<!--
-										<li>
-											<span class="opener">Submenu</span>
-											<ul>
-												<li><a href="#">Lorem Dolor</a></li>
-												<li><a href="#">Ipsum Adipiscing</a></li>
-												<li><a href="#">Tempus Magna</a></li>
-												<li><a href="#">Feugiat Veroeros</a></li>
-											</ul>
-										</li>
-										<li><a href="#">Etiam Dolore</a></li>
-										<li><a href="#">Adipiscing</a></li>
-										<li>
-											<span class="opener">Another Submenu</span>
-											<ul>
-												<li><a href="#">Lorem Dolor</a></li>
-												<li><a href="#">Ipsum Adipiscing</a></li>
-												<li><a href="#">Tempus Magna</a></li>
-												<li><a href="#">Feugiat Veroeros</a></li>
-											</ul>
-										</li>
-										<li><a href="#">Maximus Erat</a></li>
-										<li><a href="#">Sapien Mauris</a></li>
-										<li><a href="#">Amet Lacinia</a></li>
-										-->	
+										<!-- Public menu items -->
+										<li class="menu-public"><a href="log_in.html">Log In</a></li>
+										<li class="menu-public"><a href="register.html">Register</a></li>
+										
+										<!-- Volunteer menu items (hidden by default) -->
+										<li class="menu-volunteer" style="display:none;"><a href="dashboard_volunteer.html">My Dashboard</a></li>
+										
+										<!-- Staff menu items (hidden by default) - Order: Homepage, Staff Dashboard, Events, Reports, Campaigns -->
+										<li class="menu-staff" style="display:none;"><a href="dashboard_staff.html">Staff Dashboard</a></li>
+										<li class="menu-staff" style="display:none;"><a href="events.html">Events</a></li>
+										<li class="menu-staff" style="display:none;"><a href="reports.html">Reports</a></li>
+										<li class="menu-staff" style="display:none;"><a href="campaigns.html">Campaigns</a></li>
+										
+										<!-- Admin-only menu items (hidden by default) - Order: Homepage, Admin Dashboard, Events, Reports, Campaigns -->
+										<li class="menu-admin-only" style="display:none;"><a href="dashboard_admin.html">Admin Dashboard</a></li>
+										<li class="menu-admin-only" style="display:none;"><a href="events.html">Events</a></li>
+										<li class="menu-admin-only" style="display:none;"><a href="reports.html">Reports</a></li>
+										<li class="menu-admin-only" style="display:none;"><a href="campaigns.html">Campaigns</a></li>
 									</ul>
 								</nav>
 
@@ -244,6 +243,45 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script src="assets/js/auth.js"></script>
+
+			<!-- Dynamic menu based on authentication -->
+			<script>
+				(function(){
+					const user = TFA_AUTH.getCurrentUser();
+					
+					if (user) {
+						// User is logged in - show user info and sign out button
+						document.getElementById('headerAuthSection').style.display = '';
+						document.getElementById('headerSignOutBtn').style.display = '';
+						
+						// Hide public menu items
+						document.querySelectorAll('.menu-public').forEach(el => el.style.display = 'none');
+						
+						// Show appropriate menu items based on role
+						if (user.role === 'admin') {
+							// Admin: Show only admin dashboard and admin menu items
+							document.querySelectorAll('.menu-admin-only').forEach(el => el.style.display = '');
+							// Hide staff items (admin has their own dashboard)
+							document.querySelectorAll('.menu-staff').forEach(el => el.style.display = 'none');
+						} else if (user.role === 'staff') {
+							// Staff: Show only staff dashboard and staff menu items
+							document.querySelectorAll('.menu-staff').forEach(el => el.style.display = '');
+							// Hide admin items
+							document.querySelectorAll('.menu-admin-only').forEach(el => el.style.display = 'none');
+						} else {
+							// Volunteer: Show volunteer menu items
+							document.querySelectorAll('.menu-volunteer').forEach(el => el.style.display = '');
+							// Hide admin and staff items
+							document.querySelectorAll('.menu-staff').forEach(el => el.style.display = 'none');
+							document.querySelectorAll('.menu-admin-only').forEach(el => el.style.display = 'none');
+						}
+					} else {
+						// User is not logged in - show public menu only
+						document.querySelectorAll('.menu-public').forEach(el => el.style.display = '');
+					}
+				})();
+			</script>
 
 	</body>
 </html>
