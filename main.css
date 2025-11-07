@@ -193,3 +193,124 @@
     text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 3px;
     text-underline-offset: 4px;
   }
+
+  /* ======= Landing-only helpers ======= */
+  .hidden { display: none !important; }
+
+  /* Hide any CRM blocks if they exist on this page */
+  #contactsCard,
+  #contactForm { display: none !important; }
+
+  /* Top callout CTA styles (optional) */
+  .cta-row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .cta-row .btn-ghost { background:transparent; color:var(--primary); border:1px solid var(--primary) }
+
+  /* ======= Modal (Admin Login) ======= */
+  dialog#adminDialog {
+    border: 0;
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    width: min(560px, 92vw);
+  }
+  dialog::backdrop { background: rgba(0,0,0,.35); }
+  .modal-card { padding: 18px; border-radius: 16px; background: var(--card); }
+  .modal-card h3 { margin: .25rem 0 .5rem; }
+  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:10px; }
+
+  /* Small utility for muted helper text */
+  .muted { color: var(--muted); }
+/* Apply form styles to all inputs EXCEPT checkboxes and radios */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  width:100%;
+  appearance:none;
+  border:1px solid var(--border);
+  background:var(--tfa-white);
+  color:var(--text);
+  padding:10px 12px;
+  border-radius:10px;
+  outline:none;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+
+/* Focus styling for the same group */
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 25%, transparent);
+}
+
+.alert:empty { display: none !important; }
+
+/* Normal small checkboxes */
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  cursor: pointer;
+  accent-color: var(--primary); /* fills box with deep green when checked */
+  appearance: auto;
+  border: none;
+  box-shadow: none;
+}
+
+/* --- Volunteer Hours Calendar --- */
+.calendar {
+  margin-top: 10px;
+}
+.calendar .cal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.calendar .cal-head .btn {
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid var(--tfa-light);
+  border-radius: 10px;
+  overflow: hidden; /* keeps rounded corners on table */
+}
+.calendar th, .calendar td {
+  width: calc(100% / 7);
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #eee;
+  vertical-align: top;
+}
+.calendar th {
+  background: #fafafa;
+  font-weight: 700;
+}
+.calendar td.is-today {
+  outline: 2px solid var(--tfa-gold);
+  outline-offset: -2px;
+}
+.calendar .day-num {
+  display: inline-block;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.calendar .hours {
+  display: inline-block;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tfa-gold) 18%, white);
+  border: 1px solid var(--tfa-gold);
+  color: #5b4500;
+}
+.calendar .note {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 6px;
+}

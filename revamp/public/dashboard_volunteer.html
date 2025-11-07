@@ -1,0 +1,433 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>TFA – Volunteer Dashboard</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/theme-tfa.css" />
+  </head>
+  <body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+      <!-- Main -->
+      <div id="main">
+        <div class="inner">
+
+          <!-- Header -->
+          <header id="header">
+            <a href="index.html" class="logo"><strong>Volunteer Dashboard</strong></a>
+            <ul class="icons">
+              <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+              <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+              <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+            </ul>
+          </header>
+
+          <!-- Content -->
+          <section>
+            <header class="main">
+              <h1>Welcome back!</h1>
+              <p>Track your hours, see upcoming events, and stay connected with The Family Advocates.</p>
+            </header>
+
+            <!-- KPI Cards -->
+            <div class="row gtr-50 gtr-uniform">
+              <div class="col-4 col-12-small">
+                <div class="box" style="border-left: 6px solid var(--tfa-primary);">
+                  <h3 style="margin-bottom:.25em;">Hours this month</h3>
+                  <div id="kpi-month" style="font-size:2rem;font-weight:700;color:var(--tfa-primary);">0</div>
+                </div>
+              </div>
+              <div class="col-4 col-12-small">
+                <div class="box" style="border-left: 6px solid var(--tfa-secondary);">
+                  <h3 style="margin-bottom:.25em;">Total hours</h3>
+                  <div id="kpi-total" style="font-size:2rem;font-weight:700;color:var(--tfa-secondary);">0</div>
+                </div>
+              </div>
+              <div class="col-4 col-12-small">
+                <div class="box" style="border-left: 6px solid #3d4449;">
+                  <h3 style="margin-bottom:.25em;">Upcoming events</h3>
+                  <div id="kpi-events" style="font-size:2rem;font-weight:700;color:#3d4449;">0</div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="major" />
+
+            <div class="row gtr-200">
+              <!-- Upcoming Events -->
+              <div class="col-6 col-12-medium">
+                <h2 class="tfa-accent-underline">Upcoming Events</h2>
+                <p>Sign up with the organizer, then log your hours below after you volunteer.</p>
+                <div id="eventsList" class="mini-posts"></div>
+
+                <div class="box alt" style="margin-top:1.5em;">
+                  <h3>Add a personal event</h3>
+                  <div class="row gtr-uniform">
+                    <div class="col-6 col-12-xsmall">
+                      <input type="text" id="newEventName" placeholder="Event name (e.g., Clothing Drive)" />
+                    </div>
+                    <div class="col-6 col-12-xsmall">
+                      <input type="date" id="newEventDate" />
+                    </div>
+                    <div class="col-12">
+                      <button id="addEventBtn" class="button">Add Event</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Log Hours -->
+              <div class="col-6 col-12-medium">
+                <h2 class="tfa-accent-underline">Log Volunteer Hours</h2>
+                <form id="hoursForm" class="box">
+                  <div class="row gtr-uniform">
+                    <div class="col-12">
+                      <label for="logDate">Date</label>
+                      <input type="date" id="logDate" required />
+                    </div>
+                    <div class="col-12">
+                      <label for="logEvent">Event</label>
+                      <select id="logEvent" required></select>
+                    </div>
+                    <div class="col-6 col-12-xsmall">
+                      <label for="logHours">Hours</label>
+                      <input type="number" step="0.25" min="0.25" id="logHours" placeholder="e.g., 2.5" required />
+                    </div>
+                    <div class="col-6 col-12-xsmall">
+                      <label for="logMinutes">Minutes (optional)</label>
+                      <input type="number" min="0" max="59" id="logMinutes" placeholder="0–59" />
+                    </div>
+                    <div class="col-12">
+                      <label for="logNotes">Notes (optional)</label>
+                      <textarea id="logNotes" rows="3" placeholder="What did you work on?"></textarea>
+                    </div>
+                    <div class="col-12">
+                      <button type="submit" class="button primary">Save Hours</button>
+                    </div>
+                  </div>
+                </form>
+
+                <div class="table-wrapper">
+                  <table id="logsTable" class="alt">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Event</th>
+                        <th>Hours</th>
+                        <th>Notes</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div id="sidebar">
+        <div class="inner">
+
+          <!-- Search -->
+          <section id="search" class="alt">
+            <form method="post" action="#">
+              <input type="text" name="query" id="query" placeholder="Search" />
+            </form>
+          </section>
+
+          <!-- Menu -->
+          <nav id="menu">
+            <header class="major">
+              <h2>Menu</h2>
+            </header>
+            <ul>
+              <li><a href="index.html">Homepage</a></li>
+              <li><a href="volunteer_dashboard.html" class="tfa-current">Volunteer Dashboard</a></li>
+              <li><a href="contacts.html">Contacts (Admin)</a></li>
+              <li><a href="elements.html">Style Guide</a></li>
+            </ul>
+          </nav>
+
+          <!-- Help -->
+          <section>
+            <header class="major">
+              <h2>Need Help?</h2>
+            </header>
+            <p>Email <a href="#">support@thefamilyadvocates.org</a> if you have trouble logging hours.</p>
+          </section>
+
+          <!-- Footer -->
+          <footer id="footer">
+            <p class="copyright">&copy; The Family Advocates. All rights reserved.</p>
+          </footer>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <!-- Dashboard Logic -->
+    <script>
+      (function(){
+        const STORAGE_LOGS   = 'tfa_hours';
+        const EVENTS_CSV_URL = 'assets/data/events.csv';
+
+        // Utilities
+        function addDays(d, n){ const dd = new Date(d); dd.setDate(dd.getDate()+n); return dd; }
+        function fmtDate(d){ const dt = new Date(d); return isNaN(dt) ? '' : dt.toLocaleDateString(); }
+        function iso(d){ const dt = new Date(d); dt.setHours(0,0,0,0); return dt.toISOString().slice(0,10); }
+        function cryptoRandom(){ try { return crypto.getRandomValues(new Uint32Array(1))[0].toString(16)+Date.now().toString(16); } catch(e){ return Math.random().toString(16).slice(2)+Date.now().toString(16); } }
+        function escapeHtml(s){ return String(s).replace(/[&<>"]+/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+        // State
+        let events = []; // from CSV
+        let logs = load(STORAGE_LOGS) || [];
+
+        // Elements
+        const eventsList     = document.getElementById('eventsList');
+        const addEventBtn    = document.getElementById('addEventBtn');
+        const newEventName   = document.getElementById('newEventName');
+        const newEventDate   = document.getElementById('newEventDate');
+        const logEvent       = document.getElementById('logEvent');
+        const logDate        = document.getElementById('logDate');
+        const logHours       = document.getElementById('logHours');
+        const logMinutes     = document.getElementById('logMinutes');
+        const logNotes       = document.getElementById('logNotes');
+        const hoursForm      = document.getElementById('hoursForm');
+        const logsTableBody  = document.querySelector('#logsTable tbody');
+        const kpiTotal       = document.getElementById('kpi-total');
+        const kpiMonth       = document.getElementById('kpi-month');
+        const kpiEvents      = document.getElementById('kpi-events');
+
+        // Add a simple custom-event input that appears when "Other" is chosen
+        (function injectCustomEventField(){
+          const wrap = document.createElement('div');
+          wrap.className = 'col-12';
+          wrap.id = 'customEventWrap';
+          wrap.style.display = 'none';
+          wrap.innerHTML = `
+            <label for="customEventName">Custom event name</label>
+            <input type="text" id="customEventName" placeholder="Describe the event (e.g., Assisted at shelter)" />
+          `;
+          hoursForm.querySelector('.row').insertBefore(wrap, hoursForm.querySelector('.row').children[4]); // before Hours fields
+        })();
+        const customEventWrap = document.getElementById('customEventWrap');
+        const customEventName = document.getElementById('customEventName');
+
+        // Boot
+        (async function init(){
+          try{
+            const rows = await fetchCSV(EVENTS_CSV_URL);
+            events = rows.map(r => ({
+              id: r.id || cryptoRandom(),
+              name: r.name || 'Untitled Event',
+              date: r.date ? new Date(r.date) : null,
+              location: r.location || '',
+              details: r.details || ''
+            }));
+          } catch(e){
+            console.warn('Failed to load events.csv, falling back to sample events.', e);
+            events = [
+              { id: cryptoRandom(), name: 'Food Pantry Sorting',       date: addDays(new Date(), 3),  location:'Main Warehouse', details:'' },
+              { id: cryptoRandom(), name: 'Community Clothing Drive',  date: addDays(new Date(), 10), location:'Downtown Center', details:'' },
+              { id: cryptoRandom(), name: 'Fundraiser Phone Bank',     date: addDays(new Date(), 14), location:'Call Center', details:'' },
+            ];
+          }
+
+          renderEvents();
+          renderEventSelect();
+          renderLogs();
+          updateKpis();
+          logDate.value = iso(new Date());
+        })();
+
+        // Handlers
+        if (addEventBtn){
+          addEventBtn.addEventListener('click', function(){
+            const name = newEventName.value.trim();
+            const date = newEventDate.value;
+            if(!name || !date){ alert('Please enter an event name and date.'); return; }
+            // Personal (local-only) event: create ad-hoc entry in memory so it shows up immediately
+            const ev = { id: cryptoRandom(), name, date: new Date(date), location:'(Personal)', details:'' };
+            events.push(ev);
+            newEventName.value = ''; newEventDate.value = '';
+            renderEvents();
+            renderEventSelect();
+            updateKpis();
+          });
+        }
+
+        logEvent.addEventListener('change', () => {
+          const other = (logEvent.value === 'custom');
+          customEventWrap.style.display = other ? '' : 'none';
+          if(!other) customEventName.value = '';
+        });
+
+        hoursForm.addEventListener('submit', function(e){
+          e.preventDefault();
+          const date = logDate.value;
+          const eventId = logEvent.value;
+          const hours = parseFloat(logHours.value || '0');
+          const minutes = parseInt(logMinutes.value || '0', 10);
+          const total = (isFinite(hours)?hours:0) + (isFinite(minutes)?minutes:0)/60;
+
+          if(!date || total <= 0){ alert('Please select a date and enter hours.'); return; }
+
+          let evName = '(Unknown)';
+          if(eventId === 'custom'){
+            evName = (customEventName.value || '').trim();
+            if(!evName){ alert('Please enter a custom event name.'); return; }
+          } else {
+            const ev = events.find(e => e.id === eventId);
+            evName = ev ? ev.name : '(Unknown)';
+          }
+
+          logs.unshift({
+            id: cryptoRandom(),
+            date,
+            eventId,
+            eventName: evName,
+            hours: +total.toFixed(2),
+            notes: (logNotes.value||'').trim()
+          });
+          persist(STORAGE_LOGS, logs);
+
+          logHours.value = '';
+          logMinutes.value = '';
+          logNotes.value = '';
+          customEventName.value = '';
+          customEventWrap.style.display = 'none';
+          logEvent.value = events[0] ? events[0].id : 'custom';
+
+          renderLogs();
+          updateKpis();
+        });
+
+        window._tfaDel = function(id){
+          logs = logs.filter(l => l.id !== id);
+          persist(STORAGE_LOGS, logs);
+          renderLogs();
+          updateKpis();
+          return false;
+        };
+
+        // Renderers
+        function renderEvents(){
+          const upcoming = [...events].sort((a,b)=> (a.date||0)-(b.date||0));
+          eventsList.innerHTML = upcoming.map(ev => `
+            <article>
+              <div class="row gtr-25">
+                <div class="col-9 col-12-small">
+                  <h3 style="margin:0;">${escapeHtml(ev.name)}</h3>
+                  <p style="margin:.25em 0 0 0;">
+                    ${ev.date ? fmtDate(ev.date) : ''}${ev.location ? ' • ' + escapeHtml(ev.location) : ''}
+                  </p>
+                  ${ev.details ? `<p style="margin:.25em 0 0 0;color:#666;">${escapeHtml(ev.details)}</p>` : ''}
+                </div>
+                <div class="col-3 col-12-small align-right">
+                  <a class="button" href="#" onclick="return false;">Details</a>
+                </div>
+              </div>
+            </article>
+          `).join('');
+          kpiEvents.textContent = upcoming.length;
+        }
+
+        function renderEventSelect(){
+          const options = events
+            .slice().sort((a,b)=> (a.date||0)-(b.date||0))
+            .map(e => `<option value="${e.id}">${escapeHtml(e.name)}${e.date?(' – '+fmtDate(e.date)):''}</option>`)
+            .join('');
+          logEvent.innerHTML = options + `<option value="custom">Other (not listed)</option>`;
+        }
+
+        function renderLogs(){
+          if(!logs.length){
+            logsTableBody.innerHTML = `<tr><td colspan="5">No hours logged yet. Use the form above to add your first entry.</td></tr>`;
+            return;
+          }
+          logsTableBody.innerHTML = logs.map(l => `
+            <tr>
+              <td>${fmtDate(l.date)}</td>
+              <td>${escapeHtml(l.eventName)}</td>
+              <td>${Number(l.hours||0).toFixed(2)}</td>
+              <td>${escapeHtml(l.notes||'')}</td>
+              <td><a href="#" onclick="return window._tfaDel('${l.id}');" class="button small">Delete</a></td>
+            </tr>
+          `).join('');
+        }
+
+        function updateKpis(){
+          const total = logs.reduce((s,l)=> s + (Number(l.hours)||0), 0);
+          kpiTotal.textContent = total.toFixed(2);
+          const now = new Date();
+          const y = now.getFullYear(), m = now.getMonth();
+          const monthTotal = logs
+            .filter(l => { const d=new Date(l.date); return d.getFullYear()===y && d.getMonth()===m; })
+            .reduce((s,l)=> s + (Number(l.hours)||0), 0);
+          kpiMonth.textContent = monthTotal.toFixed(2);
+        }
+
+        // CSV loader (quoted-field safe)
+        async function fetchCSV(url){
+          const res = await fetch(url, { cache: 'no-store' });
+          if(!res.ok) throw new Error('Failed to fetch: ' + url);
+          const text = await res.text();
+          return parseCSV(text);
+        }
+        function parseCSV(text){
+          const rows = [];
+          let i = 0, field = '', fields = [], inQuotes = false;
+          const pushField = () => { fields.push(field); field=''; };
+          const pushRow   = () => { if (fields.length) rows.push(fields); fields = []; };
+          while (i < text.length){
+            const c = text[i];
+            if (inQuotes){
+              if (c === '"'){
+                if (text[i+1] === '"'){ field+='"'; i+=2; continue; }
+                inQuotes = false; i++; continue;
+              }
+              field += c; i++; continue;
+            }
+            if (c === '"'){ inQuotes = true; i++; continue; }
+            if (c === ','){ pushField(); i++; continue; }
+            if (c === '\r'){ i++; continue; }
+            if (c === '\n'){ pushField(); pushRow(); i++; continue; }
+            field += c; i++;
+          }
+          if (field.length || fields.length){ pushField(); pushRow(); }
+          if (!rows.length) return [];
+          const headers = rows[0].map(h => String(h||'').trim());
+          return rows.slice(1)
+            .filter(r => r.some(x => String(x||'').trim().length))
+            .map(r => {
+              const obj = {};
+              headers.forEach((h,idx) => obj[h] = (r[idx]!==undefined ? String(r[idx]) : '').trim());
+              return obj;
+            });
+        }
+
+        // Persistence
+        function load(key){ try{ return JSON.parse(localStorage.getItem(key)); }catch(_){ return null; } }
+        function persist(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(_){ /* ignore */ } }
+      })();
+    </script>
+
+  </body>
+</html>

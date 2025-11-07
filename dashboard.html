@@ -23,6 +23,9 @@
           <a href="contacts.html">Contacts</a>
           <a href="volunteer-hours.html">Volunteer Hours</a>
           <a href="#" id="aboutLink">About</a>
+          <a href="volunteer-hours.html" id="navVolHours">Volunteer Hours</a>
+          <!-- hidden until clicked to show the email-flow-->
+          <a href="#email-flow">Email Mgmt</a>
         </div>
         <div>
           <button class="logout" onclick="logout()">Log Out</button>
@@ -111,6 +114,16 @@
         </div>
         <div id="tableWrap"></div>
       </section>
+
+<!-- ADD: Recent Volunteer Hours -->
+<section class="card" id="recentVolHours">
+  <h2>Recent Volunteer Hours</h2>
+  <div id="recentVolHoursWrap" class="empty">No hours yet.</div>
+  <div style="margin-top:8px">
+    <a class="btn secondary" href="volunteer-hours.html">Open Volunteer Hours</a>
+  </div>
+</section>
+
 
       <!-- RIGHT: Tasks -->
       <aside class="card">
@@ -427,11 +440,69 @@
       renderTasks();
     })();
 
-    // About link (simple modal/alert for demo)
-    document.getElementById("aboutLink").addEventListener("click", e=>{
-      e.preventDefault();
-      alert("The Family Advocates CRM Demo\nBrand: Deep Green #063F1E, Heritage Gold #D89F01\nThis dashboard is a static mock—wire to your backend for production.");
-    });
-  </script>
+/* === Volunteer Hours (dashboard card) === */
+const LS_VOL = { volunteers: "tfa_volunteers_v1", hours: "tfa_volunteer_hours_v1" };
+
+function readVolunteerHours(){
+  try { return JSON.parse(localStorage.getItem(LS_VOL.hours)) || []; }
+  catch { return []; }
+}
+
+function readVolunteers(){
+  try { return JSON.parse(localStorage.getItem(LS_VOL.volunteers)) || []; }
+  catch { return []; }
+}
+
+function renderRecentVolHours(){
+  const wrap = document.getElementById("recentVolHoursWrap");
+  if(!wrap){ return; }
+  const hours = readVolunteerHours()
+    .slice()
+    .sort((a,b)=> (b.submittedAt||0) - (a.submittedAt||0))
+    .slice(0,8);
+
+  if(hours.length === 0){
+    wrap.className = "empty";
+    wrap.textContent = "No hours yet.";
+    return;
+  }
+
+  const rows = hours.map(h=>{
+    const d = new Date(h.entry_date);
+    const date = isNaN(d) ? (h.entry_date||"") : d.toLocaleDateString();
+    const name = h.name || h.email || "Unknown";
+    const hrs  = parseFloat(h.hours||0).toFixed(1);
+    const notes = (h.notes||"");
+    return `
+      <tr>
+        <td>${name}</td>
+        <td>${h.email||""}</td>
+        <td>${date}</td>
+        <td><span class="tag">${hrs} hrs</span></td>
+        <td>${notes ? `<span class="muted">${notes}</span>` : ""}</td>
+      </tr>
+    `;
+  }).join("");
+
+  wrap.className = "";
+  wrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th style="width:22%">Name</th>
+          <th style="width:24%">Email</th>
+          <th style="width:14%">Date</th>
+          <th style="width:12%">Hours</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+document.addEventListener("DOMContentLoaded", renderRecentVolHours);
+
+</script>
 </body>
 </html>

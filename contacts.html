@@ -85,7 +85,18 @@
         <button class="btn ghost" id="exportBtn" title="Export JSON">Export</button>
         <button class="btn danger" id="clearBtn" title="Delete ALL contacts">Clear All</button>
       </div>
-      <div id="tableWrap"></div>
+      
+<!-- ADD: Volunteer Hours panel (shown when role=Volunteer) -->
+<section class="card" id="volHoursPanel" style="display:none">
+  <h2>Volunteer Hours</h2>
+  <div id="volHoursSummary" class="muted">No hours logged for this volunteer.</div>
+  <div id="volHoursTableWrap"></div>
+  <div style="margin-top:8px">
+    <a class="btn btn-ghost" href="volunteer-hours.html">Manage Volunteer Hours</a>
+  </div>
+</section>
+
+<div id="tableWrap"></div>
     </section>
   </main>
 
@@ -305,15 +316,79 @@
     // expose for buttons
     window.startEdit = startEdit;
     window.remove = remove;
+  
 
-  // About link
-  const aboutLink = document.getElementById("aboutLink");
-  if(aboutLink){
-    aboutLink.addEventListener("click", e=>{
-      e.preventDefault();
-      alert("The Family Advocates CRM Demo\nContacts manager (localStorage)\nFor production, connect to a backend per the Database Schema page.");
-    });
+/* === Volunteer Hours (admin-side view) === */
+const LS_VOL = { volunteers: "tfa_volunteers_v1", hours: "tfa_volunteer_hours_v1" };
+function readVolunteerHours(){
+  try { return JSON.parse(localStorage.getItem(LS_VOL.hours)) || []; }
+  catch { return []; }
+
+try {
+  const itemForHours = readContacts().find(x=>x.id===id);
+  if(itemForHours && itemForHours.role === "Volunteer" && itemForHours.email){
+    renderVolunteerHoursFor(itemForHours.email);
+  } else {
+    renderVolunteerHoursFor("");
   }
-  </script>
+} catch(e){ renderVolunteerHoursFor(""); }
+
+}
+function renderVolunteerHoursFor(email){
+  const panel = document.getElementById("volHoursPanel");
+  const wrap  = document.getElementById("volHoursTableWrap");
+  const sum   = document.getElementById("volHoursSummary");
+  if(!panel){ return; }
+  if(!email){
+    panel.style.display="none"; if(wrap) wrap.innerHTML=""; if(sum) sum.textContent=""; return;
+  }
+  const rows = readVolunteerHours().filter(h => (h.email||"").toLowerCase() === email.toLowerCase());
+  if(rows.length === 0){
+    panel.style.display = "block";
+    if(wrap) wrap.innerHTML = "";
+    if(sum) sum.textContent = "No hours logged for this volunteer.";
+    return;
+  }
+  const total = rows.reduce((n,r)=> n + (parseFloat(r.hours)||0), 0).toFixed(1);
+  if(sum) sum.innerHTML = `Total recorded: <b>${total} hrs</b>`;
+  const html = `
+    <table>
+      <thead>
+        <tr>
+          <th style="width:18%">Date</th>
+          <th style="width:12%">Hours</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.sort((a,b)=> new Date(b.entry_date)-new Date(a.entry_date)).map(r=>{
+          const d = new Date(r.entry_date);
+          const date = isNaN(d) ? (r.entry_date||"") : d.toLocaleDateString();
+          return `
+            <tr>
+              <td>${date}</td>
+              <td><span class="tag">${parseFloat(r.hours||0).toFixed(1)}</span></td>
+              <td>${escapeHtml(r.notes||"")}</td>
+            </tr>
+          `;
+        }).join("")}
+      </tbody>
+    </table>
+  `;
+  panel.style.display = "block";
+  if(wrap) wrap.innerHTML = html;
+}
+
+
+
+function _volHoursBadge(email, role){
+  if(role !== "Volunteer" || !email) return "";
+  const total = readVolunteerHours()
+    .filter(h => (h.email||"").toLowerCase() === String(email).toLowerCase())
+    .reduce((n,r)=> n + (parseFloat(r.hours)||0), 0);
+  return `<span class="tag">Hrs: ${total.toFixed(1)}</span>`;
+}
+
+</script>
 </body>
 </html>
