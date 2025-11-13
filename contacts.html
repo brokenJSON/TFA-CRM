@@ -4,169 +4,7 @@
   <meta charset="utf-8" />
   <title>TFA CRM – Contacts</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: #f5f5f5;  /* light gray */
-      color: #222;
-      font: 16px/1.4 Arial, Helvetica, sans-serif;
-    }
-
-    a { color: #063F1E; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    /* branding */
-    .brand-bar {
-      background: #063F1E;          /* deep green */
-      color: #fff;
-      border-bottom: 4px solid #D89F01; /* gold accent */
-    }
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .logo {
-      width: 46px; height: 46px; border-radius: 10px;
-      background: #D89F01;       /* gold behind transparent PNGs */
-      display: inline-flex; align-items: center; justify-content: center;
-      color: #063F1E; font-weight: bold;
-    }
-
-    /* top navigation */
-    .nav {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 8px;
-    }
-    .nav a, .nav button {
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid #063F1E;
-      background: #fff;
-      color: #063F1E;
-      cursor: pointer;
-    }
-    .nav .logout {
-      border-color: #8b1a1a;
-      color: #8b1a1a;
-    }
-
-    /* page shell */
-    .shell {
-      max-width: 1100px;
-      margin: 18px auto 40px;
-      padding: 0 16px;
-      display: block;
-    }
-
-    /* card */
-    .card {
-      background: #fff;
-      border: 1px solid #e3e3e3;
-      border-radius: 10px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-      padding: 16px;
-      margin-bottom: 18px;
-    }
-    h2 {
-      margin: 0 0 10px;
-      border-bottom: 1px solid #eaeaea;
-      padding-bottom: 8px;
-    }
-
-    /* form */
-    label {
-      display: block;
-      font-weight: bold;
-      margin: .6rem 0 .25rem;
-    }
-    input, textarea, select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #cccccc;
-      border-radius: 8px;
-      background: #fff;
-      outline: none;
-    }
-    input:focus, textarea:focus, select:focus {
-      border-color: #D89F01;                  /* gold focus */
-      box-shadow: 0 0 0 3px rgba(216,159,1,0.25);
-    }
-
-    .row { display: flex; gap: 10px; }
-    .row > * { flex: 1; }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-
-    .btn {
-      border: 0;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 7px 18px rgba(6,63,30,0.18);
-      background: #063F1E; color: #fff;
-    }
-    .btn.primary { background: #063F1E; color: #fff; }
-    .btn.ghost { background: #fff; color: #063F1E; border: 1px solid #063F1E; box-shadow: none; }
-    .btn.danger { background: #8b1a1a; color: #fff; }
-
-    .muted { color: #777; }
-
-    /* Table */
-    table {
-      width: 100%;
-      border-collapse: collapse;  /* simpler */
-      background: #fff;
-    }
-    th, td {
-      padding: 10px 12px;
-      border: 1px solid #eee;
-      vertical-align: top;
-      text-align: left;
-    }
-    th { background: #fafafa; }
-
-    /* tag / pill */
-    .tag {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      background: #fff6da;        /* pale gold */
-      border: 1px solid #D89F01;
-      color: #5b4500;
-      margin-right: 6px;
-    }
-
-    /* empty state */
-    .empty {
-      padding: 16px;
-      border: 1px dashed #cccccc;
-      border-radius: 10px;
-      text-align: center;
-      background: #fff;
-      color: #777;
-    }
-
-    #editFlag { display: none; }
-  </style>
+  <link rel="stylesheet" href="contacts.css" />
 </head>
 <body>
   <header class="brand-bar">
@@ -178,10 +16,12 @@
           <small>Contacts</small>
         </div>
       </div>
-      <div class="nav">
+      <div id="topNav" class="nav" style="display:none">
         <div>
           <a href="dashboard.html">Dashboard</a>
           <a href="contacts.html">Contacts</a>
+          <a href="volunteer-hours.html">Volunteer Hours</a>
+          <a href="#" id="aboutLink">About</a>
         </div>
         <div>
           <button class="logout" onclick="logout()">Log Out</button>
@@ -265,7 +105,11 @@
     const LS = { session:"tfa_session", contacts:"tfa_contacts_v1" };
     if(!localStorage.getItem(LS.session)){
       alert("Please log in first.");
-      window.location.href = "tfa-crm.html";
+      window.location.href = "main.html";
+    } else {
+      // Show navigation tabs after login
+      const topNav = document.getElementById("topNav");
+      if(topNav) topNav.style.display = "flex";
     }
 
     // ==== Helpers ====
@@ -273,7 +117,10 @@
     const uid = () => Math.random().toString(36).slice(2,9);
     const esc = s => String(s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 
-    function logout(){ localStorage.removeItem(LS.session); window.location.href = "tfa-crm.html"; }
+    function logout(){ localStorage.removeItem(LS.session); window.location.href = "main.html"; }
+    
+    // Make logout function global
+    window.logout = logout;
 
     function readContacts(){ try{return JSON.parse(localStorage.getItem(LS.contacts))||[]}catch{return[]} }
     function writeContacts(arr){ localStorage.setItem(LS.contacts, JSON.stringify(arr)); render(); }

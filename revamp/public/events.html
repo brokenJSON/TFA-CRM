@@ -1,0 +1,525 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>TFA – Events Manager</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/theme-tfa.css" />
+    <style>
+      .nowrap { white-space: nowrap; }
+      .muted { color:#666; font-size:.9em; }
+      .chip { display:inline-block; padding:.15em .5em; border-radius:999px; background:#eef1f3; margin:.1em .25em 0 0; }
+      .status {
+        display:inline-block; padding:.2em .6em; border-radius:999px; font-weight:600;
+      }
+      .status.scheduled { background:#e6f6ee; color:#0b7a40; }
+      .status.completed { background:#eef2ff; color:#3a41b1; }
+      .status.cancelled { background:#ffeeee; color:#b13a3a; }
+      .csv-controls { display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; }
+      .csv-controls input[type="file"] { max-width:260px; }
+      .box .hint { margin-top:.5rem; }
+      .table-wrapper table td, .table-wrapper table th { vertical-align: top; }
+    </style>
+  </head>
+  <body class="is-preload">
+    <div id="wrapper">
+      <div id="main">
+        <div class="inner">
+          <header id="header">
+            <a href="index.html" class="logo"><strong>Events Manager</strong></a>
+            <ul class="icons">
+              <li><span id="userEmail" style="margin-right:1em;color:#7f888f;"></span></li>
+              <li><a href="#" id="signOutBtn" class="button small" style="margin:0;">Sign Out</a></li>
+            </ul>
+          </header>
+
+          <section>
+            <header class="main"><h1>Manage Events</h1></header>
+
+            <!-- Add/Edit form -->
+            <div class="box">
+              <form id="eventForm">
+                <input type="hidden" id="evId" />
+                <div class="row gtr-uniform">
+                  <div class="col-6 col-12-small">
+                    <label for="evName">Event name</label>
+                    <input type="text" id="evName" placeholder="e.g., Winter Clothing Drive" required />
+                  </div>
+                  <div class="col-3 col-12-small">
+                    <label for="evDate">Date</label>
+                    <input type="date" id="evDate" required />
+                  </div>
+                  <div class="col-1 col-6-xsmall">
+                    <label for="evStart">Start</label>
+                    <input type="time" id="evStart" />
+                  </div>
+                  <div class="col-1 col-6-xsmall">
+                    <label for="evEnd">End</label>
+                    <input type="time" id="evEnd" />
+                  </div>
+                  <div class="col-1 col-12-xsmall">
+                    <label for="evCap">Cap</label>
+                    <input type="number" id="evCap" min="0" placeholder="0" />
+                  </div>
+
+                  <div class="col-6 col-12-small">
+                    <label for="evLocation">Location</label>
+                    <input type="text" id="evLocation" placeholder="123 Main St, Phoenix AZ" />
+                  </div>
+                  <div class="col-6 col-12-small">
+                    <label for="evSignup">Signup link</label>
+                    <input type="url" id="evSignup" placeholder="https://…" />
+                  </div>
+
+                  <div class="col-6 col-12-small">
+                    <label for="evTags">Tags (comma-separated)</label>
+                    <input type="text" id="evTags" placeholder="pantry, outreach, families" />
+                  </div>
+                  <div class="col-6 col-12-small">
+                    <label for="evStatus">Status</label>
+                    <select id="evStatus">
+                      <option value="scheduled" selected>Scheduled</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12">
+                    <label for="evNotes">Notes</label>
+                    <textarea id="evNotes" rows="3" placeholder="Organizer, setup needs, reminders…"></textarea>
+                  </div>
+
+                  <div class="col-12">
+                    <ul class="actions">
+                      <li><button class="button primary" type="submit">Save Event</button></li>
+                      <li><button class="button" type="button" id="evReset">Reset</button></li>
+                    </ul>
+                  </div>
+                </div>
+              </form>
+              <p class="hint muted">Tip: Use <b>Export CSV</b> to save your list, and commit to <code>assets/data/events.csv</code> so other pages (e.g., Volunteer Dashboard) can read it.</p>
+            </div>
+
+            <!-- CSV controls -->
+            <div class="box">
+              <h3 style="margin-bottom:.75rem;">CSV Sync</h3>
+              <div class="csv-controls">
+                <button id="btnExport" class="button">Export CSV</button>
+                <label class="muted">Import CSV:
+                  <input type="file" id="fileCsv" accept=".csv,text/csv" />
+                </label>
+                <span class="muted">Auto-loads from <code>assets/data/events.csv</code> on first visit (if present).</span>
+              </div>
+            </div>
+
+            <!-- Search / filters -->
+            <div class="box">
+              <div class="row gtr-uniform">
+                <div class="col-3 col-12-small">
+                  <label for="fTxt">Search</label>
+                  <input type="text" id="fTxt" placeholder="Name, location, tag…" />
+                </div>
+                <div class="col-3 col-12-small">
+                  <label for="fStatus">Status</label>
+                  <select id="fStatus">
+                    <option value="">All</option>
+                    <option value="scheduled">Scheduled</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div class="col-3 col-12-small">
+                  <label for="fFrom">From</label>
+                  <input type="date" id="fFrom" />
+                </div>
+                <div class="col-3 col-12-small">
+                  <label for="fTo">To</label>
+                  <input type="date" id="fTo" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Events table -->
+            <div class="table-wrapper">
+              <table class="alt" id="evTable">
+                <thead>
+                  <tr>
+                    <th class="nowrap">Date/Time</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Tags</th>
+                    <th>Status</th>
+                    <th class="nowrap">Cap</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+          </section>
+        </div>
+      </div>
+
+      <div id="sidebar">
+        <div class="inner">
+          <nav id="menu">
+            <header class="major"><h2>Navigation</h2></header>
+            <ul id="eventsMenu">
+              <!-- Menu items will be populated based on user role -->
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/auth.js"></script>
+    
+    <!-- Dynamic menu based on user role -->
+    <script>
+      (function(){
+        const user = TFA_AUTH.getCurrentUser();
+        const menu = document.getElementById('eventsMenu');
+        
+        if (!user) {
+          menu.innerHTML = '<li><a href="index.html">Homepage</a></li><li><a href="log_in.html">Log In</a></li>';
+          return;
+        }
+        
+        let menuItems = [];
+        
+        if (user.role === 'admin') {
+          menuItems = [
+            '<li><a href="index.html">Homepage</a></li>',
+            '<li><a href="dashboard_admin.html">Admin Dashboard</a></li>',
+            '<li><a href="events.html" class="tfa-current">Events</a></li>',
+            '<li><a href="reports.html">Reports</a></li>',
+            '<li><a href="campaigns.html">Campaigns</a></li>'
+          ];
+        } else if (user.role === 'staff') {
+          menuItems = [
+            '<li><a href="index.html">Homepage</a></li>',
+            '<li><a href="dashboard_staff.html">Staff Dashboard</a></li>',
+            '<li><a href="events.html" class="tfa-current">Events</a></li>',
+            '<li><a href="reports.html">Reports</a></li>',
+            '<li><a href="campaigns.html">Campaigns</a></li>'
+          ];
+        } else {
+          menuItems = [
+            '<li><a href="index.html">Homepage</a></li>',
+            '<li><a href="dashboard_volunteer.html">My Dashboard</a></li>'
+          ];
+        }
+        
+        menu.innerHTML = menuItems.join('');
+      })();
+    </script>
+
+    <script>
+      // Require admin authentication
+      TFA_AUTH.requireAdmin();
+    </script>
+
+    <script>
+      (function(){
+        const STORAGE_EVENTS = 'tfa_events';
+        const CSV_URL = 'assets/data/events.csv';
+
+        // State
+        let events = load(STORAGE_EVENTS) || [];
+        let bootTriedFetch = false;
+
+        // Els
+        const form = document.getElementById('eventForm');
+        const evId = document.getElementById('evId');
+        const evName = document.getElementById('evName');
+        const evDate = document.getElementById('evDate');
+        const evStart = document.getElementById('evStart');
+        const evEnd = document.getElementById('evEnd');
+        const evLocation = document.getElementById('evLocation');
+        const evCap = document.getElementById('evCap');
+        const evTags = document.getElementById('evTags');
+        const evStatus = document.getElementById('evStatus');
+        const evNotes = document.getElementById('evNotes');
+        const evReset = document.getElementById('evReset');
+
+        const fTxt = document.getElementById('fTxt');
+        const fStatus = document.getElementById('fStatus');
+        const fFrom = document.getElementById('fFrom');
+        const fTo = document.getElementById('fTo');
+
+        const tblBody = document.querySelector('#evTable tbody');
+        const btnExport = document.getElementById('btnExport');
+        const fileCsv = document.getElementById('fileCsv');
+
+        // Boot
+        render(); // render localStorage if present
+        // First load attempt from CSV (only if nothing in localStorage)
+        if (!events.length) {
+          tryFetchCsv();
+        }
+
+        // Listeners
+        form.addEventListener('submit', onSubmit);
+        evReset.addEventListener('click', resetForm);
+        [fTxt, fStatus, fFrom, fTo].forEach(el => el.addEventListener('input', render));
+        btnExport.addEventListener('click', exportCsv);
+        fileCsv.addEventListener('change', importCsv);
+
+        // Actions
+        function onSubmit(e){
+          e.preventDefault();
+          const id = evId.value || uid();
+          const rec = {
+            id,
+            name: evName.value.trim(),
+            date: evDate.value,
+            start: evStart.value || '',
+            end: evEnd.value || '',
+            location: evLocation.value.trim(),
+            capacity: Number(evCap.value || 0),
+            tags: evTags.value.trim(),
+            status: evStatus.value,
+            signup: (document.getElementById('evSignup') || {value:''}).value || '',
+            notes: evNotes.value.trim()
+          };
+          if(!rec.name || !rec.date){ alert('Please provide at least name and date.'); return; }
+
+          const idx = events.findIndex(x => x.id === id);
+          if (idx >= 0) events[idx] = rec; else events.unshift(rec);
+          save(STORAGE_EVENTS, events);
+          resetForm();
+          render();
+        }
+
+        function resetForm(){
+          evId.value = '';
+          form.reset();
+          evStatus.value = 'scheduled';
+        }
+
+        function render(){
+          // Filtering
+          const q = (fTxt.value || '').toLowerCase().trim();
+          const st = fStatus.value;
+          const from = fFrom.value ? new Date(fFrom.value) : null;
+          const to = fTo.value ? new Date(fTo.value) : null;
+
+          const rows = events
+            .filter(e => {
+              if (st && e.status !== st) return false;
+              if (from && new Date(e.date) < from) return false;
+              if (to && new Date(e.date) > to) return false;
+              if (q) {
+                const hay = [e.name, e.location, e.tags, e.notes].join(' ').toLowerCase();
+                if (!hay.includes(q)) return false;
+              }
+              return true;
+            })
+            .sort((a,b) => new Date(a.date) - new Date(b.date)); // soonest first
+
+          tblBody.innerHTML = rows.map(r => `
+            <tr>
+              <td class="nowrap">
+                <div>${escapeHtml(fmtDate(r.date))}</div>
+                <div class="muted">${escapeHtml(fmtTimeRange(r.start, r.end))}</div>
+              </td>
+              <td>
+                <strong>${escapeHtml(r.name)}</strong>
+                ${r.signup ? `<div class="muted"><a href="${escapeAttr(r.signup)}" target="_blank" rel="noopener">Signup</a></div>` : ''}
+                ${r.notes ? `<div class="muted">${escapeHtml(r.notes)}</div>` : ''}
+              </td>
+              <td>${escapeHtml(r.location||'')}</td>
+              <td>${renderTags(r.tags)}</td>
+              <td>${renderStatus(r.status)}</td>
+              <td class="nowrap">${Number(r.capacity||0)}</td>
+              <td class="nowrap">
+                <a href="#" class="button small" onclick="return _eedit('${r.id}')">Edit</a>
+                <a href="#" class="button small" onclick="return _edel('${r.id}')">Delete</a>
+                <a href="#" class="button small" onclick="return _edup('${r.id}')">Duplicate</a>
+              </td>
+            </tr>
+          `).join('') || '<tr><td colspan="7">No events found.</td></tr>';
+        }
+
+        // CSV
+        async function tryFetchCsv(){
+          if (bootTriedFetch) return;
+          bootTriedFetch = true;
+          try {
+            const res = await fetch(CSV_URL, { cache: 'no-store' });
+            if (!res.ok) return; // file might not exist yet
+            const text = await res.text();
+            const arr = parseCsv(text);
+            if (Array.isArray(arr) && arr.length) {
+              events = arr.map(normalizeCsvRow);
+              save(STORAGE_EVENTS, events);
+              render();
+            }
+          } catch (e) {
+            console.warn('CSV fetch failed:', e);
+          }
+        }
+
+        function exportCsv(){
+          const header = ['id','name','date','start','end','location','capacity','tags','status','signup','notes'].join(',') + '\n';
+          const body = events.map(e => [
+            e.id, e.name, e.date, e.start, e.end, e.location,
+            Number(e.capacity||0), e.tags, e.status, e.signup||'', e.notes||''
+          ].map(csvCell).join(',')).join('\n');
+          download('events.csv', header+body, 'text/csv');
+        }
+
+        function importCsv(e){
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const arr = parseCsv(String(reader.result||''));
+              events = arr.map(normalizeCsvRow);
+              save(STORAGE_EVENTS, events);
+              render();
+              alert('CSV imported. Don’t forget to replace assets/data/events.csv in your repo if you want others to load the same list.');
+            } catch (err){
+              alert('Failed to parse CSV. Check console.');
+              console.error(err);
+            }
+          };
+          reader.readAsText(file);
+        }
+
+        function normalizeCsvRow(o){
+          return {
+            id: o.id || uid(),
+            name: o.name || '',
+            date: o.date || '',
+            start: o.start || '',
+            end: o.end || '',
+            location: o.location || '',
+            capacity: Number(o.capacity || 0),
+            tags: o.tags || '',
+            status: (o.status||'scheduled').toLowerCase(),
+            signup: o.signup || '',
+            notes: o.notes || ''
+          };
+        }
+
+        // Helpers
+        function _eedit(id){
+          const r = events.find(x => x.id === id);
+          if (!r) return false;
+          evId.value = r.id;
+          evName.value = r.name || '';
+          evDate.value = r.date || '';
+          evStart.value = r.start || '';
+          evEnd.value = r.end || '';
+          evLocation.value = r.location || '';
+          evCap.value = Number(r.capacity||0);
+          evTags.value = r.tags || '';
+          evStatus.value = r.status || 'scheduled';
+          evNotes.value = r.notes || '';
+          window.scrollTo({ top: form.offsetTop - 80, behavior: 'smooth' });
+          return false;
+        }
+
+        function _edel(id){
+          if (!confirm('Delete this event?')) return false;
+          events = events.filter(x => x.id !== id);
+          save(STORAGE_EVENTS, events);
+          render();
+          return false;
+        }
+
+        function _edup(id){
+          const r = events.find(x => x.id === id);
+          if (!r) return false;
+          const copy = { ...r, id: uid(), name: r.name + ' (Copy)' };
+          events.unshift(copy);
+          save(STORAGE_EVENTS, events);
+          render();
+          return false;
+        }
+
+        // expose for onclick
+        window._eedit = _eedit;
+        window._edel = _edel;
+        window._edup = _edup;
+
+        // Utils
+        function renderStatus(s){
+          const cls = s==='completed' ? 'completed' : s==='cancelled' ? 'cancelled' : 'scheduled';
+          return `<span class="status ${cls}">${escapeHtml(capitalize(s||'scheduled'))}</span>`;
+        }
+        function renderTags(s){
+          const tags = String(s||'').split(',').map(t=>t.trim()).filter(Boolean);
+          if (!tags.length) return '';
+          return tags.map(t => `<span class="chip">${escapeHtml(t)}</span>`).join('');
+        }
+        function fmtDate(d){ const dt = new Date(d); return isNaN(dt) ? '' : dt.toLocaleDateString(); }
+        function fmtTimeRange(a,b){
+          const fa = a ? toLocalTime(a) : '';
+          const fb = b ? toLocalTime(b) : '';
+          if (fa && fb) return `${fa}–${fb}`;
+          return fa || fb || '';
+        }
+        function toLocalTime(t){ // "HH:MM" -> localized
+          const [H,M] = String(t).split(':').map(Number);
+          if (isNaN(H)) return '';
+          const d = new Date(); d.setHours(H||0, M||0, 0, 0);
+          return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        }
+        function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+        function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+        function capitalize(s){ return String(s||'').charAt(0).toUpperCase() + String(s||'').slice(1); }
+        function csvCell(v){ const s = String(v==null?'':v).replace(/"/g,'""'); return /[",\n]/.test(s) ? '"'+s+'"' : s; }
+        function download(filename, text, type){
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(new Blob([text], {type}));
+          a.download = filename; a.click();
+          setTimeout(()=>URL.revokeObjectURL(a.href), 500);
+        }
+        function parseCsv(text){
+          const rows = [];
+          let i=0, field='', fields=[], inQ=false;
+          const pushF = ()=>{ fields.push(field); field=''; };
+          const pushR = ()=>{ if(fields.length) rows.push(fields); fields=[]; };
+          while (i<text.length){
+            const c=text[i];
+            if(inQ){
+              if(c==='"'){
+                if(text[i+1]==='"'){ field+='"'; i+=2; continue; }
+                inQ=false; i++; continue;
+              }
+              field+=c; i++; continue;
+            }
+            if(c==='"'){ inQ=true; i++; continue; }
+            if(c===','){ pushF(); i++; continue; }
+            if(c==='\r'){ i++; continue; }
+            if(c==='\n'){ pushF(); pushR(); i++; continue; }
+            field+=c; i++;
+          }
+          if(field.length || fields.length){ pushF(); pushR(); }
+          if(!rows.length) return [];
+          const headers = rows[0].map(h=>String(h||'').trim());
+          return rows.slice(1)
+            .filter(r => r.some(x => String(x||'').trim().length))
+            .map(r => {
+              const o={}; headers.forEach((h,idx)=> o[h] = (r[idx]!==undefined ? String(r[idx]) : '').trim());
+              return o;
+            });
+        }
+        function uid(){ try{ return crypto.getRandomValues(new Uint32Array(2)).join('') + Date.now().toString(36); }catch(_){ return Math.random().toString(36).slice(2)+Date.now().toString(36);} }
+        function load(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(_){ return null; } }
+        function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(_){ /*noop*/ } }
+      })();
+    </script>
+  </body>
+</html>

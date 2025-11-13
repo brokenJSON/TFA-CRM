@@ -1,0 +1,31 @@
+date,email,event,hours,notes
+2025-10-02,alex.lee@example.org,Food Pantry Sorting,2.5,Boxed dry goods
+2025-10-05,maria.garcia@example.org,Clothing Drive Intake,3.0,Sorted winter coats
+2025-10-06,sam.patel@example.org,Fundraiser Phone Bank,1.5,Left 12 voicemails
+2025-10-07,nina.jones@example.org,Shelter Meal Prep,2.0,Chopped veggies
+2025-10-08,david.kim@example.org,Tutoring Night,2.0,Math tutoring grade 6
+2025-10-09,olivia.wilson@example.org,Clothing Drive Intake,2.0,Children sizes
+2025-10-10,li.wei@example.org,Food Pantry Sorting,1.75,Re-stock shelves
+2025-10-11,tyrone.brown@example.org,Community Outreach Booth,3.0,Handed flyers
+2025-10-12,emma.thompson@example.org,Fundraiser Phone Bank,2.0,Confirmed 5 pledges
+2025-10-13,jacob.nguyen@example.org,Shelter Meal Prep,2.5,Prepared sides
+2025-10-14,sofia.martinez@example.org,Tutoring Night,1.5,Reading help
+2025-10-15,noah.james@example.org,Clothing Drive Intake,1.0,Men’s jackets
+2025-10-16,mia.hernandez@example.org,Food Pantry Sorting,2.25,Expiration checks
+2025-10-17,ethan.park@example.org,Warehouse Organization,2.0,Re-labeled bins
+2025-10-18,ava.davis@example.org,Fundraiser Phone Bank,2.0,Follow-up calls
+2025-10-20,alex.lee@example.org,Tutoring Night,1.5,Essay review
+2025-10-21,maria.garcia@example.org,Shelter Meal Prep,2.25,Dessert station
+2025-10-22,sam.patel@example.org,Community Outreach Booth,2.0,Volunteer signups
+2025-10-24,nina.jones@example.org,Clothing Drive Intake,1.5,Sort & fold
+2025-10-25,david.kim@example.org,Food Pantry Sorting,2.0,Canned goods
+2025-10-27,olivia.wilson@example.org,Tutoring Night,1.5,Science homework
+2025-10-28,li.wei@example.org,Warehouse Organization,1.25,Scan SKUs
+2025-10-29,tyrone.brown@example.org,Fundraiser Phone Bank,1.75,10 contacts
+2025-11-01,emma.thompson@example.org,Community Outreach Booth,2.5,Park event
+2025-11-02,jacob.nguyen@example.org,Shelter Meal Prep,2.0,Grill station
+2025-11-03,sofia.martinez@example.org,Tutoring Night,2.0,Algebra practice
+2025-11-04,noah.james@example.org,Food Pantry Sorting,1.25,Stock rotation
+2025-11-05,mia.hernandez@example.org,Clothing Drive Intake,2.0,Kids section
+2025-11-05,ethan.park@example.org,Fundraiser Phone Bank,1.5,RSVP confirmations
+2025-11-05,ava.davis@example.org,Warehouse Organization,2.0,Move pallets

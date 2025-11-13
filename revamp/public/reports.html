@@ -1,0 +1,550 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>TFA – Reports</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/theme-tfa.css" />
+  </head>
+  <body class="is-preload">
+    <div id="wrapper">
+      <div id="main">
+        <div class="inner">
+          <header id="header">
+            <a href="index.html" class="logo"><strong>Reports</strong></a>
+            <ul class="icons">
+              <li><span id="userEmail" style="margin-right:1em;color:#7f888f;"></span></li>
+              <li><a href="#" id="signOutBtn" class="button small" style="margin:0;">Sign Out</a></li>
+            </ul>
+          </header>
+
+          <section>
+            <header class="main"><h1>Reporting</h1></header>
+
+            <div class="box">
+              <div class="row gtr-25">
+                <div class="col-3 col-12-small">
+                  <label for="rStart">Start date</label>
+                  <input type="date" id="rStart" />
+                </div>
+                <div class="col-3 col-12-small">
+                  <label for="rEnd">End date</label>
+                  <input type="date" id="rEnd" />
+                </div>
+                <div class="col-3 col-12-small">
+                  <label for="rGroup">Group by</label>
+                  <select id="rGroup">
+                    <option value="volunteer">Volunteer</option>
+                    <option value="event">Event (if available)</option>
+                    <option value="month">Month</option>
+                  </select>
+                </div>
+                <div class="col-3 col-12-small">
+                  <label for="rView">View</label>
+                  <select id="rView">
+                    <option value="summary">Summary</option>
+                    <option value="detail" selected>Detail</option>
+                  </select>
+                </div>
+
+                <div class="col-4 col-12-small">
+                  <label for="rVolunteer">Filter by volunteer (name or email)</label>
+                  <input type="text" id="rVolunteer" placeholder="e.g., alex or alex@example.org" />
+                </div>
+                <div class="col-4 col-12-small">
+                  <label for="rEventTxt">Filter by event text</label>
+                  <input type="text" id="rEventTxt" placeholder="e.g., Pantry, Clothing Drive" />
+                </div>
+                <div class="col-4 col-12-small">
+                  <label>&nbsp;</label>
+                  <div>
+                    <label><input type="checkbox" id="includeNotes" /> Include notes in detail</label>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <ul class="actions">
+                    <li><a href="#" class="button primary" id="runReport">Run Report</a></li>
+                    <li><a href="#" class="button" id="exportReport">Export CSV</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table id="reportTable" class="alt">
+                <thead><tr id="reportHead"></tr></thead>
+                <tbody id="reportBody"></tbody>
+              </table>
+            </div>
+
+            <hr class="major" />
+
+            <h2 class="tfa-accent-underline">Visualizations</h2>
+              <div class="row gtr-200">
+                <div class="col-6 col-12-medium">
+                  <div class="box chart-box">
+                    <h3>Hours Over Time</h3>
+                    <canvas id="chartTime"></canvas>
+                  </div>
+                </div>
+                <div class="col-6 col-12-medium">
+                  <div class="box chart-box">
+                    <h3>Hours by Volunteer</h3>
+                    <canvas id="chartVolunteer"></canvas>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="box chart-box">
+                    <h3>Hours by Event</h3>
+                    <canvas id="chartEvent"></canvas>
+                  </div>
+                </div>
+            </div>
+
+          </section>
+        </div>
+      </div>
+
+      <div id="sidebar">
+        <div class="inner">
+          <nav id="menu">
+            <header class="major"><h2>Navigation</h2></header>
+            <ul id="reportsMenu">
+              <!-- Menu items will be populated based on user role -->
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- Dynamic menu based on user role -->
+    <script>
+      (function(){
+        const user = TFA_AUTH.getCurrentUser();
+        const menu = document.getElementById('reportsMenu');
+        
+        if (!user) {
+          menu.innerHTML = '<li><a href="index.html">Homepage</a></li><li><a href="log_in.html">Log In</a></li>';
+          return;
+        }
+        
+        let menuItems = [];
+        
+        if (user.role === 'admin') {
+          menuItems = [
+            '<li><a href="index.html">Homepage</a></li>',
+            '<li><a href="dashboard_admin.html">Admin Dashboard</a></li>',
+            '<li><a href="events.html">Events</a></li>',
+            '<li><a href="reports.html" class="tfa-current">Reports</a></li>',
+            '<li><a href="campaigns.html">Campaigns</a></li>'
+          ];
+        } else if (user.role === 'staff') {
+          menuItems = [
+            '<li><a href="index.html">Homepage</a></li>',
+            '<li><a href="dashboard_staff.html">Staff Dashboard</a></li>',
+            '<li><a href="events.html">Events</a></li>',
+            '<li><a href="reports.html" class="tfa-current">Reports</a></li>',
+            '<li><a href="campaigns.html">Campaigns</a></li>'
+          ];
+        } else {
+          menuItems = [
+            '<li><a href="index.html">Homepage</a></li>',
+            '<li><a href="dashboard_volunteer.html">My Dashboard</a></li>'
+          ];
+        }
+        
+        menu.innerHTML = menuItems.join('');
+      })();
+    </script>
+
+<script>
+  // Require admin authentication
+  TFA_AUTH.requireAdmin();
+</script>
+
+<script>
+  (function(){
+    const VOL_CSV_URL = 'assets/data/volunteers.csv';
+    const HRS_CSV_URL = 'assets/data/hours.csv';
+
+    let volunteers = [];
+    let logs = [];
+    const nameByEmail = {};
+    let chartTime = null;
+    let chartVolunteer = null;
+    let chartEvent = null;
+
+
+    const rStart = document.getElementById('rStart');
+    const rEnd = document.getElementById('rEnd');
+    const rGroup = document.getElementById('rGroup');
+    const rView = document.getElementById('rView');
+    const rVolunteer = document.getElementById('rVolunteer');
+    const rEventTxt = document.getElementById('rEventTxt');
+    const includeNotes = document.getElementById('includeNotes');
+
+    const runBtn = document.getElementById('runReport');
+    const exportBtn = document.getElementById('exportReport');
+    const thead = document.getElementById('reportHead');
+    const tbody = document.getElementById('reportBody');
+
+    runBtn.addEventListener('click', function(e){ e.preventDefault(); run(); });
+    exportBtn.addEventListener('click', function(e){ e.preventDefault(); exportCSV(); });
+
+    // ---- Boot ----
+    (async function boot(){
+      try {
+        volunteers = await fetchCSV(VOL_CSV_URL);
+        logs = await fetchCSV(HRS_CSV_URL);
+
+        // normalize volunteers
+        volunteers.forEach(v => {
+          const email = String(v.email||'').trim();
+          const name = String(v.name||email).trim();
+          if (email) nameByEmail[email.toLowerCase()] = name;
+        });
+
+        // normalize logs (ensure numeric hours)
+        logs = logs.map(l => ({
+          date: l.date,
+          volunteerEmail: (l.email||'').trim(),
+          eventName: l.event || 'Unassigned',
+          hours: Number(l.hours||0),
+          notes: l.notes || ''
+        }));
+
+        // auto-run once
+        run();
+      } catch (err){
+        console.error(err);
+        alert('Failed to load CSV data. Check console and file paths.');
+      }
+    })();
+
+    // ---- Actions ----
+    function run(){
+      const start = rStart.value ? new Date(rStart.value) : null;
+      const end = rEnd.value ? new Date(rEnd.value) : null;
+      const view = rView.value;
+      const groupBy = rGroup.value;
+      const vq = rVolunteer.value.trim().toLowerCase();
+      const eq = rEventTxt.value.trim().toLowerCase();
+
+      // filter
+      let filtered = logs.filter(l => {
+        const d = new Date(l.date);
+        if (isNaN(d)) return false;
+        if (start && d < start) return false;
+        if (end && d > end) return false;
+
+        if (vq) {
+          const em = (l.volunteerEmail||'').toLowerCase();
+          const nm = (nameByEmail[em] || '').toLowerCase();
+          if (!(em.includes(vq) || nm.includes(vq))) return false;
+        }
+        if (eq) {
+          const ev = (l.eventName||'').toLowerCase();
+          if (!ev.includes(eq)) return false;
+        }
+        return true;
+      });
+
+      if (view === 'detail') {
+        renderDetail(filtered);
+      } else {
+        renderSummary(filtered, groupBy);
+      }
+      updateCharts(filtered);
+    }
+
+    function renderDetail(rows){
+      rows.sort((a,b) => {
+        const ad = new Date(a.date), bd = new Date(b.date);
+        if (bd - ad !== 0) return bd - ad;
+        const an = (nameByEmail[(a.volunteerEmail||'').toLowerCase()] || a.volunteerEmail || '').toLowerCase();
+        const bn = (nameByEmail[(b.volunteerEmail||'').toLowerCase()] || b.volunteerEmail || '').toLowerCase();
+        return an.localeCompare(bn);
+      });
+
+      const include = includeNotes.checked;
+      thead.innerHTML = include
+        ? '<th>Date</th><th>Volunteer</th><th>Email</th><th>Event</th><th>Hours</th><th>Notes</th>'
+        : '<th>Date</th><th>Volunteer</th><th>Email</th><th>Event</th><th>Hours</th>';
+
+      const body = rows.map(l => {
+        const em = (l.volunteerEmail||'');
+        const nm = nameByEmail[em.toLowerCase()] || em || 'Unknown';
+        const cols = [
+          escapeHtml(fmtDate(l.date)),
+          escapeHtml(nm),
+          escapeHtml(em),
+          escapeHtml(l.eventName || 'Unassigned'),
+          (Number(l.hours)||0).toFixed(2)
+        ];
+        if (include) cols.push(escapeHtml(l.notes||''));
+        return '<tr>' + cols.map(c => `<td>${c}</td>`).join('') + '</tr>';
+      }).join('') || `<tr><td colspan="${include?6:5}">No data for selected filters.</td></tr>`;
+
+      tbody.innerHTML = body;
+
+      // export cache
+      window._currentReportView = 'detail';
+      window._currentReport = rows.map(l => ({
+        date: iso(l.date),
+        volunteer: nameByEmail[(l.volunteerEmail||'').toLowerCase()] || (l.volunteerEmail||''),
+        email: (l.volunteerEmail||''),
+        event: (l.eventName||'Unassigned'),
+        hours: Number(l.hours||0),
+        notes: (l.notes||'')
+      }));
+    }
+
+    function updateCharts(filtered){
+      // Build datasets based on currently filtered rows
+      const seriesOverTime = rollupByDay(filtered);        // [{date:'YYYY-MM-DD', hours:Number}]
+      const byVolunteer = rollupByKey(filtered, r => labelForVolunteer(r.volunteerEmail)); // {label: totalHours}
+      const byEvent = rollupByKey(filtered, r => r.eventName || 'Unassigned');
+
+      drawTimeChart(seriesOverTime);
+      drawVolunteerChart(byVolunteer);
+      drawEventChart(byEvent);
+    }
+
+    function labelForVolunteer(email){
+      return nameByEmail[(email||'').toLowerCase()] || (email||'Unknown');
+    }
+
+    function rollupByDay(rows){
+      const map = new Map();
+      rows.forEach(r => {
+        const key = iso(r.date); // YYYY-MM-DD
+        const current = map.get(key) || 0;
+        map.set(key, current + (Number(r.hours)||0));
+      });
+      // sort by date asc
+      return Array.from(map.entries())
+        .sort((a,b)=> new Date(a[0]) - new Date(b[0]))
+        .map(([date, hours]) => ({date, hours}));
+    }
+
+    function rollupByKey(rows, keyFn){
+      const acc = {};
+      rows.forEach(r => {
+        const key = keyFn(r);
+        acc[key] = (acc[key]||0) + (Number(r.hours)||0);
+      });
+      // sort desc by hours
+      const entries = Object.entries(acc).sort((a,b)=> b[1]-a[1]);
+      return Object.fromEntries(entries);
+    }
+
+    // ---- Chart drawers ----
+    function drawTimeChart(series){
+      const ctx = document.getElementById('chartTime');
+      if(chartTime){ chartTime.destroy(); }
+      chartTime = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: series.map(d=>d.date),
+          datasets: [{
+            label: 'Hours',
+            data: series.map(d=>d.hours),
+            tension: 0.25,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: true } },
+          scales: {
+            x: { title: { display: true, text: 'Date' } },
+            y: { title: { display: true, text: 'Hours' }, beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    function drawVolunteerChart(obj){
+      const labels = Object.keys(obj);
+      const data = Object.values(obj);
+      const ctx = document.getElementById('chartVolunteer');
+      if(chartVolunteer){ chartVolunteer.destroy(); }
+      chartVolunteer = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Total Hours',
+            data
+          }]
+        },
+        options: {
+          indexAxis: (labels.length > 8 ? 'y' : 'x'),
+          responsive: true,
+          plugins: {
+            legend: { display: true },
+            tooltip: { mode: 'nearest' }
+          },
+          scales: {
+            x: { title: { display: true, text: labels.length > 8 ? 'Hours' : 'Volunteer' } },
+            y: { title: { display: true, text: labels.length > 8 ? 'Volunteer' : 'Hours' }, beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    function drawEventChart(obj){
+      const labels = Object.keys(obj);
+      const data = Object.values(obj);
+      const ctx = document.getElementById('chartEvent');
+      if(chartEvent){ chartEvent.destroy(); }
+      chartEvent = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Hours by Event',
+            data
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: { mode: 'nearest' }
+          },
+          cutout: '55%'
+        }
+      });
+    }
+
+    function renderSummary(filtered, groupBy){
+      const groups = {};
+      filtered.forEach(l => {
+        let key;
+        if (groupBy === 'month') {
+          const d = new Date(l.date);
+          key = (d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
+        } else if (groupBy === 'event') {
+          key = l.eventName || 'Unassigned';
+        } else {
+          const em = (l.volunteerEmail||'').toLowerCase();
+          key = nameByEmail[em] || em || 'Unknown';
+        }
+        groups[key] = (groups[key]||0) + (Number(l.hours)||0);
+      });
+
+      thead.innerHTML = '<th>Group</th><th>Total Hours</th>';
+      const rows = Object.entries(groups)
+        .sort((a,b)=> b[1]-a[1])
+        .map(([k,v]) => `<tr><td>${escapeHtml(k)}</td><td>${v.toFixed(2)}</td></tr>`)
+        .join('') || `<tr><td colspan="2">No data for selected filters.</td></tr>`;
+      tbody.innerHTML = rows;
+
+      window._currentReportView = 'summary';
+      window._currentReport = Object.entries(groups).map(([k,v]) => ({group:k, hours:v}));
+    }
+
+
+
+    function exportCSV(){
+      const view = window._currentReportView || 'detail';
+      const data = window._currentReport || [];
+      if(!data.length){ alert('Run a report first.'); return; }
+
+      let csv;
+      if(view === 'detail'){
+        const include = includeNotes.checked;
+        const header = include
+          ? 'date,volunteer,email,event,hours,notes\n'
+          : 'date,volunteer,email,event,hours\n';
+        const body = data.map(r => {
+          const base = [
+            csvCell(r.date),
+            csvCell(r.volunteer),
+            csvCell(r.email),
+            csvCell(r.event),
+            (Number(r.hours)||0).toFixed(2)
+          ];
+          if(include) base.push(csvCell(r.notes||''));
+          return base.join(',');
+        }).join('\n');
+        csv = header + body;
+      } else {
+        const header = 'group,hours\n';
+        const body = data.map(r => csvCell(r.group)+','+(Number(r.hours)||0).toFixed(2)).join('\n');
+        csv = header + body;
+      }
+      download(`tfa_report_${view}.csv`, csv, 'text/csv');
+    }
+
+    // ---- CSV helpers (robust to quoted fields) ----
+    async function fetchCSV(url){
+      const res = await fetch(url, { cache: 'no-store' });
+      if(!res.ok) throw new Error('Failed to fetch: ' + url);
+      const text = await res.text();
+      return parseCSV(text);
+    }
+
+    function parseCSV(text){
+      const rows = [];
+      let i = 0, field = '', fields = [], inQuotes = false;
+      const pushField = () => { fields.push(field); field=''; };
+      const pushRow = () => { if (fields.length) rows.push(fields); fields = []; };
+
+      while (i < text.length){
+        const c = text[i];
+
+        if (inQuotes){
+          if (c === '"'){
+            if (text[i+1] === '"'){ field += '"'; i+=2; continue; }
+            inQuotes = false; i++; continue;
+          }
+          field += c; i++; continue;
+        }
+
+        if (c === '"'){ inQuotes = true; i++; continue; }
+        if (c === ','){ pushField(); i++; continue; }
+        if (c === '\r'){ i++; continue; }
+        if (c === '\n'){ pushField(); pushRow(); i++; continue; }
+
+        field += c; i++;
+      }
+      // last field/row
+      if (field.length || fields.length){ pushField(); pushRow(); }
+
+      if (!rows.length) return [];
+      const headers = rows[0].map(h => String(h||'').trim());
+      return rows.slice(1).filter(r => r.some(x => String(x||'').trim().length)).map(r => {
+        const obj = {};
+        headers.forEach((h,idx) => obj[h] = (r[idx]!==undefined ? String(r[idx]) : '').trim());
+        return obj;
+      });
+    }
+
+    // ---- utils ----
+    function escapeHtml(s){ return String(s).replace(/[&<>"]+/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+    function csvCell(v){ const s=String(v==null?'':v).replace(/"/g,'""'); return /[",\n]/.test(s)?('"'+s+'"'):s; }
+    function download(filename, text, type){
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([text], {type}));
+      a.download = filename; a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 500);
+    }
+    function fmtDate(d){ const dt = new Date(d); return isNaN(dt)?'':dt.toLocaleDateString(); }
+    function iso(d){ const dt = new Date(d); if(isNaN(dt)) return ''; dt.setHours(0,0,0,0); return dt.toISOString().slice(0,10); }
+  })();
+</script>
+
+  </body>
+</html>

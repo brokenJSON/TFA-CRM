@@ -1,0 +1,296 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>TFA – Volunteer Registration</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/theme-tfa.css" />
+    <style>
+      /* Small page-specific touches */
+      .required:after { content:" *"; color: var(--tfa-primary); }
+      .help { font-size:.9em; color:#6f777d; margin-top:.25rem; }
+      .error { color:#b00020; margin:.25rem 0 0; font-size:.9em; display:none; }
+      .success-banner { background: #e8f5ec; border-left: 6px solid var(--tfa-primary); padding: 0.85rem 1rem; margin-bottom: 1rem; display:none; }
+    </style>
+  </head>
+  <body class="is-preload">
+
+    <div id="wrapper">
+
+      <!-- Main -->
+      <div id="main">
+        <div class="inner">
+
+          <!-- Header -->
+          <header id="header">
+            <a href="index.html" class="logo"><strong>New Volunteer Registration</strong></a>
+            <ul class="icons">
+              <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+              <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+              <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+            </ul>
+          </header>
+
+          <!-- Content -->
+          <section>
+            <header class="main">
+              <h1>Join The Family Advocates</h1>
+              <p>Tell us a bit about you. Fields marked with <span style="color:var(--tfa-primary)">*</span> are required.</p>
+            </header>
+
+            <div id="regSuccess" class="success-banner">
+              ✅ Thanks for registering! We’ve saved your profile. You can now <a href="log_in.html">log in</a>.
+            </div>
+
+            <form id="regForm" class="box">
+              <div class="row gtr-uniform">
+                <!-- Basic Info -->
+                <div class="col-6 col-12-medium">
+                  <label for="name" class="required">Full name</label>
+                  <input type="text" id="name" autocomplete="name" required />
+                  <div class="error" id="err-name">Please enter your name.</div>
+                </div>
+
+                <div class="col-6 col-12-medium">
+                  <label for="email" class="required">Email</label>
+                  <input type="email" id="email" autocomplete="email" required />
+                  <div class="error" id="err-email">Please enter a valid email.</div>
+                </div>
+
+                <div class="col-6 col-12-medium">
+                  <label for="phone">Phone</label>
+                  <input type="tel" id="phone" placeholder="(555) 123-4567" autocomplete="tel" />
+                </div>
+
+                <div class="col-6 col-12-medium">
+                  <label for="password" class="required">Password</label>
+                  <input type="password" id="password" minlength="8" placeholder="At least 8 characters" required />
+                  <div class="error" id="err-password">Password must be at least 8 characters.</div>
+                </div>
+
+                <!-- Preferences / Skills -->
+                <div class="col-12">
+                  <label for="skills">Skills & interests</label>
+                  <input type="text" id="skills" placeholder="e.g., Spanish, data entry, event setup" />
+                  <p class="help">Comma-separated works great.</p>
+                </div>
+
+                <div class="col-6 col-12-medium">
+                  <label for="availability" class="required">General availability</label>
+                  <select id="availability" required>
+                    <option value="">— Select —</option>
+                    <option>Weekdays – Mornings</option>
+                    <option>Weekdays – Afternoons</option>
+                    <option>Weekdays – Evenings</option>
+                    <option>Weekends – Mornings</option>
+                    <option>Weekends – Afternoons</option>
+                    <option>Weekends – Evenings</option>
+                    <option>Flexible / Varies</option>
+                  </select>
+                  <div class="error" id="err-availability">Please select your general availability.</div>
+                </div>
+
+                <div class="col-6 col-12-medium">
+                  <label for="interests">Volunteer focus</label>
+                  <select id="interests" multiple>
+                    <option>Food pantry</option>
+                    <option>Clothing drive</option>
+                    <option>Admin / office</option>
+                    <option>Fundraising</option>
+                    <option>Outreach</option>
+                    <option>Transportation</option>
+                  </select>
+                  <p class="help">Hold Ctrl/⌘ to select multiple.</p>
+                </div>
+
+                <!-- Optional Profile Image -->
+                <div class="col-12">
+                  <label for="avatar">Profile photo (optional)</label>
+                  <input type="file" id="avatar" accept="image/*" />
+                  <p class="help">A square image looks best.</p>
+                </div>
+
+                <!-- Consents -->
+                <div class="col-12">
+                  <input type="checkbox" id="optin" />
+                  <label for="optin">Keep me posted on upcoming events and campaigns.</label>
+                </div>
+
+                <div class="col-12">
+                  <input type="checkbox" id="coc" required />
+                  <label for="coc" class="required">I agree to the Code of Conduct and Privacy Policy.</label>
+                  <div class="error" id="err-coc">You must agree to proceed.</div>
+                </div>
+
+                <!-- Actions -->
+                <div class="col-12">
+                  <ul class="actions">
+                    <li><button type="submit" class="button primary">Create account</button></li>
+                    <li><a href="log_in.html" class="button">Already have an account?</a></li>
+                  </ul>
+                </div>
+              </div>
+            </form>
+
+            <!-- What happens next -->
+            <hr class="major" />
+            <h3>What happens next?</h3>
+            <p>After registration, you can log in to your <a href="dashboard_volunteer.html">Volunteer Dashboard</a> to see events and log hours. If you need help, email <a href="#">support@thefamilyadvocates.org</a>.</p>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div id="sidebar">
+        <div class="inner">
+
+          <!-- Search -->
+          <section id="search" class="alt">
+            <form method="post" action="#">
+              <input type="text" name="query" id="query" placeholder="Search" />
+            </form>
+          </section>
+
+          <!-- Menu -->
+          <nav id="menu">
+            <header class="major">
+              <h2>Menu</h2>
+            </header>
+            <ul>
+              <li><a href="index.html">Homepage</a></li>
+              <li><a href="log_in.html">Log In</a></li>
+              <li><a href="register.html" class="tfa-current">Volunteer Registration</a></li>
+            </ul>
+          </nav>
+
+          <!-- Get in touch -->
+          <section>
+            <header class="major"><h2>Get in touch</h2></header>
+            <p>Questions about volunteering? We’re happy to help.</p>
+            <ul class="contact">
+              <li class="icon solid fa-envelope"><a href="#">support@thefamilyadvocates.org</a></li>
+              <li class="icon solid fa-phone">(000) 000-0000</li>
+            </ul>
+          </section>
+
+          <footer id="footer">
+            <p class="copyright">&copy; The Family Advocates. All rights reserved.</p>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <!-- Registration Logic -->
+    <script>
+      (function(){
+        const STORAGE_VOLUNTEERS = 'tfa_volunteers';
+
+        const form = document.getElementById('regForm');
+        const banner = document.getElementById('regSuccess');
+
+        // Simple helpers
+        function $(id){ return document.getElementById(id); }
+        function escapeHtml(s){ return String(s).replace(/[&<>"]+/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+        function load(key){ try { return JSON.parse(localStorage.getItem(key)); } catch(_) { return null; } }
+        function save(key, val){ try { localStorage.setItem(key, JSON.stringify(val)); } catch(_){} }
+        function cryptoId(){ try { return crypto.getRandomValues(new Uint32Array(1))[0].toString(16) + Date.now().toString(16); } catch(_){ return Math.random().toString(16).slice(2)+Date.now().toString(16); } }
+
+        // Convert file to base64 (for simple local preview/persistence)
+        function fileToBase64(file){
+          return new Promise((resolve,reject)=>{
+            if(!file){ resolve(null); return; }
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        }
+
+        // Front-end validation
+        function showErr(id, show){ const el = $(id); if(!el) return; el.style.display = show ? 'block' : 'none'; }
+        function validate(){
+          let ok = true;
+          const name = $('name').value.trim();
+          const email = $('email').value.trim();
+          const pw = $('password').value;
+          const avail = $('availability').value;
+          const coc = $('coc').checked;
+
+          showErr('err-name', !name); ok = ok && !!name;
+          const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+          showErr('err-email', !emailOk); ok = ok && emailOk;
+          showErr('err-password', !(pw && pw.length >= 8)); ok = ok && pw && pw.length >= 8;
+          showErr('err-availability', !avail); ok = ok && !!avail;
+          showErr('err-coc', !coc); ok = ok && coc;
+
+          return ok;
+        }
+
+        // Submit handler
+        form.addEventListener('submit', async function(e){
+          e.preventDefault();
+          banner.style.display = 'none';
+          if(!validate()) return;
+
+          const API_KEY = 'dev-key';
+          const submitBtn = form.querySelector('button[type="submit"]');
+          const originalText = submitBtn.textContent;
+          
+          // Disable button during submission
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Creating account...';
+
+          const payload = {
+            name: $('name').value.trim(),
+            email: $('email').value.trim().toLowerCase(),
+            phone: $('phone').value.trim(),
+            password: $('password').value,
+          };
+
+          try {
+            // Call the registration API endpoint
+            const res = await fetch('/api/auth/register', {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'x-api-key': API_KEY
+              },
+              body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if(!res.ok){
+              throw new Error(data.error || 'Registration failed');
+            }
+
+            // Success!
+            $('password').value = '';
+            $('password2').value = '';
+            banner.innerHTML = '✅ Account created successfully! Redirecting to login...';
+            banner.style.display = 'block';
+
+            // Redirect to login page after success
+            setTimeout(() => {
+              window.location.href = 'log_in.html';
+            }, 2000);
+
+          } catch(err) {
+            alert('Registration error: ' + err.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

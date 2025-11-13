@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>TFA - Log In</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/theme-tfa.css" />
+  </head>
+  <body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+      <!-- Main -->
+      <div id="main">
+        <div class="inner">
+
+          <!-- Header -->
+          <header id="header">
+            <a href="index.html" class="logo"><strong>TFA Log In</strong></a>
+            <ul class="icons">
+              <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+              <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+              <li><a href="#" class="icon brands fa-snapchat-ghost"><span class="label">Snapchat</span></a></li>
+              <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+              <li><a href="#" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
+            </ul>
+          </header>
+
+          <!-- Content -->
+          <section>
+            <header class="main">
+              <h1>Log In</h1>
+              <p>Welcome back! Please sign in to access your volunteer dashboard.</p>
+            </header>
+
+            <div class="row gtr-50 gtr-uniform">
+              <div class="col-6 col-12-medium">
+                <form id="loginForm" method="post" action="#" class="box">
+                  <div class="row gtr-uniform">
+
+                    <div class="col-12">
+                      <label for="email">Email</label>
+                      <input type="email" name="email" id="email" placeholder="you@example.org" autocomplete="email" required />
+                    </div>
+
+                    <div class="col-12">
+                      <label for="password">Password</label>
+                      <input type="password" name="password" id="password" placeholder="Your password" autocomplete="current-password" required />
+                    </div>
+
+                    <div class="col-12">
+                      <input type="checkbox" id="remember" name="remember" />
+                      <label for="remember">Remember me on this device</label>
+                    </div>
+
+                    <div class="col-12">
+                      <button type="submit" class="button primary">Sign In</button>
+                      <a href="register.html" class="button secondary" style="margin-left:0.5em;">Create Account</a>
+                    </div>
+
+                    <div class="col-12">
+                      <p class="align-left" style="margin-top:1em;">
+                        <a href="#" id="forgotLink">Forgot your password?</a>
+                      </p>
+                    </div>
+
+                    <div class="col-12">
+                      <p id="loginMessage" class="align-left" style="display:none;"></p>
+                    </div>
+
+                  </div>
+                </form>
+              </div>
+
+              <div class="col-6 col-12-medium">
+                <div class="box alt">
+                  <h3>Don’t have an account?</h3>
+                  <p>Volunteers can register to report hours, view upcoming events, and manage their profile.</p>
+                  <a href="register.html" class="button">Register as a Volunteer</a>
+
+                  <hr class="major" />
+
+                  <h3>Admins</h3>
+                  <p>Administrators can review submitted hours and manage contacts inside the CRM.</p>
+                </div>
+              </div>
+            </div>
+
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div id="sidebar">
+        <div class="inner">
+
+          <!-- Search -->
+          <section id="search" class="alt">
+            <form method="post" action="#">
+              <input type="text" name="query" id="query" placeholder="Search" />
+            </form>
+          </section>
+
+          <!-- Menu -->
+          <nav id="menu">
+            <header class="major">
+              <h2>Menu</h2>
+            </header>
+            <ul>
+              <li><a href="index.html">Homepage</a></li>
+              <li><a href="log_in.html">Log In</a></li>
+            </ul>
+          </nav>
+
+          <!-- Section -->
+          <section>
+            <header class="major">
+              <h2>Get in touch</h2>
+            </header>
+            <p>Have trouble signing in? Reach out and we’ll help you get access.</p>
+            <ul class="contact">
+              <li class="icon solid fa-envelope"><a href="#">support@thefamilyadvocates.org</a></li>
+              <li class="icon solid fa-phone">(000) 000-0000</li>
+            </ul>
+          </section>
+
+          <!-- Footer -->
+          <footer id="footer">
+            <p class="copyright">&copy; The Family Advocates. All rights reserved. Design base: <a href="https://html5up.net">HTML5 UP</a>.</p>
+          </footer>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <!-- Real authentication with backend API -->
+    <script>
+      (function(){
+        const form = document.getElementById('loginForm');
+        const message = document.getElementById('loginMessage');
+        const forgot = document.getElementById('forgotLink');
+        const API_KEY = 'dev-key'; // Should match your server's API key
+        const API_BASE = '/api';
+
+        function showMessage(text, ok){
+          message.textContent = text;
+          message.style.display = 'block';
+          message.style.color = ok ? '#063F1E' : '#c0392b';
+        }
+
+        if(forgot){
+          forgot.addEventListener('click', function(e){
+            e.preventDefault();
+            showMessage('Password reset coming soon. Please contact support@thefamilyadvocates.org for assistance.', false);
+          });
+        }
+
+        if(form){
+          form.addEventListener('submit', async function(e){
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+
+            if(!email || !password){
+              showMessage('Please enter your email and password.', false);
+              return;
+            }
+
+            // Disable submit button during login
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
+
+            try {
+              // Call the real authentication API
+              const response = await fetch(`${API_BASE}/auth/login`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-api-key': API_KEY
+                },
+                body: JSON.stringify({ email, password })
+              });
+
+              const data = await response.json();
+
+              if (!response.ok) {
+                throw new Error(data.error || 'Login failed');
+              }
+
+              // Store user info in localStorage
+              const user = {
+                id: data.user.id,
+                email: data.user.email,
+                role: data.user.role,
+                is_active: data.user.is_active,
+                loginTime: new Date().toISOString()
+              };
+
+              localStorage.setItem('tfa_current_user', JSON.stringify(user));
+              localStorage.setItem('tfa_api_key', API_KEY);
+              
+              if(remember){ 
+                localStorage.setItem('tfa_remember_me', '1'); 
+              } else { 
+                localStorage.removeItem('tfa_remember_me'); 
+              }
+
+              showMessage('✓ Signed in successfully! Redirecting...', true);
+
+              // Redirect based on user role
+              setTimeout(() => {
+                if (data.user.role === 'admin') {
+                  window.location.href = 'dashboard_admin.html';
+                } else if (data.user.role === 'staff') {
+                  window.location.href = 'dashboard_staff.html';
+                } else {
+                  window.location.href = 'dashboard_volunteer.html';
+                }
+              }, 1000);
+
+            } catch(err){
+              showMessage('✗ ' + err.message, false);
+              submitBtn.disabled = false;
+              submitBtn.textContent = originalText;
+            }
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

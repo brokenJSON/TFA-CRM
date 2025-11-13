@@ -4,237 +4,7 @@
   <meta charset="utf-8" />
   <title>TFA CRM – Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-
-    /* reset so padding/borders behave */
-    * { box-sizing: border-box; }
-
-    /* page basics */
-    body {
-      margin: 0;
-      background: #f5f5f5;   /* light gray page background */
-      color: #222;           /* dark text */
-      font: 16px/1.4 Arial, Helvetica, sans-serif;
-    }
-
-    /* links */
-    a {
-      color: #063F1E;        /* deep green (TFA COLOR CODE) */
-      text-decoration: none;
-    }
-    a:hover { text-decoration: underline; }
-
-    /* header / branding */
-    .brand-bar {
-      background: #063F1E;   /* deep green bar (TFA COLOR CODE) */
-      color: #ffffff;
-      border-bottom: 4px solid #D89F01; /* gold accent (TFA COLOR CODE) */
-    }
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* build out logos */
-    .logo {
-      width: 46px;
-      height: 46px;
-      border-radius: 10px;
-      background: #D89F01;   /* gold fill behind transparent PNGs looks fine */
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: #063F1E;        /* green text if you ever show letters */
-      font-weight: bold;
-    }
-
-    /* page shell */
-    .shell {
-      max-width: 1100px;
-      margin: 16px auto 32px;
-      padding: 0 16px;
-    }
-
-    /* top nav */
-    .nav {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 8px;
-    }
-    .nav a,
-    .nav button {
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid #063F1E;
-      background: #ffffff;
-      color: #063F1E;
-      cursor: pointer;
-    }
-    .nav .logout {
-      border-color: #8b1a1a;
-      color: #8b1a1a;
-    }
-
-    /* Two-column area (left content + right tasks) */
-    .grid {
-      display: flex;
-      gap: 16px;
-    }
-    .grid > * {
-      flex: 1;               /* both columns take space */
-    }
-    .grid > :first-child {
-      flex: 2;               /* left side bigger */
-    }
-
-    /* Stack columns on small screens */
-    @media (max-width: 900px) {
-      .grid { flex-direction: column; }
-    }
-
-    /* Card */
-    .card {
-      background: #ffffff;
-      border: 1px solid #e3e3e3;
-      border-radius: 10px;
-      padding: 16px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-    }
-    h2 {
-      margin: 0 0 10px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #eaeaea;
-    }
-
-    /* Quick actions list */
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .action {
-      flex: 1 1 180px;       /* grow/shrink, min width */
-      border: 1px dashed #dcdcdc;
-      border-radius: 10px;
-      background: #fff;
-      padding: 12px;
-    }
-
-    /* Buttons */
-    .btn {
-      display: inline-block;
-      margin-top: 6px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 0;
-      background: #063F1E;   /* primary green */
-      color: #fff;
-      cursor: pointer;
-    }
-    .btn:hover { background: #0a4e28; }   /* a bit darker */
-    .btn.secondary {
-      background: #D89F01;   /* gold */
-      color: #3f2f00;
-    }
-    .btn.danger {
-      background: #8b1a1a;   /* red-ish */
-      color: #fff;
-    }
-
-    /* form basics */
-    label {
-      display: block;
-      font-weight: bold;
-      margin: .6rem 0 .25rem;
-    }
-    input, textarea, select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #cccccc;
-      border-radius: 8px;
-      background: #fff;
-      outline: none;
-    }
-    input:focus, textarea:focus, select:focus {
-      border-color: #D89F01;  /* gold focus */
-      box-shadow: 0 0 0 3px rgba(216,159,1,0.25);
-    }
-
-    /* row layout */
-    .row {
-      display: flex;
-      gap: 10px;
-    }
-    .row > * { flex: 1; }
-
-    /* table for contacts */
-    table {
-      width: 100%;
-      border-collapse: collapse;   /* simple table lines */
-      background: #fff;
-    }
-    th, td {
-      padding: 10px 12px;
-      border: 1px solid #eee;
-      text-align: left;
-    }
-    th { background: #fafafa; }
-
-    /* Small pill/tag */
-    .tag {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      background: #fff6da;          /* pale gold */
-      border: 1px solid #D89F01;
-      color: #5b4500;
-    }
-
-    /* Empty state + muted text */
-    .empty {
-      padding: 16px;
-      border: 1px dashed #cccccc;
-      border-radius: 10px;
-      text-align: center;
-      background: #fff;
-      color: #777;
-    }
-    .muted { color: #777; }
-
-    /* ============ Email Flow (proposal-only sponosor feedback needed) ============ */
-    .flow-card .meta { display:flex; gap:10px; flex-wrap:wrap; margin:8px 0 14px }
-    .badge {
-      display:inline-block; font-weight:700; font-size:12px;
-      padding:4px 8px; border-radius:999px; border:1px solid #D89F01;
-      background:#fff6da; color:#5b4500;
-    }
-    .flow { display:flex; flex-direction:column; gap:16px }
-    .flow-row { display:flex; flex-wrap:wrap; gap:12px }
-    .node {
-      background:#fff; border:1px solid #e3e3e3; border-radius:12px;
-      padding:12px; box-shadow:0 6px 14px rgba(0,0,0,0.08);
-      min-width: 220px; flex: 1;
-    }
-    .node h4 { margin:0 0 6px; color:#063F1E }
-    .kv { margin:4px 0; font-size:14px }
-    .kv b { color:#444 }
-    .btn-ghost-sm {
-      border:1px solid #063F1E; background:#fff; color:#063F1E;
-      padding:6px 10px; border-radius:10px; font-weight:600; cursor:default;
-    }
-    .flow-arrows { display:flex; justify-content:center; align-items:center }
-    .flow-arrows svg { width:56px; height:30px }
-    .note { color:#777; font-size:13px }
-  </style>
+  <link rel="stylesheet" href="dashboard.css" />
 </head>
 <body>
   <header class="brand-bar">
@@ -247,10 +17,12 @@
           <small>CRM Dashboard</small>
         </div>
       </div>
-      <div class="nav">
+      <div id="topNav" class="nav" style="display:none">
         <div>
           <a href="dashboard.html">Dashboard</a>
           <a href="contacts.html">Contacts</a>
+          <a href="volunteer-hours.html">Volunteer Hours</a>
+          <a href="#" id="aboutLink">About</a>
           <a href="volunteer-hours.html" id="navVolHours">Volunteer Hours</a>
           <!-- hidden until clicked to show the email-flow-->
           <a href="#email-flow">Email Mgmt</a>
@@ -478,8 +250,14 @@
     // ===== Guard: require login =====
     if(!localStorage.getItem(LS.session)){
       alert("Please log in first.");
-      window.location.href = "tfa-crm.html";
+      window.location.href = "main.html";
+    } else {
+      // Show navigation tabs after login
+      const topNav = document.getElementById("topNav");
+      if(topNav) topNav.style.display = "flex";
     }
+    
+    // Manual logout only - no auto-logout to avoid navigation issues
 
     // ===== Utilities =====
     const $ = s => document.querySelector(s);
